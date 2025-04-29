@@ -15,3 +15,5 @@ FITQUEST es una aplicación diseñada para ayudar a los usuarios a mejorar su f�
 - Base de datos y Autenticación: Firebase - Para gestionar la base de datos en tiempo real y la autenticación de usuarios.
 - Autenticación de sesiones: JWT (JSON Web Tokens) - Para la autenticación y gestión de sesiones de usuarios.
 - CORS: Se utilizará para permitir la comunicación entre el frontend y el backend correctamente.
+
+![TFG-ENTIDAD-RELACION](https://github.com/user-attachments/assets/bd45d00a-5cd2-46ee-a77c-2eba5a3ceb02)
