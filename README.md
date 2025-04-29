@@ -18,3 +18,14 @@ FITQUEST es una aplicación diseñada para ayudar a los usuarios a mejorar su f�
 
 ## ENTIDAD-RELACIÓN
 ![TFG-ENTIDAD-RELACION](https://github.com/user-attachments/assets/bd45d00a-5cd2-46ee-a77c-2eba5a3ceb02)
+
+## Estructura del proyecto
+- `client/` → Frontend con Vue.js
+- `server/` → Backend con Node.js + Express
+- `database/` → Configuración de Firebase
+- `docs/` → Documentación y diagramas
+- `assets/` → Recursos estáticos
+
+## Cómo ejecutar
+- `cd client && npm run serve` → Arranca el frontend
+- `cd server && node server.js` → Arranca el backend
