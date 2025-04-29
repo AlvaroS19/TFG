@@ -16,4 +16,5 @@ FITQUEST es una aplicación diseñada para ayudar a los usuarios a mejorar su f�
 - Autenticación de sesiones: JWT (JSON Web Tokens) - Para la autenticación y gestión de sesiones de usuarios.
 - CORS: Se utilizará para permitir la comunicación entre el frontend y el backend correctamente.
 
+## ENTIDAD-RELACIÓN
 ![TFG-ENTIDAD-RELACION](https://github.com/user-attachments/assets/bd45d00a-5cd2-46ee-a77c-2eba5a3ceb02)
