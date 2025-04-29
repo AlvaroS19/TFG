@@ -1,0 +1,12 @@
+# Node
+node_modules
+.env
+
+# Vue
+/dist
+
+# Firebase
+firebase-debug.log
+
+# General
+.DS_Store
