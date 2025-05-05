@@ -29,3 +29,4 @@ FITQUEST es una aplicación diseñada para ayudar a los usuarios a mejorar su f�
 ## Cómo ejecutar
 - `cd client && npm run serve` → Arranca el frontend
 - `cd server && node server.js` → Arranca el backend
+
