@@ -26,7 +26,7 @@ FITQUEST es una aplicación diseñada para ayudar a los usuarios a mejorar su f�
 - `docs/` → Documentación y diagramas
 - `assets/` → Recursos estáticos
 
-## Cómo ejecutar
-- `cd client && npm run serve` → Arranca el frontend
-- `cd server && node server.js` → Arranca el backend
+## Diagrama Base de Datos
+![image](https://github.com/user-attachments/assets/5dc3f756-a0e5-4fd5-94a9-66032e5effd9)
+
 
