@@ -1,5 +1,11 @@
 const express = require('express');
 const cors = require('cors');
+const missionsRoutes = require('./routes/missionsRoutes');
+const userRoutes = require('./routes/userRoutes');
+
+app.use('/missions', missionsRoutes);
+app.use('/user', userRoutes);
+
 require('dotenv').config();
 
 const app = express();
