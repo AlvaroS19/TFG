@@ -10,3 +10,5 @@ firebase-debug.log
 
 # General
 .DS_Store
+server/serviceAccountKey.json
+server/serviceAccountKey.json
