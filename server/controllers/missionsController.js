@@ -21,8 +21,6 @@ const getUserMissions = async (req, res) => {
   }
 };
 
-module.exports = { getUserMissions };
-
 const completeMission = async (req, res) => {
   const uid = req.uid;
   const { description, type } = req.body;
@@ -31,30 +29,54 @@ const completeMission = async (req, res) => {
     return res.status(400).json({ error: 'Faltan campos: description o type' });
   }
 
+  // Asignar XP según el tipo de misión
+  const xpGained = type === 'weekly' ? 30 : 10;
+
+  const newMission = {
+    description,
+    type,
+    completedAt: new Date().toISOString(),
+  };
+
   try {
+    // Guardar la misión como completada
     const completedRef = db.collection('missionsCompleted').doc(uid);
-    const userDoc = await completedRef.get();
+    const docSnap = await completedRef.get();
 
-    const newMission = {
-      description,
-      type,
-      completedAt: new Date().toISOString(),
-    };
-
-    if (!userDoc.exists) {
-      await completedRef.set({
-        completed: [newMission],
-      });
+    if (!docSnap.exists) {
+      await completedRef.set({ completed: [newMission] });
     } else {
       await completedRef.update({
-        completed: admin.firestore.FieldValue.arrayUnion(newMission),
+        completed: admin.firestore.FieldValue.arrayUnion(newMission)
       });
     }
 
-    res.status(200).json({ msg: 'Misión marcada como completada ✅', mission: newMission });
+    // Actualizar o crear XP del usuario
+    const statsRef = db.collection('userStats').doc(uid);
+    const statsSnap = await statsRef.get();
+
+    if (!statsSnap.exists) {
+      await statsRef.set({ xp: xpGained, level: 1 });
+    } else {
+      const currentData = statsSnap.data();
+      const updatedXP = (currentData.xp || 0) + xpGained;
+      const newLevel = Math.floor(updatedXP / 100) + 1;
+
+      await statsRef.update({
+        xp: updatedXP,
+        level: newLevel
+      });
+    }
+
+    res.status(200).json({
+      msg: `✅ Misión completada y ${xpGained} XP añadidos`,
+      mission: newMission,
+      xpEarned: xpGained
+    });
+
   } catch (error) {
-    console.error('Error al marcar misión como completada:', error);
-    res.status(500).json({ error: 'Error interno al completar la misión' });
+    console.error('Error al completar misión:', error);
+    res.status(500).json({ error: 'Error al completar misión' });
   }
 };
 
