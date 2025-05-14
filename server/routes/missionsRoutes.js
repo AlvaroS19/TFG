@@ -4,6 +4,7 @@ const { getUserMissions, completeMission, getCompletedMissions } = require('../c
 
 const router = express.Router();
 
+// Middleware to verify token
 router.get('/', verifyToken, getUserMissions);
 router.post('/complete', verifyToken, completeMission);
 router.get('/completed', verifyToken, getCompletedMissions);
