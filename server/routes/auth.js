@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { auth, db } = require('../services/firebase');
+const { admin, db } = require('../services/firebase');
 const bcrypt = require('bcrypt');
+const { registerUser } = require('../controllers/authController');
 require('dotenv').config();
 
 
@@ -10,7 +11,7 @@ router.post('/register', async (req, res) => {
 
   try {
     // Crear usuario en Firebase Auth
-    const userRecord = await auth.createUser({ email, password });
+    const userRecord = await admin.auth().createUser({ email, password });
 
     // Crear documento en Firestore con datos adicionales
     await db.collection('users').doc(userRecord.uid).set({
