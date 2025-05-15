@@ -1,5 +1,5 @@
-const admin = require('../services/firebase');
-const db = admin.firestore();
+const { admin, db } = require('../services/firebase');
+
 
 const getUserMissions = async (req, res) => {
   const uid = req.uid;

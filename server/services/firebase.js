@@ -9,4 +9,6 @@ admin.initializeApp({
   }),
 });
 
-module.exports = admin;
+const db = admin.firestore();
+
+module.exports = { admin, db };
