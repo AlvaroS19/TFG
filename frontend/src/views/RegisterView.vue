@@ -1,67 +1,112 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-900 text-white">
-    <div class="w-full max-w-md p-8 bg-gray-800 rounded-xl shadow-lg">
-      <h1 class="text-2xl font-bold mb-6 text-center">Crear cuenta</h1>
+  <div class="h-screen w-screen bg-background text-text flex flex-col justify-center items-center px-6">
+    <h1 class="text-3xl font-bold mb-6">Crear cuenta</h1>
 
-      <form @submit.prevent="handleRegister" class="space-y-4">
-        <input v-model="name" type="text" placeholder="Nombre"
-          class="w-full p-2 rounded bg-gray-700 text-white placeholder-gray-400" />
+    <form @submit.prevent="handleRegister" class="w-full max-w-xs flex flex-col gap-4">
+      <!-- EMAIL -->
+      <BaseInput label="Email" v-model="email" type="email" placeholder="tú@correo.com" />
+      <p v-if="emailError" class="text-red-500 text-sm -mt-2">{{ emailError }}</p>
 
-        <input v-model="lastName" type="text" placeholder="Apellido"
-          class="w-full p-2 rounded bg-gray-700 text-white placeholder-gray-400" />
-
-        <input v-model="email" type="email" placeholder="Correo electrónico"
-          class="w-full p-2 rounded bg-gray-700 text-white placeholder-gray-400" />
-
-        <input v-model="password" type="password" placeholder="Contraseña"
-          class="w-full p-2 rounded bg-gray-700 text-white placeholder-gray-400" />
-
-        <button type="submit"
-          class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded transition">
-          Registrarse
+      <!-- CONTRASEÑA -->
+      <div class="relative w-full">
+        <BaseInput
+          label="Contraseña"
+          v-model="password"
+          :type="showPassword ? 'text' : 'password'"
+          placeholder="Mínimo 8 caracteres"
+        />
+        <button
+          type="button"
+          @click="showPassword = !showPassword"
+          class="absolute right-3 top-9 text-primary"
+        >
+          <component :is="showPassword ? EyeOff : Eye" class="w-5 h-5" />
         </button>
+      </div>
+      <p v-if="passwordError" class="text-red-500 text-sm -mt-2">{{ passwordError }}</p>
 
-        <p v-if="error" class="text-red-500 text-sm text-center mt-2">{{ error }}</p>
-      </form>
-    </div>
+      <!-- REPETIR CONTRASEÑA -->
+      <div class="relative w-full">
+        <BaseInput
+          label="Repetir contraseña"
+          v-model="repeatPassword"
+          :type="showRepeat ? 'text' : 'password'"
+          placeholder="Confirma tu contraseña"
+        />
+        <button
+          type="button"
+          @click="showRepeat = !showRepeat"
+          class="absolute right-3 top-9 text-primary"
+        >
+          <component :is="showRepeat ? EyeOff : Eye" class="w-5 h-5" />
+        </button>
+      </div>
+      <p v-if="repeatError" class="text-red-500 text-sm -mt-2">{{ repeatError }}</p>
+
+      <BaseButton type="submit">Registrarse</BaseButton>
+    </form>
+
+    <p class="text-sm mt-6">
+      ¿Ya tienes cuenta?
+      <span class="text-primary font-semibold underline" @click="$router.push('/login')">Inicia sesión</span>
+    </p>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import API from '../services/api';
+import { ref } from 'vue'
+import { Eye, EyeOff } from 'lucide-vue-next'
+import { toast } from 'vue3-toastify'
 
-const name = ref('');
-const lastName = ref('');
-const email = ref('');
-const password = ref('');
-const error = ref('');
+import BaseInput from '@/components/BaseInput.vue'
+import BaseButton from '@/components/BaseButton.vue'
 
-const router = useRouter();
+const email = ref('')
+const password = ref('')
+const repeatPassword = ref('')
+const showPassword = ref(false)
+const showRepeat = ref(false)
 
-const handleRegister = async () => {
-  error.value = '';
+const emailError = ref('')
+const passwordError = ref('')
+const repeatError = ref('')
 
-  if (!name.value || !lastName.value || !email.value || !password.value) {
-    error.value = 'Rellena todos los campos';
-    return;
+function isValidEmail(mail) {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return regex.test(mail)
+}
+
+function isValidPassword(pwd) {
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/
+  return regex.test(pwd)
+}
+
+function handleRegister() {
+  // Reset errores
+  emailError.value = ''
+  passwordError.value = ''
+  repeatError.value = ''
+
+  let valid = true
+
+  if (!isValidEmail(email.value)) {
+    emailError.value = 'Introduce un correo válido'
+    valid = false
   }
 
-  try {
-    const res = await API.post('/auth/register', {
-      name: name.value,
-      lastName: lastName.value,
-      email: email.value,
-      password: password.value,
-    });
-
-    console.log('Registrado:', res.data);
-
-    // Redirigir al login tras registro
-    router.push('/login');
-  } catch (err) {
-    error.value = err.response?.data?.error || 'Error al registrar usuario';
+  if (!isValidPassword(password.value)) {
+    passwordError.value = 'Debe tener mínimo 8 caracteres, una mayúscula y un número'
+    valid = false
   }
-};
+
+  if (password.value !== repeatPassword.value) {
+    repeatError.value = 'Las contraseñas no coinciden'
+    valid = false
+  }
+
+  if (!valid) return
+
+  toast.success('¡Cuenta creada correctamente!')
+  // Aquí iría la llamada real a Firebase o backend
+}
 </script>
