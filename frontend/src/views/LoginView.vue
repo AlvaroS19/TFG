@@ -23,6 +23,12 @@
       ¿No tienes cuenta?
       <span class="text-primary font-semibold underline" @click="$router.push('/register')">Regístrate</span>
     </p>
+    <p class="text-sm text-center mt-4">
+      <span class="text-primary font-semibold underline" @click="$router.push('/reset-password')">
+        ¿Has olvidado tu contraseña?
+      </span>
+    </p>
+
   </div>
 </template>
 
