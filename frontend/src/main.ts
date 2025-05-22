@@ -12,6 +12,8 @@ import './style.css'
 
 const app = createApp(App)
 
+createApp(App).use(router).mount('#app')
+
 const toastOptions: ToastContainerOptions = {
   autoClose: 3000,
   position: 'top-center',

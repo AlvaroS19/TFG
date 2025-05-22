@@ -6,6 +6,7 @@ import RegisterView from '@/views/RegisterView.vue'
 import ResetPasswordView from '@/views/ResetPasswordView.vue'
 import ResetPasswordTokenView from '@/views/ResetPasswordTokenView.vue'
 import DashboardView from '@/views/DashboardView.vue'
+import { isAuthenticated } from '@/core/auth.service'
 
 const routes = [
   { path: '/',         name: 'Landing',  component: LandingView },
@@ -13,10 +14,18 @@ const routes = [
   { path: '/register', name: 'Register', component: RegisterView },
   { path: '/reset-password', name: 'ResetPassword', component: ResetPasswordView },
   { path: '/reset-password/:token', name: 'ResetPasswordToken', component: ResetPasswordTokenView },
-  { path: '/dashboard', name: 'Dashboard', component: DashboardView },
+  { path: '/dashboard', name: 'Dashboard', component: DashboardView, meta: { requiresAuth: true } },
 ]
-
-export default createRouter({
+const router = createRouter({
   history: createWebHistory(),
   routes,
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.meta.requiresAuth && !isAuthenticated()) {
+    next('/login')
+  } else {
+    next()
+  }
+})
+export default router
