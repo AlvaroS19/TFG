@@ -1,50 +1,61 @@
 <template>
-  <div class="h-screen w-screen bg-background text-text flex flex-col justify-center items-center px-6">
-    <h1 class="text-3xl font-bold mb-6">Inicia sesión</h1>
+  <div class="h-screen w-screen flex flex-col items-center justify-center bg-background px-6">
+    <img src="@/assets/logo.png" alt="FitQuest Logo" class="w-32 mb-6" />
 
-    <form @submit.prevent="handleLogin" class="w-full max-w-xs flex flex-col gap-4">
-      <BaseInput label="Email" v-model="email" type="email" placeholder="tú@correo.com" />
-      <p v-if="emailError" class="text-red-500 text-sm -mt-2">{{ emailError }}</p>
+    <div class="w-full max-w-xs flex flex-col gap-5">
+      <!-- Email -->
+      <BaseInput
+        v-model="email"
+        type="email"
+        placeholder="Correo electrónico"
+        label="Correo"
+        :error="emailError"
+      />
 
-      <div class="relative w-full">
-        <BaseInput label="Contraseña" v-model="password" :type="showPassword ? 'text' : 'password'"
-          placeholder="••••••••" />
-        <button type="button" @click="showPassword = !showPassword" class="absolute right-3 top-9 text-primary">
-          <component :is="showPassword ? EyeOff : Eye" class="w-5 h-5" />
-        </button>
-      </div>
-      <p v-if="passwordError" class="text-red-500 text-sm -mt-2">{{ passwordError }}</p>
+      <!-- Contraseña -->
+      <BaseInput
+        v-model="password"
+        :type="showPassword ? 'text' : 'password'"
+        placeholder="Contraseña"
+        label="Contraseña"
+        :error="passwordError"
+      >
+        <template #right>
+          <button type="button" @click="showPassword = !showPassword">
+            <component :is="showPassword ? EyeOff : Eye" class="w-5 h-5 text-gray-400" />
+          </button>
+        </template>
+      </BaseInput>
 
+      <BaseButton @click="handleLogin">
+        Iniciar sesión
+      </BaseButton>
 
-      <BaseButton type="submit">Entrar</BaseButton>
-    </form>
-
-    <p class="text-sm mt-6">
-      ¿No tienes cuenta?
-      <span class="text-primary font-semibold underline" @click="$router.push('/register')">Regístrate</span>
-    </p>
-    <p class="text-sm text-center mt-4">
-      <span class="text-primary font-semibold underline" @click="$router.push('/reset-password')">
-        ¿Has olvidado tu contraseña?
-      </span>
-    </p>
-
+      <!-- Enlace para reset password -->
+      <router-link to="/reset-password" class="text-sm text-text underline text-center mt-2">
+        ¿Has olvidado la contraseña?
+      </router-link>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { toast } from 'vue3-toastify'
 import { Eye, EyeOff } from 'lucide-vue-next'
+
 import BaseInput from '@/components/BaseInput.vue'
 import BaseButton from '@/components/BaseButton.vue'
-import { toast } from 'vue3-toastify'
+import { loginUser } from '@/services/auth'
 
 const email = ref('')
 const password = ref('')
-const showPassword = ref(false)
-
 const emailError = ref('')
 const passwordError = ref('')
+const showPassword = ref(false)
+
+const router = useRouter()
 
 function isValidEmail(mail) {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -55,7 +66,7 @@ function isValidPassword(pwd) {
   return pwd.length >= 8
 }
 
-function handleLogin() {
+async function handleLogin() {
   emailError.value = ''
   passwordError.value = ''
 
@@ -73,7 +84,13 @@ function handleLogin() {
 
   if (!valid) return
 
-  toast.success('Login válido, redirigiendo...')
-  // Aquí iría la llamada real a tu backend o Firebase
+  try {
+    const data = await loginUser(email.value, password.value)
+    toast.success('¡Inicio de sesión correcto!')
+    localStorage.setItem('token', data.idToken)
+    router.push('/dashboard')
+  } catch (err) {
+    toast.error(err.message || 'Error al iniciar sesión')
+  }
 }
 </script>

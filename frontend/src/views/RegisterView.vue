@@ -1,13 +1,16 @@
 <template>
   <div class="h-screen w-screen bg-background text-text flex flex-col justify-center items-center px-6">
-    <h1 class="text-3xl font-bold mb-6">Crear cuenta</h1>
+    <!-- Logo (opcional) -->
+    <img src="@/assets/logo.png" alt="FitQuest Logo" class="w-32 mb-6" />
+
+    <h1 class="text-3xl font-bold mb-4 text-center">Crear cuenta</h1>
 
     <form @submit.prevent="handleRegister" class="w-full max-w-xs flex flex-col gap-4">
-      <!-- EMAIL -->
+      <!-- email -->
       <BaseInput label="Email" v-model="email" type="email" placeholder="tú@correo.com" />
       <p v-if="emailError" class="text-red-500 text-sm -mt-2">{{ emailError }}</p>
 
-      <!-- CONTRASEÑA -->
+      <!-- contraseña -->
       <div class="relative w-full">
         <BaseInput
           label="Contraseña"
@@ -25,7 +28,7 @@
       </div>
       <p v-if="passwordError" class="text-red-500 text-sm -mt-2">{{ passwordError }}</p>
 
-      <!-- REPETIR CONTRASEÑA -->
+      <!-- repetir -->
       <div class="relative w-full">
         <BaseInput
           label="Repetir contraseña"
@@ -55,11 +58,15 @@
 
 <script setup>
 import { ref } from 'vue'
-import { Eye, EyeOff } from 'lucide-vue-next'
+import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
+import { Eye, EyeOff } from 'lucide-vue-next'
 
 import BaseInput from '@/components/BaseInput.vue'
 import BaseButton from '@/components/BaseButton.vue'
+import { registerUser } from '@/services/auth'
+
+const router = useRouter()
 
 const email = ref('')
 const password = ref('')
@@ -81,8 +88,7 @@ function isValidPassword(pwd) {
   return regex.test(pwd)
 }
 
-function handleRegister() {
-  // Reset errores
+async function handleRegister() {
   emailError.value = ''
   passwordError.value = ''
   repeatError.value = ''
@@ -95,7 +101,7 @@ function handleRegister() {
   }
 
   if (!isValidPassword(password.value)) {
-    passwordError.value = 'Debe tener mínimo 8 caracteres, una mayúscula y un número'
+    passwordError.value = 'Debe tener al menos 8 caracteres, mayúscula y número'
     valid = false
   }
 
@@ -106,7 +112,12 @@ function handleRegister() {
 
   if (!valid) return
 
-  toast.success('¡Cuenta creada correctamente!')
-  // Aquí iría la llamada real a Firebase o backend
+  try {
+    await registerUser(email.value, password.value)
+    toast.success('¡Usuario registrado correctamente!')
+    router.push('/login')
+  } catch (err) {
+    toast.error(err.message || 'Error al registrar usuario')
+  }
 }
 </script>
