@@ -12,5 +12,5 @@
 
 
 <script setup>
-import LogoutButton from '@/components/LogoutButton.vue'
+import bottomnav from '@/components/BottomNav.vue'
 </script>
