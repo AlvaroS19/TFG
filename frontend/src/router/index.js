@@ -12,20 +12,40 @@ import MissionsView from '@/views/MissionsView.vue'
 import CompletedMissionsView from '@/views/CompletedMissionsView.vue'
 import AchievementsView from '@/views/AchievementsView.vue'
 import ProfileView from '@/views/ProfileView.vue'
+import AppLayout from '@/views/AppLayout.vue'
+
 
 const routes = [
-  { path: '/',         name: 'Landing',  component: LandingView },
-  { path: '/login',    name: 'Login',    component: LoginView },
+  // Redirección base
+  {
+    path: '/',
+    redirect: () => {
+      return isAuthenticated() ? '/dashboard' : '/landing'
+    }
+  },
+  // Vistas públicas
+  { path: '/landing', name: 'Landing', component: LandingView },
+  { path: '/login', name: 'Login', component: LoginView },
   { path: '/register', name: 'Register', component: RegisterView },
   { path: '/reset-password', name: 'ResetPassword', component: ResetPasswordView },
   { path: '/reset-password/:token', name: 'ResetPasswordToken', component: ResetPasswordTokenView },
-  { path: '/dashboard', name: 'Dashboard', component: DashboardView, meta: { requiresAuth: true } },
-  { path: '/user/stats', name: 'UserStats', component: UserStatsView, meta: { requiresAuth: true } },
-  { path: '/missions', name: 'Missions', component: MissionsView, meta: { requiresAuth: true } },
-  { path: '/missions/completed', name: 'CompletedMissions', component: CompletedMissionsView, meta: { requiresAuth: true } },
-  { path: '/achievements', name: 'Achievements', component: AchievementsView, meta: { requiresAuth: true } },
-  { path: '/profile', name: 'Profile', component: ProfileView, meta: { requiresAuth: true } }
+
+  // Rutas protegidas con layout
+  {
+    path: '/',
+    component: AppLayout,
+    meta: { requiresAuth: true },
+    children: [
+      { path: 'dashboard', name: 'Dashboard', component: DashboardView },
+      { path: 'missions', name: 'Missions', component: MissionsView },
+      { path: 'missions/completed', name: 'CompletedMissions', component: CompletedMissionsView },
+      { path: 'user/stats', name: 'UserStats', component: UserStatsView },
+      { path: 'achievements', name: 'Achievements', component: AchievementsView },
+      { path: 'profile', name: 'Profile', component: ProfileView }
+    ]
+  }
 ]
+
 const router = createRouter({
   history: createWebHistory(),
   routes,

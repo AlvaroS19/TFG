@@ -10,17 +10,17 @@ import 'vue3-toastify/dist/index.css'
 // Tu CSS
 import './style.css'
 
-const app = createApp(App)
-
-createApp(App).use(router).mount('#app')
-
 const toastOptions: ToastContainerOptions = {
   autoClose: 3000,
   position: 'top-center',
   theme: 'dark',
 }
 
+const app = createApp(App)
+
 app.use(router)
 app.use(createPinia())
 app.use(Vue3Toastify, toastOptions)
+
 app.mount('#app')
+
