@@ -64,5 +64,32 @@ router.post('/login', async (req, res) => {
   }
 });
 
+router.get('/stats', async (req, res) => {
+  const authHeader = req.headers.authorization
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Token no proporcionado' })
+  }
+
+  const idToken = authHeader.split(' ')[1]
+
+  try {
+    const decoded = await admin.auth().verifyIdToken(idToken)
+    const uid = decoded.uid
+
+    const userDoc = await db.collection('users').doc(uid).get()
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ error: 'Usuario no encontrado en Firestore' })
+    }
+
+    const { xp, level, email } = userDoc.data()
+
+    res.json({ xp, level, email })
+  } catch (error) {
+    console.error('Error al obtener stats:', error)
+    res.status(401).json({ error: 'Token inválido o expirado' })
+  }
+})
 
 module.exports = router;

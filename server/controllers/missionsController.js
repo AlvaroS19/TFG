@@ -1,4 +1,5 @@
 const { admin, db } = require('../services/firebase');
+const { getRoleByLevel } = require('../utils/roles')
 
 
 const getUserMissions = async (req, res) => {
@@ -30,7 +31,15 @@ const completeMission = async (req, res) => {
   }
 
   // Asignar XP según el tipo de misión
-  const xpGained = type === 'weekly' ? 30 : 10;
+  function getXPForMission(type, difficulty) {
+    const table = {
+      daily: { easy: 10, medium: 15, hard: 20 },
+      weekly: { normal: 30, hard: 40 },
+      special: { unique: 50 },
+      challenge: { insane: 70 }
+    }
+    return table[type]?.[difficulty] || 0
+  }
 
   const newMission = {
     description,
@@ -54,6 +63,7 @@ const completeMission = async (req, res) => {
     // Actualizar o crear XP del usuario
     const statsRef = db.collection('userStats').doc(uid);
     const statsSnap = await statsRef.get();
+    const newRole = getRoleByLevel(newLevel)
 
     if (!statsSnap.exists) {
       await statsRef.set({ xp: xpGained, level: 1 });
@@ -64,14 +74,17 @@ const completeMission = async (req, res) => {
 
       await statsRef.update({
         xp: updatedXP,
-        level: newLevel
+        level: newLevel,
+        role: newRole
       });
     }
 
     res.status(200).json({
       msg: `✅ Misión completada y ${xpGained} XP añadidos`,
       mission: newMission,
-      xpEarned: xpGained
+      xpEarned: xpGained,
+      newLevel,
+      newRole
     });
 
   } catch (error) {
