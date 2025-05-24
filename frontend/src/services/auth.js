@@ -1,4 +1,4 @@
-const API = 'http://localhost:5000/auth' // Ajusta el puerto si tu backend usa otro
+const API = 'http://192.168.1.129:5000/auth' // Ajusta el puerto si tu backend usa otro
 
 export async function registerUser(email, password) {
   const res = await fetch(`${API}/register`, {
