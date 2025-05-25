@@ -23,7 +23,6 @@
 
 <script setup>
 import { ref } from 'vue'
-import { toast } from 'vue3-toastify'
 import BaseInput from '@/components/BaseInput.vue'
 import BaseButton from '@/components/BaseButton.vue'
 
@@ -44,6 +43,6 @@ function handleReset() {
   }
 
   // Simulación: aquí iría la llamada a backend o Firebase
-  toast.success('Enlace de recuperación enviado (simulado)')
+  console.log('Operación completada')
 }
 </script>

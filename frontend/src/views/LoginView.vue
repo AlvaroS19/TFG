@@ -14,6 +14,7 @@
 
       <!-- Contraseña -->
       <BaseInput
+        ref="inputRef"
         v-model="password"
         :type="showPassword ? 'text' : 'password'"
         placeholder="Contraseña"
@@ -21,13 +22,13 @@
         :error="passwordError"
       >
         <template #right>
-          <button type="button" @click="showPassword = !showPassword">
+          <button type="button" @click="alternarPassword">
             <component :is="showPassword ? EyeOff : Eye" class="w-5 h-5 text-gray-400" />
           </button>
         </template>
       </BaseInput>
 
-      <BaseButton @click="handleLogin">
+      <BaseButton type="submit" @click="handleLogin">
         Iniciar sesión
       </BaseButton>
 
@@ -40,9 +41,8 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
-import { toast } from 'vue3-toastify'
 import { Eye, EyeOff } from 'lucide-vue-next'
 
 import BaseInput from '@/components/BaseInput.vue'
@@ -54,8 +54,15 @@ const password = ref('')
 const emailError = ref('')
 const passwordError = ref('')
 const showPassword = ref(false)
+const inputRef = ref(null)
 
 const router = useRouter()
+
+const alternarPassword = async () => {
+  showPassword.value = !showPassword.value
+  await nextTick()
+  inputRef.value?.inputRef?.focus()
+}
 
 function isValidEmail(mail) {
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -69,7 +76,8 @@ function isValidPassword(pwd) {
 async function handleLogin() {
   emailError.value = ''
   passwordError.value = ''
-
+  console.log('📥 Login enviado')
+  
   let valid = true
 
   if (!isValidEmail(email.value)) {
@@ -86,11 +94,14 @@ async function handleLogin() {
 
   try {
     const data = await loginUser(email.value, password.value)
-    toast.success('¡Inicio de sesión correcto!')
-    localStorage.setItem('token', data.idToken)
-    router.push('/dashboard')
+    console.log('🟢 Login correcto:', data)
+
+    localStorage.setItem('idToken', data.idToken)
+    console.log('🔁 Redirigiendo al dashboard...')
+    window.location.href = '/dashboard'
   } catch (err) {
-    toast.error(err.message || 'Error al iniciar sesión')
+    console.error('❌ Error al iniciar sesión:', err)
+    passwordError.value = 'Email o contraseña incorrectos'
   }
 }
 </script>

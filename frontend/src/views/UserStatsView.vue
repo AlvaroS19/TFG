@@ -12,15 +12,14 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
-import { toast } from 'vue3-toastify'
 
 const stats = ref({ email: '', level: 0, xp: 0, role: '' })
 
 onMounted(async () => {
-  const token = localStorage.getItem('token')
+  const token = localStorage.getItem('idToken')
 
   if (!token) {
-    toast.error('No hay sesión activa')
+    console.error('Error al cargar datos')
     return
   }
 
@@ -33,7 +32,7 @@ onMounted(async () => {
     if (!res.ok) throw new Error(data.error)
     stats.value = data
   } catch (err) {
-    toast.error(err.message || 'Error al cargar estadísticas')
+    console.error('Error al cargar datos')
   }
 })
 </script>
