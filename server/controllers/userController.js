@@ -1,30 +1,49 @@
 const { admin, db } = require('../services/firebase');
 
-
 const getUserStats = async (req, res) => {
   const uid = req.uid;
 
   try {
     const statsRef = db.collection('userStats').doc(uid);
-    const docSnap = await statsRef.get();
+    const statsSnap = await statsRef.get();
 
-    if (!docSnap.exists) {
+    const configRef = db.collection('userConfig').doc(uid);
+    const configSnap = await configRef.get();
+
+    if (!statsSnap.exists) {
       return res.status(404).json({ error: 'No hay estadísticas para este usuario' });
     }
 
-    const { xp = 0, level = 1 } = docSnap.data();
+    const { xp = 0, level = 1 } = statsSnap.data();
+    const { nickname = '', goal = '', difficulty = '' } = configSnap.exists ? configSnap.data() : {};
+
     const progress = xp % 100;
 
     res.status(200).json({
       uid,
       xp,
       level,
-      progress
+      progress,
+      nickname,
+      goal,
+      difficulty,
     });
-
   } catch (error) {
     console.error('Error al obtener estadísticas del usuario:', error);
     res.status(500).json({ error: 'Error al obtener estadísticas' });
+  }
+};
+
+const updateUserStats = async (req, res) => {
+  const uid = req.uid;
+  const data = req.body;
+
+  try {
+    await db.collection('userStats').doc(uid).set(data, { merge: true });
+    res.status(200).json({ message: 'Datos actualizados correctamente' });
+  } catch (error) {
+    console.error('Error al actualizar datos:', error);
+    res.status(500).json({ error: 'Error al actualizar datos' });
   }
 };
 
@@ -105,33 +124,11 @@ const getUserRewards = async (req, res) => {
   }
 };
 
-const updateUserConfig = async (req, res) => {
-  const uid = req.uid;
-  const { nickname, goal, difficulty } = req.body;
-
-  try {
-    await db.collection('userConfig').doc(uid).set({
-      ...(nickname && { nickname }),
-      ...(goal && { goal }),
-      ...(difficulty && { difficulty })
-    }, { merge: true });
-
-    res.status(200).json({
-      msg: '✅ Configuración actualizada correctamente',
-      updated: { nickname, goal, difficulty }
-    });
-
-  } catch (error) {
-    console.error('Error al actualizar configuración del usuario:', error);
-    res.status(500).json({ error: 'Error al guardar configuración' });
-  }
-};
-
 module.exports = {
   getUserStats,
+  updateUserStats,
   getUserProgress,
-  getUserRewards,
-  updateUserConfig
+  getUserRewards
 };
 
 

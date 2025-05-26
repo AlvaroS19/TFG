@@ -18,6 +18,10 @@ export async function loginUser(email, password) {
     body: JSON.stringify({ email, password })
   })
 
-  if (!res.ok) throw new Error((await res.json()).error)
+    if (!res.ok) {
+    const error = await res.json()
+    throw new Error(error.error || 'Login fallido')
+}
   return res.json()
 }
+

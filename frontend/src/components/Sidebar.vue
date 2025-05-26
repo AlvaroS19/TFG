@@ -36,7 +36,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { X, List, LogOut, Home, Trophy, User, Target } from 'lucide-vue-next'
+import { X, Gift, LogOut, Home, Trophy, User, Target } from 'lucide-vue-next'
 import { toast } from 'vue3-toastify'
 
 const router = useRouter()
@@ -45,7 +45,7 @@ const isOpen = ref(false)
 const links = [
   { label: 'Misiones completadas', route: '/missions/completed', icon: Target },
   { label: 'Estadísticas', route: '/user/stats', icon: Trophy },
-  { label: 'Perfil', route: '/profile', icon: User },
+  { label: 'Recompensas', route: '/rewards', icon: Gift },
 ]
 
 function navigate(routePath) {

@@ -38,7 +38,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { toast } from 'vue3-toastify'
 import BaseInput from '@/components/BaseInput.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import { Eye, EyeOff } from 'lucide-vue-next'
@@ -78,12 +77,12 @@ function handleReset() {
   }
 
   if (!token.value) {
-    toast.error('Token inválido o caducado')
+    console.error('Error al cargar datos')
     return
   }
 
   // Simulación de llamada real
-  toast.success('¡Contraseña actualizada!')
+  console.log('Operación completada')
   router.push('/login')
 }
 </script>

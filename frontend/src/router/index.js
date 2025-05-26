@@ -13,7 +13,7 @@ import CompletedMissionsView from '@/views/CompletedMissionsView.vue'
 import AchievementsView from '@/views/AchievementsView.vue'
 import ProfileView from '@/views/ProfileView.vue'
 import AppLayout from '@/views/AppLayout.vue'
-
+import RewardsView from '@/views/RewardsView.vue'
 
 const routes = [
   // Redirección base
@@ -41,7 +41,8 @@ const routes = [
       { path: 'missions/completed', name: 'CompletedMissions', component: CompletedMissionsView },
       { path: 'user/stats', name: 'UserStats', component: UserStatsView },
       { path: 'achievements', name: 'Achievements', component: AchievementsView },
-      { path: 'profile', name: 'Profile', component: ProfileView }
+      { path: 'profile', name: 'Profile', component: ProfileView },
+      { path: '/rewards', name: 'Rewards', component: RewardsView },
     ]
   }
 ]
@@ -58,4 +59,5 @@ router.beforeEach((to, from, next) => {
     next()
   }
 })
+
 export default router

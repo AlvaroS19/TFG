@@ -59,7 +59,6 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { toast } from 'vue3-toastify'
 import { Eye, EyeOff } from 'lucide-vue-next'
 
 import BaseInput from '@/components/BaseInput.vue'
@@ -114,10 +113,10 @@ async function handleRegister() {
 
   try {
     await registerUser(email.value, password.value)
-    toast.success('¡Usuario registrado correctamente!')
+    console.log('Operación completada')
     router.push('/login')
   } catch (err) {
-    toast.error(err.message || 'Error al registrar usuario')
+    console.error('Error al cargar datos')
   }
 }
 </script>
