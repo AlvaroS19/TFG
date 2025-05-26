@@ -112,9 +112,35 @@ const getCompletedMissions = async (req, res) => {
     res.status(500).json({ error: 'Error al obtener misiones completadas' });
   }
 };
+const createMission = async (req, res) => {
+  const { titulo, descripcion, xp, categoria, dificultad } = req.body;
+
+  if (!titulo || !descripcion || !xp || !categoria || !dificultad) {
+    return res.status(400).json({ error: 'Faltan campos obligatorios' });
+  }
+
+  try {
+    const nuevaMision = {
+      titulo,
+      descripcion,
+      xp,
+      categoria,
+      dificultad,
+      createdAt: new Date().toISOString()
+    };
+
+    const doc = await db.collection('missions').add(nuevaMision);
+
+    res.status(201).json({ message: 'Misión creada correctamente', id: doc.id });
+  } catch (error) {
+    console.error('Error al crear misión:', error);
+    res.status(500).json({ error: 'Error al crear misión' });
+  }
+};
 
 module.exports = {
   getUserMissions,
   completeMission,
-  getCompletedMissions
+  getCompletedMissions,
+  createMission,
 };
