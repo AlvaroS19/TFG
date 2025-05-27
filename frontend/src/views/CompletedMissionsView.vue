@@ -23,6 +23,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { getCookie } from '@/services/auth';
 
 const completadas = ref([])
 
@@ -36,7 +37,7 @@ const formatFecha = (fecha) => {
 }
 
 const cargarCompletadas = async () => {
-  const token = localStorage.getItem('idToken')
+  const token = getCookie('idToken');
   const res = await fetch('http://localhost:5000/user/progress', {
     headers: {
       Authorization: `Bearer ${token}`

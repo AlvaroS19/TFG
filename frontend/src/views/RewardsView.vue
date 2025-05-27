@@ -20,11 +20,12 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { getCookie } from '@/services/auth';
 
 const recompensas = ref<any[]>([])
 
 const cargarRecompensas = async () => {
-  const token = localStorage.getItem('idToken')
+  const token = getCookie('idToken');
 
   const res = await fetch('http://localhost:5000/user/rewards', {
     headers: {

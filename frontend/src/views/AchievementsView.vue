@@ -28,6 +28,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { getCookie } from '@/services/auth';
 
 const logrosDesbloqueados = ref([])
 
@@ -55,7 +56,7 @@ const TODOS_LOS_LOGROS = [
 ]
 
 const cargarLogros = async () => {
-  const token = localStorage.getItem('idToken')
+  const token = getCookie('idToken');
   const res = await fetch('http://localhost:5000/user/rewards', {
     headers: {
       Authorization: `Bearer ${token}`

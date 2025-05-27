@@ -24,6 +24,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { getCookie } from '@/services/auth';
 
 const perfil = ref({
   nickname: '',
@@ -35,7 +36,7 @@ const perfil = ref({
 const router = useRouter()
 
 const cargarPerfil = async () => {
-  const token = localStorage.getItem('idToken')
+  const token = getCookie('idToken');
   const res = await fetch('http://localhost:5000/user/stats', {
     headers: { Authorization: `Bearer ${token}` }
   })

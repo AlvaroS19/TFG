@@ -48,6 +48,7 @@ import { Eye, EyeOff } from 'lucide-vue-next'
 import BaseInput from '@/components/BaseInput.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import { loginUser } from '@/services/auth'
+import { getCookie } from '@/services/auth'
 
 const email = ref('')
 const password = ref('')
@@ -93,15 +94,26 @@ async function handleLogin() {
   if (!valid) return
 
   try {
-    const data = await loginUser(email.value, password.value)
-    console.log('🟢 Login correcto:', data)
+  const data = await loginUser(email.value, password.value);
+  console.log('✅ Login OK:', data);
 
-    localStorage.setItem('idToken', data.idToken)
-    console.log('🔁 Redirigiendo al dashboard...')
-    window.location.href = '/dashboard'
-  } catch (err) {
-    console.error('❌ Error al iniciar sesión:', err)
-    passwordError.value = 'Email o contraseña incorrectos'
-  }
+  // Esperar brevemente para asegurar que la cookie esté accesible
+  document.cookie = `idToken=${data.idToken}; path=/; max-age=3600; SameSite=Lax`;
+  console.log('🍪 Cookie idToken establecida:', data.idToken);
+  setTimeout(() => {
+    const token = getCookie('idToken');
+    console.log('🍪 Cookie token leído tras delay:', token);
+
+    if (token) {
+      router.push('/dashboard');
+    } else {
+      console.warn('⚠️ Cookie aún no disponible, intenta de nuevo');
+    }
+  }, 100); // puedes subir a 150ms si sigue fallando
+} catch (err) {
+  console.error('❌ Error al iniciar sesión:', err);
+  passwordError.value = 'Email o contraseña incorrectos';
+}
+
 }
 </script>

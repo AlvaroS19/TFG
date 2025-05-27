@@ -1,16 +1,24 @@
-import axios from 'axios';
+export async function apiFetch(path, options = {}) {
+  const defaultOptions = {
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include' // 👈 ENVÍA LAS COOKIES de sesión al backend
+  };
 
-const API = axios.create({
-  baseURL: 'http://localhost:5000',
-});
+  const finalOptions = {
+    ...defaultOptions,
+    ...options,
+    headers: {
+      ...defaultOptions.headers,
+      ...(options.headers || {})
+    }
+  };
 
-// Añadir token automáticamente si existe
-API.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+  const response = await fetch(path, finalOptions);
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error || 'Error desconocido');
   }
-  return config;
-});
 
-export default API;
+  return await response.json();
+}

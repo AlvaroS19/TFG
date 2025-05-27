@@ -59,6 +59,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { getMissions, completeMission } from '../services/missions'
 
 const misiones = ref([])
 const categoriaSeleccionada = ref('todas')
@@ -66,41 +67,25 @@ const categoriaSeleccionada = ref('todas')
 const categoriasDisponibles = ['todas', 'diaria', 'semanal', 'especial']
 
 const misionesFiltradas = computed(() => {
-  if (categoriaSeleccionada.value === 'todas') return misiones.value
-  return misiones.value.filter(m => m.categoria === categoriaSeleccionada.value)
+  return categoriaSeleccionada.value === 'todas'
+    ? misiones.value
+    : misiones.value.filter(m => m.categoria === categoriaSeleccionada.value)
 })
 
 const cargarMisiones = async () => {
-  const token = localStorage.getItem('idToken')
-  const res = await fetch('http://localhost:5000/missions', {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
-
-  if (res.ok) {
-    misiones.value = await res.json()
-  } else {
-    console.error('Error al cargar misiones')
+  try {
+    misiones.value = await getMissions()
+  } catch (error) {
+    console.error('Error al cargar misiones:', error)
   }
 }
 
 const completarMision = async (id) => {
-  const token = localStorage.getItem('idToken')
-  const res = await fetch('http://localhost:5000/missions/complete', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify({ id })
-  })
-
-  if (res.ok) {
-    console.log('✅ Misión completada')
+  try {
+    await completeMission(id)
     await cargarMisiones()
-  } else {
-    console.error('❌ Error al completar misión')
+  } catch (error) {
+    console.error('❌ Error al completar misión', error)
   }
 }
 

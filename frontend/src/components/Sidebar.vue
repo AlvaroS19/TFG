@@ -38,6 +38,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { X, Gift, LogOut, Home, Trophy, User, Target } from 'lucide-vue-next'
 import { toast } from 'vue3-toastify'
+import { getCookie } from '@/services/auth';
 
 const router = useRouter()
 const isOpen = ref(false)
@@ -54,10 +55,13 @@ function navigate(routePath) {
 }
 
 function logout() {
-  localStorage.removeItem('token')
-  toast.success('Has cerrado sesión')
-  router.push('/login')
-  toggleSidebar(false)
+  document.cookie = 'idToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC';
+
+  const token = getCookie('idToken');
+
+  toast('Sesión cerrada correctamente', { type: 'success' });
+
+  router.push('/login');
 }
 
 import { isSidebarOpen, toggleSidebar } from '@/composables/useSidebar'

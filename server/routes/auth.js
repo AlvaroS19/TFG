@@ -1,95 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const { admin, db } = require('../services/firebase');
-const bcrypt = require('bcrypt');
-const { registerUser } = require('../controllers/authController');
 require('dotenv').config();
 
+// ✅ Importar controladores
+const { login, registerUser } = require('../controllers/authController');
 
-router.post('/register', async (req, res) => {
-  const { email, password, role = 'user' } = req.body;
+// 🧠 Usar controladores
+router.post('/login', login);
+router.post('/register', registerUser);
 
-  try {
-    // Crear usuario en Firebase Auth
-    const userRecord = await admin.auth().createUser({ email, password });
-
-    // Crear documento en Firestore con datos adicionales
-    await db.collection('users').doc(userRecord.uid).set({
-      email,
-      role,
-      level: 1,
-      xp: 0,
-      createdAt: new Date(),
-    });
-
-    res.status(201).json({ message: 'Usuario registrado', uid: userRecord.uid });
-  } catch (error) {
-    console.error('Error al registrar usuario:', error);
-    res.status(500).json({ error: error.message });
-  }
+// 🔐 Logout (destruir sesión y limpiar cookies)
+router.post('/logout', (req, res) => {
+  req.session.destroy(() => {
+    res.clearCookie('connect.sid');
+    res.clearCookie('idToken');
+    res.json({ message: 'Sesión cerrada correctamente' });
+  });
 });
-
-router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    const fetch = (await import('node-fetch')).default;
-
-    const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.FIREBASE_API_KEY}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email,
-        password,
-        returnSecureToken: true
-      })
-    });
-
-    const data = await response.json();
-
-    if (data.error) {
-      return res.status(401).json({ error: data.error.message });
-    }
-
-    res.json({
-      message: 'Login correcto',
-      idToken: data.idToken,
-      refreshToken: data.refreshToken,
-      uid: data.localId
-    });
-
-  } catch (error) {
-    console.error('Error al iniciar sesión:', error);
-    res.status(500).json({ error: 'Error en el servidor' });
-  }
-});
-
-router.get('/stats', async (req, res) => {
-  const authHeader = req.headers.authorization
-
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'Token no proporcionado' })
-  }
-
-  const idToken = authHeader.split(' ')[1]
-
-  try {
-    const decoded = await admin.auth().verifyIdToken(idToken)
-    const uid = decoded.uid
-
-    const userDoc = await db.collection('users').doc(uid).get()
-
-    if (!userDoc.exists) {
-      return res.status(404).json({ error: 'Usuario no encontrado en Firestore' })
-    }
-
-    const { xp, level, email } = userDoc.data()
-
-    res.json({ xp, level, email })
-  } catch (error) {
-    console.error('Error al obtener stats:', error)
-    res.status(401).json({ error: 'Token inválido o expirado' })
-  }
-})
 
 module.exports = router;
