@@ -1,7 +1,7 @@
 // src/services/missions.js
 import axios from 'axios'
 
-const API_URL = 'http://localhost:5000/missions'
+const API_URL = '/missions'
 
 export const getMissions = async () => {
   const res = await axios.get(API_URL, { withCredentials: true })

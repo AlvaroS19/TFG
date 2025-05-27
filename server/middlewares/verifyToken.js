@@ -1,25 +1,20 @@
-const { admin } = require('../services/firebase')
+const { admin } = require("../services/firebase");
 
 const verifyToken = async (req, res, next) => {
-  const authHeader = req.headers.authorization
+  const token = req.cookies.idToken;
 
-  console.log('🔐 Header recibido:', authHeader)
-
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ error: 'No token provided' })
+  if (!token) {
+    return res.status(401).json({ error: "Token no proporcionado" });
   }
-
-  const idToken = authHeader.split(' ')[1]
 
   try {
-    const decodedToken = await admin.auth().verifyIdToken(idToken)
-    req.uid = decodedToken.uid
-    console.log('✅ UID verificado:', req.uid)
-    next()
+    const decoded = await admin.auth().verifyIdToken(token);
+    req.uid = decoded.uid;
+    next();
   } catch (error) {
-    console.error('❌ Token verification error:', error)
-    return res.status(401).json({ error: 'Invalid or expired token' })
+    console.error("Error al verificar token:", error);
+    res.status(401).json({ error: "Token inválido o expirado" });
   }
-}
+};
 
-module.exports = verifyToken
+module.exports = verifyToken;
