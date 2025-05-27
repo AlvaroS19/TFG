@@ -27,12 +27,13 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { getCookie } from '../services/auth';
 
 const misiones = ref<any[]>([])
 const stats = ref({ xp: 0, nivel: 1 })
 
 const cargarMisiones = async () => {
-  const token = localStorage.getItem('idToken')
+  const token = getCookie('idToken');
   const res = await fetch('http://localhost:5000/missions/', {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -47,7 +48,7 @@ const cargarMisiones = async () => {
 }
 
 const cargarStats = async () => {
-  const token = localStorage.getItem('idToken')
+  const token = getCookie('idToken');
   const res = await fetch('http://localhost:5000/user/stats', {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -62,7 +63,7 @@ const cargarStats = async () => {
 }
 
 const completarMision = async (misionId: string) => {
-  const token = localStorage.getItem('idToken')
+  const token = getCookie('idToken');
   const res = await fetch('http://localhost:5000/missions/complete', {
     method: 'POST',
     headers: {
@@ -82,7 +83,7 @@ const completarMision = async (misionId: string) => {
 }
 
 onMounted(async () => {
-  const token = localStorage.getItem('idToken')
+  const token = getCookie('idToken');
   console.log('🪪 Token al montar dashboard:', token)
 
   if (!token) {

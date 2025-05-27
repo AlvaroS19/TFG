@@ -1,4 +1,5 @@
 const { admin, db } = require('../services/firebase');
+const fetch = require('node-fetch');
 
 const registerUser = async (req, res) => {
   const { name, lastName, email, password } = req.body;
@@ -8,14 +9,12 @@ const registerUser = async (req, res) => {
   }
 
   try {
-    // Crear usuario en Firebase Auth
     const userRecord = await admin.auth().createUser({
       email,
       password,
       displayName: `${name} ${lastName}`,
     });
 
-    // Guardar en Firestore
     await db.collection('users').doc(userRecord.uid).set({
       name,
       lastName,
@@ -23,7 +22,6 @@ const registerUser = async (req, res) => {
       createdAt: new Date().toISOString(),
     });
 
-    // Devolver UID
     res.status(201).json({
       message: 'Usuario registrado correctamente',
       uid: userRecord.uid,
@@ -34,4 +32,41 @@ const registerUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser };
+const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const response = await fetch(
+      `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.FIREBASE_API_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          password,
+          returnSecureToken: true,
+        }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (data.error) {
+      return res.status(401).json({ error: data.error.message });
+    }
+
+    req.session.userId = data.localId;
+
+    res.json({
+      message: 'Login correcto',
+      idToken: data.idToken,
+      refreshToken: data.refreshToken,
+      uid: data.localId,
+    });
+  } catch (error) {
+    console.error('Error al iniciar sesión:', error);
+    res.status(500).json({ error: error.message || 'Error desconocido' });
+  }
+};
+
+module.exports = { registerUser, login };

@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host localhost",
     "build": "vite build",
     "preview": "vite preview",
     "preview-ip": "vite preview --host"
@@ -16,6 +16,7 @@
     "axios": "^1.9.0",
     "firebase": "^11.8.0",
     "lucide-vue-next": "^0.511.0",
+    "node-fetch": "^3.3.2",
     "pinia": "^3.0.2",
     "vee-validate": "^4.15.0",
     "vue": "^3.5.13",

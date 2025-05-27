@@ -1,14 +1,29 @@
-
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config()
-
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+require('dotenv').config();
 
 const app = express();
 
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
+
+app.use(cookieParser());
 app.use(express.json());
+app.use(session({
+  secret: 'fitquest-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    httpOnly: true, 
+    secure: false,  
+    sameSite: 'Lax'
+  }
+}));
 
 
 const authRoutes = require('./routes/auth');

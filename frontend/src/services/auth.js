@@ -12,16 +12,34 @@ export async function registerUser(email, password) {
 }
 
 export async function loginUser(email, password) {
-  const res = await fetch(`${API}/login`, {
+  const res = await fetch('/auth/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
     body: JSON.stringify({ email, password })
-  })
+  });
 
-    if (!res.ok) {
-    const error = await res.json()
-    throw new Error(error.error || 'Login fallido')
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || 'Login fallido');
+  }
+
+  return await res.json();
 }
-  return res.json()
+
+export function getCookie(name) {
+  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+  return match ? match[2] : null;
 }
+
+export function isAuthenticated() {
+  return !!getCookie('idToken');
+}
+
+export function logout() {
+  document.cookie = 'idToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC';
+  localStorage.clear();
+  window.location.href = '/login';
+}
+
 

@@ -12,11 +12,12 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
+import { getCookie } from '@/services/auth';
 
 const stats = ref({ email: '', level: 0, xp: 0, role: '' })
 
 onMounted(async () => {
-  const token = localStorage.getItem('idToken')
+  const token = getCookie('idToken');
 
   if (!token) {
     console.error('Error al cargar datos')

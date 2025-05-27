@@ -113,14 +113,26 @@ const getCompletedMissions = async (req, res) => {
   }
 };
 const createMission = async (req, res) => {
-  const { titulo, descripcion, xp, categoria, dificultad } = req.body;
+  const authHeader = req.headers.authorization;
 
-  if (!titulo || !descripcion || !xp || !categoria || !dificultad) {
-    return res.status(400).json({ error: 'Faltan campos obligatorios' });
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ error: 'Token no proporcionado' });
   }
 
+  const idToken = authHeader.split(' ')[1];
+
   try {
+    const decoded = await admin.auth().verifyIdToken(idToken);
+    const userId = decoded.uid;
+
+    const { titulo, descripcion, xp, categoria, dificultad } = req.body;
+
+    if (!titulo || !descripcion || !xp || !categoria || !dificultad) {
+      return res.status(400).json({ error: 'Faltan campos obligatorios' });
+    }
+
     const nuevaMision = {
+      userId,
       titulo,
       descripcion,
       xp,
