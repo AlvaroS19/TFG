@@ -1,0 +1,732 @@
+{
+  "fuerza": {
+    "daily": [
+      {
+        "titulo": "[FUERZA] Misión diaria 1",
+        "descripcion": "Realiza una actividad diaria enfocada en fuerza",
+        "xp": 10,
+        "dificultad": "fácil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[FUERZA] Misión diaria 2",
+        "descripcion": "Realiza una actividad diaria enfocada en fuerza",
+        "xp": 20,
+        "dificultad": "difícil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[FUERZA] Misión diaria 3",
+        "descripcion": "Realiza una actividad diaria enfocada en fuerza",
+        "xp": 15,
+        "dificultad": "media",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[FUERZA] Misión diaria 4",
+        "descripcion": "Realiza una actividad diaria enfocada en fuerza",
+        "xp": 15,
+        "dificultad": "media",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[FUERZA] Misión diaria 5",
+        "descripcion": "Realiza una actividad diaria enfocada en fuerza",
+        "xp": 15,
+        "dificultad": "media",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[FUERZA] Misión diaria 6",
+        "descripcion": "Realiza una actividad diaria enfocada en fuerza",
+        "xp": 20,
+        "dificultad": "difícil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[FUERZA] Misión diaria 7",
+        "descripcion": "Realiza una actividad diaria enfocada en fuerza",
+        "xp": 10,
+        "dificultad": "fácil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[FUERZA] Misión diaria 8",
+        "descripcion": "Realiza una actividad diaria enfocada en fuerza",
+        "xp": 15,
+        "dificultad": "media",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[FUERZA] Misión diaria 9",
+        "descripcion": "Realiza una actividad diaria enfocada en fuerza",
+        "xp": 10,
+        "dificultad": "fácil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[FUERZA] Misión diaria 10",
+        "descripcion": "Realiza una actividad diaria enfocada en fuerza",
+        "xp": 15,
+        "dificultad": "media",
+        "categoria": "diaria"
+      }
+    ],
+    "weekly": [
+      {
+        "titulo": "[FUERZA] Misión semanal 1",
+        "descripcion": "Completa una rutina semanal centrada en fuerza",
+        "xp": 20,
+        "dificultad": "fácil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[FUERZA] Misión semanal 2",
+        "descripcion": "Completa una rutina semanal centrada en fuerza",
+        "xp": 30,
+        "dificultad": "media",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[FUERZA] Misión semanal 3",
+        "descripcion": "Completa una rutina semanal centrada en fuerza",
+        "xp": 30,
+        "dificultad": "media",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[FUERZA] Misión semanal 4",
+        "descripcion": "Completa una rutina semanal centrada en fuerza",
+        "xp": 20,
+        "dificultad": "fácil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[FUERZA] Misión semanal 5",
+        "descripcion": "Completa una rutina semanal centrada en fuerza",
+        "xp": 30,
+        "dificultad": "media",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[FUERZA] Misión semanal 6",
+        "descripcion": "Completa una rutina semanal centrada en fuerza",
+        "xp": 30,
+        "dificultad": "media",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[FUERZA] Misión semanal 7",
+        "descripcion": "Completa una rutina semanal centrada en fuerza",
+        "xp": 40,
+        "dificultad": "difícil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[FUERZA] Misión semanal 8",
+        "descripcion": "Completa una rutina semanal centrada en fuerza",
+        "xp": 30,
+        "dificultad": "media",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[FUERZA] Misión semanal 9",
+        "descripcion": "Completa una rutina semanal centrada en fuerza",
+        "xp": 30,
+        "dificultad": "media",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[FUERZA] Misión semanal 10",
+        "descripcion": "Completa una rutina semanal centrada en fuerza",
+        "xp": 40,
+        "dificultad": "difícil",
+        "categoria": "semanal"
+      }
+    ]
+  },
+  "resistencia": {
+    "daily": [
+      {
+        "titulo": "[RESISTENCIA] Misión diaria 1",
+        "descripcion": "Realiza una actividad diaria enfocada en resistencia",
+        "xp": 15,
+        "dificultad": "media",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[RESISTENCIA] Misión diaria 2",
+        "descripcion": "Realiza una actividad diaria enfocada en resistencia",
+        "xp": 15,
+        "dificultad": "media",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[RESISTENCIA] Misión diaria 3",
+        "descripcion": "Realiza una actividad diaria enfocada en resistencia",
+        "xp": 20,
+        "dificultad": "difícil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[RESISTENCIA] Misión diaria 4",
+        "descripcion": "Realiza una actividad diaria enfocada en resistencia",
+        "xp": 20,
+        "dificultad": "difícil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[RESISTENCIA] Misión diaria 5",
+        "descripcion": "Realiza una actividad diaria enfocada en resistencia",
+        "xp": 15,
+        "dificultad": "media",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[RESISTENCIA] Misión diaria 6",
+        "descripcion": "Realiza una actividad diaria enfocada en resistencia",
+        "xp": 20,
+        "dificultad": "difícil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[RESISTENCIA] Misión diaria 7",
+        "descripcion": "Realiza una actividad diaria enfocada en resistencia",
+        "xp": 20,
+        "dificultad": "difícil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[RESISTENCIA] Misión diaria 8",
+        "descripcion": "Realiza una actividad diaria enfocada en resistencia",
+        "xp": 10,
+        "dificultad": "fácil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[RESISTENCIA] Misión diaria 9",
+        "descripcion": "Realiza una actividad diaria enfocada en resistencia",
+        "xp": 20,
+        "dificultad": "difícil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[RESISTENCIA] Misión diaria 10",
+        "descripcion": "Realiza una actividad diaria enfocada en resistencia",
+        "xp": 15,
+        "dificultad": "media",
+        "categoria": "diaria"
+      }
+    ],
+    "weekly": [
+      {
+        "titulo": "[RESISTENCIA] Misión semanal 1",
+        "descripcion": "Completa una rutina semanal centrada en resistencia",
+        "xp": 40,
+        "dificultad": "difícil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[RESISTENCIA] Misión semanal 2",
+        "descripcion": "Completa una rutina semanal centrada en resistencia",
+        "xp": 20,
+        "dificultad": "fácil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[RESISTENCIA] Misión semanal 3",
+        "descripcion": "Completa una rutina semanal centrada en resistencia",
+        "xp": 40,
+        "dificultad": "difícil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[RESISTENCIA] Misión semanal 4",
+        "descripcion": "Completa una rutina semanal centrada en resistencia",
+        "xp": 40,
+        "dificultad": "difícil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[RESISTENCIA] Misión semanal 5",
+        "descripcion": "Completa una rutina semanal centrada en resistencia",
+        "xp": 30,
+        "dificultad": "media",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[RESISTENCIA] Misión semanal 6",
+        "descripcion": "Completa una rutina semanal centrada en resistencia",
+        "xp": 30,
+        "dificultad": "media",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[RESISTENCIA] Misión semanal 7",
+        "descripcion": "Completa una rutina semanal centrada en resistencia",
+        "xp": 30,
+        "dificultad": "media",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[RESISTENCIA] Misión semanal 8",
+        "descripcion": "Completa una rutina semanal centrada en resistencia",
+        "xp": 20,
+        "dificultad": "fácil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[RESISTENCIA] Misión semanal 9",
+        "descripcion": "Completa una rutina semanal centrada en resistencia",
+        "xp": 20,
+        "dificultad": "fácil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[RESISTENCIA] Misión semanal 10",
+        "descripcion": "Completa una rutina semanal centrada en resistencia",
+        "xp": 30,
+        "dificultad": "media",
+        "categoria": "semanal"
+      }
+    ]
+  },
+  "tonificación": {
+    "daily": [
+      {
+        "titulo": "[TONIFICACIÓN] Misión diaria 1",
+        "descripcion": "Realiza una actividad diaria enfocada en tonificación",
+        "xp": 10,
+        "dificultad": "fácil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[TONIFICACIÓN] Misión diaria 2",
+        "descripcion": "Realiza una actividad diaria enfocada en tonificación",
+        "xp": 20,
+        "dificultad": "difícil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[TONIFICACIÓN] Misión diaria 3",
+        "descripcion": "Realiza una actividad diaria enfocada en tonificación",
+        "xp": 20,
+        "dificultad": "difícil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[TONIFICACIÓN] Misión diaria 4",
+        "descripcion": "Realiza una actividad diaria enfocada en tonificación",
+        "xp": 15,
+        "dificultad": "media",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[TONIFICACIÓN] Misión diaria 5",
+        "descripcion": "Realiza una actividad diaria enfocada en tonificación",
+        "xp": 20,
+        "dificultad": "difícil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[TONIFICACIÓN] Misión diaria 6",
+        "descripcion": "Realiza una actividad diaria enfocada en tonificación",
+        "xp": 10,
+        "dificultad": "fácil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[TONIFICACIÓN] Misión diaria 7",
+        "descripcion": "Realiza una actividad diaria enfocada en tonificación",
+        "xp": 15,
+        "dificultad": "media",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[TONIFICACIÓN] Misión diaria 8",
+        "descripcion": "Realiza una actividad diaria enfocada en tonificación",
+        "xp": 10,
+        "dificultad": "fácil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[TONIFICACIÓN] Misión diaria 9",
+        "descripcion": "Realiza una actividad diaria enfocada en tonificación",
+        "xp": 10,
+        "dificultad": "fácil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[TONIFICACIÓN] Misión diaria 10",
+        "descripcion": "Realiza una actividad diaria enfocada en tonificación",
+        "xp": 15,
+        "dificultad": "media",
+        "categoria": "diaria"
+      }
+    ],
+    "weekly": [
+      {
+        "titulo": "[TONIFICACIÓN] Misión semanal 1",
+        "descripcion": "Completa una rutina semanal centrada en tonificación",
+        "xp": 30,
+        "dificultad": "media",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[TONIFICACIÓN] Misión semanal 2",
+        "descripcion": "Completa una rutina semanal centrada en tonificación",
+        "xp": 20,
+        "dificultad": "fácil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[TONIFICACIÓN] Misión semanal 3",
+        "descripcion": "Completa una rutina semanal centrada en tonificación",
+        "xp": 30,
+        "dificultad": "media",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[TONIFICACIÓN] Misión semanal 4",
+        "descripcion": "Completa una rutina semanal centrada en tonificación",
+        "xp": 20,
+        "dificultad": "fácil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[TONIFICACIÓN] Misión semanal 5",
+        "descripcion": "Completa una rutina semanal centrada en tonificación",
+        "xp": 20,
+        "dificultad": "fácil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[TONIFICACIÓN] Misión semanal 6",
+        "descripcion": "Completa una rutina semanal centrada en tonificación",
+        "xp": 40,
+        "dificultad": "difícil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[TONIFICACIÓN] Misión semanal 7",
+        "descripcion": "Completa una rutina semanal centrada en tonificación",
+        "xp": 20,
+        "dificultad": "fácil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[TONIFICACIÓN] Misión semanal 8",
+        "descripcion": "Completa una rutina semanal centrada en tonificación",
+        "xp": 40,
+        "dificultad": "difícil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[TONIFICACIÓN] Misión semanal 9",
+        "descripcion": "Completa una rutina semanal centrada en tonificación",
+        "xp": 40,
+        "dificultad": "difícil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[TONIFICACIÓN] Misión semanal 10",
+        "descripcion": "Completa una rutina semanal centrada en tonificación",
+        "xp": 20,
+        "dificultad": "fácil",
+        "categoria": "semanal"
+      }
+    ]
+  },
+  "perder_peso": {
+    "daily": [
+      {
+        "titulo": "[PERDER_PESO] Misión diaria 1",
+        "descripcion": "Realiza una actividad diaria enfocada en perder_peso",
+        "xp": 20,
+        "dificultad": "difícil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[PERDER_PESO] Misión diaria 2",
+        "descripcion": "Realiza una actividad diaria enfocada en perder_peso",
+        "xp": 10,
+        "dificultad": "fácil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[PERDER_PESO] Misión diaria 3",
+        "descripcion": "Realiza una actividad diaria enfocada en perder_peso",
+        "xp": 15,
+        "dificultad": "media",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[PERDER_PESO] Misión diaria 4",
+        "descripcion": "Realiza una actividad diaria enfocada en perder_peso",
+        "xp": 15,
+        "dificultad": "media",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[PERDER_PESO] Misión diaria 5",
+        "descripcion": "Realiza una actividad diaria enfocada en perder_peso",
+        "xp": 10,
+        "dificultad": "fácil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[PERDER_PESO] Misión diaria 6",
+        "descripcion": "Realiza una actividad diaria enfocada en perder_peso",
+        "xp": 10,
+        "dificultad": "fácil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[PERDER_PESO] Misión diaria 7",
+        "descripcion": "Realiza una actividad diaria enfocada en perder_peso",
+        "xp": 10,
+        "dificultad": "fácil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[PERDER_PESO] Misión diaria 8",
+        "descripcion": "Realiza una actividad diaria enfocada en perder_peso",
+        "xp": 10,
+        "dificultad": "fácil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[PERDER_PESO] Misión diaria 9",
+        "descripcion": "Realiza una actividad diaria enfocada en perder_peso",
+        "xp": 15,
+        "dificultad": "media",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[PERDER_PESO] Misión diaria 10",
+        "descripcion": "Realiza una actividad diaria enfocada en perder_peso",
+        "xp": 10,
+        "dificultad": "fácil",
+        "categoria": "diaria"
+      }
+    ],
+    "weekly": [
+      {
+        "titulo": "[PERDER_PESO] Misión semanal 1",
+        "descripcion": "Completa una rutina semanal centrada en perder_peso",
+        "xp": 40,
+        "dificultad": "difícil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[PERDER_PESO] Misión semanal 2",
+        "descripcion": "Completa una rutina semanal centrada en perder_peso",
+        "xp": 40,
+        "dificultad": "difícil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[PERDER_PESO] Misión semanal 3",
+        "descripcion": "Completa una rutina semanal centrada en perder_peso",
+        "xp": 40,
+        "dificultad": "difícil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[PERDER_PESO] Misión semanal 4",
+        "descripcion": "Completa una rutina semanal centrada en perder_peso",
+        "xp": 20,
+        "dificultad": "fácil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[PERDER_PESO] Misión semanal 5",
+        "descripcion": "Completa una rutina semanal centrada en perder_peso",
+        "xp": 40,
+        "dificultad": "difícil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[PERDER_PESO] Misión semanal 6",
+        "descripcion": "Completa una rutina semanal centrada en perder_peso",
+        "xp": 40,
+        "dificultad": "difícil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[PERDER_PESO] Misión semanal 7",
+        "descripcion": "Completa una rutina semanal centrada en perder_peso",
+        "xp": 20,
+        "dificultad": "fácil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[PERDER_PESO] Misión semanal 8",
+        "descripcion": "Completa una rutina semanal centrada en perder_peso",
+        "xp": 20,
+        "dificultad": "fácil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[PERDER_PESO] Misión semanal 9",
+        "descripcion": "Completa una rutina semanal centrada en perder_peso",
+        "xp": 30,
+        "dificultad": "media",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[PERDER_PESO] Misión semanal 10",
+        "descripcion": "Completa una rutina semanal centrada en perder_peso",
+        "xp": 30,
+        "dificultad": "media",
+        "categoria": "semanal"
+      }
+    ]
+  },
+  "general": {
+    "daily": [
+      {
+        "titulo": "[GENERAL] Misión diaria 1",
+        "descripcion": "Realiza una actividad diaria enfocada en general",
+        "xp": 15,
+        "dificultad": "media",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[GENERAL] Misión diaria 2",
+        "descripcion": "Realiza una actividad diaria enfocada en general",
+        "xp": 10,
+        "dificultad": "fácil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[GENERAL] Misión diaria 3",
+        "descripcion": "Realiza una actividad diaria enfocada en general",
+        "xp": 20,
+        "dificultad": "difícil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[GENERAL] Misión diaria 4",
+        "descripcion": "Realiza una actividad diaria enfocada en general",
+        "xp": 10,
+        "dificultad": "fácil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[GENERAL] Misión diaria 5",
+        "descripcion": "Realiza una actividad diaria enfocada en general",
+        "xp": 15,
+        "dificultad": "media",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[GENERAL] Misión diaria 6",
+        "descripcion": "Realiza una actividad diaria enfocada en general",
+        "xp": 15,
+        "dificultad": "media",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[GENERAL] Misión diaria 7",
+        "descripcion": "Realiza una actividad diaria enfocada en general",
+        "xp": 10,
+        "dificultad": "fácil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[GENERAL] Misión diaria 8",
+        "descripcion": "Realiza una actividad diaria enfocada en general",
+        "xp": 20,
+        "dificultad": "difícil",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[GENERAL] Misión diaria 9",
+        "descripcion": "Realiza una actividad diaria enfocada en general",
+        "xp": 15,
+        "dificultad": "media",
+        "categoria": "diaria"
+      },
+      {
+        "titulo": "[GENERAL] Misión diaria 10",
+        "descripcion": "Realiza una actividad diaria enfocada en general",
+        "xp": 10,
+        "dificultad": "fácil",
+        "categoria": "diaria"
+      }
+    ],
+    "weekly": [
+      {
+        "titulo": "[GENERAL] Misión semanal 1",
+        "descripcion": "Completa una rutina semanal centrada en general",
+        "xp": 30,
+        "dificultad": "media",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[GENERAL] Misión semanal 2",
+        "descripcion": "Completa una rutina semanal centrada en general",
+        "xp": 40,
+        "dificultad": "difícil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[GENERAL] Misión semanal 3",
+        "descripcion": "Completa una rutina semanal centrada en general",
+        "xp": 30,
+        "dificultad": "media",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[GENERAL] Misión semanal 4",
+        "descripcion": "Completa una rutina semanal centrada en general",
+        "xp": 30,
+        "dificultad": "media",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[GENERAL] Misión semanal 5",
+        "descripcion": "Completa una rutina semanal centrada en general",
+        "xp": 20,
+        "dificultad": "fácil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[GENERAL] Misión semanal 6",
+        "descripcion": "Completa una rutina semanal centrada en general",
+        "xp": 40,
+        "dificultad": "difícil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[GENERAL] Misión semanal 7",
+        "descripcion": "Completa una rutina semanal centrada en general",
+        "xp": 40,
+        "dificultad": "difícil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[GENERAL] Misión semanal 8",
+        "descripcion": "Completa una rutina semanal centrada en general",
+        "xp": 40,
+        "dificultad": "difícil",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[GENERAL] Misión semanal 9",
+        "descripcion": "Completa una rutina semanal centrada en general",
+        "xp": 30,
+        "dificultad": "media",
+        "categoria": "semanal"
+      },
+      {
+        "titulo": "[GENERAL] Misión semanal 10",
+        "descripcion": "Completa una rutina semanal centrada en general",
+        "xp": 30,
+        "dificultad": "media",
+        "categoria": "semanal"
+      }
+    ]
+  }
+}
