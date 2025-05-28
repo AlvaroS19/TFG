@@ -19,6 +19,7 @@ const registerUser = async (req, res) => {
       name,
       lastName,
       email,
+      objetivo,
       createdAt: new Date().toISOString(),
     });
 
