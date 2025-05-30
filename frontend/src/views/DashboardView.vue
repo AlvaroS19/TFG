@@ -72,23 +72,31 @@ const cargarStats = async () => {
 
 const completarMision = async (misionId: string) => {
   const token = getCookie('idToken');
+
+  const mision = misiones.value.find(m => m.id === misionId);
+  if (!mision) return;
+
   const res = await fetch('http://localhost:5000/missions/complete', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ id: misionId }),
-  })
+    body: JSON.stringify({
+      description: mision.descripcion,
+      type: mision.categoria,
+      dificultad: mision.dificultad
+    }),
+  });
 
   if (res.ok) {
-    console.log('Operación completada')
-    await cargarMisiones()
-    await cargarStats()
+    console.log('✅ Misión completada con éxito');
+    await cargarMisiones();
+    await cargarStats();
   } else {
-    console.error('Error al cargar datos')
+    console.error('❌ Error al completar misión');
   }
-}
+};
 
 onMounted(async () => {
   const token = getCookie('idToken');

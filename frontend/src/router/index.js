@@ -42,7 +42,8 @@ const routes = [
       { path: 'user/stats', name: 'UserStats', component: UserStatsView },
       { path: 'profile', name: 'Profile', component: ProfileView },
       { path: 'achievements', name: 'Achievements', component: AchievementsView },
-      { path: 'rewards', name: 'Rewards', component: RewardsView }
+      { path: 'rewards', name: 'Rewards', component: RewardsView },
+    
     ]
   }
 ]

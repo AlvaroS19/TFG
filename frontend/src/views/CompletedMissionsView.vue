@@ -1,20 +1,20 @@
 <template>
   <div class="min-h-screen bg-[#0A1A2F] text-[#F5F0E1] p-4">
-    <h1 class="text-2xl font-bold text-center mb-6">✅ Misiones completadas</h1>
+    <h1 class="text-2xl font-bold text-center mb-4">🏁 Misiones completadas</h1>
 
     <div v-if="completadas.length" class="space-y-4">
-      <CompletedMissionCard
+      <div
         v-for="(m, i) in completadas"
         :key="i"
-        :titulo="m.titulo || m.description"
-        :descripcion="m.description || '-'"
-        :dificultad="m.dificultad || '—'"
-        :categoria="m.type || '—'"
-        :xp="m.xp || 0"
-      />
+        class="border border-[#F66B0E] rounded-xl p-4 bg-[#111827]"
+      >
+        <h2 class="font-bold text-[#FFC107]">{{ m.descripcion }}</h2>
+        <p class="text-sm text-[#F5F0E1]/70">Tipo: {{ m.tipo }} · Dificultad: {{ m.dificultad }}</p>
+        <p class="text-xs mt-1 text-[#F5F0E1]/50">📅 Completada: {{ formatFecha(m.completedAt) }}</p>
+      </div>
     </div>
 
-    <div v-else class="text-center text-[#F5F0E1]/70 mt-10">
+    <div v-else class="text-center text-[#F5F0E1]/50 mt-10">
       Aún no has completado ninguna misión.
     </div>
   </div>
@@ -22,25 +22,22 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import CompletedMissionCard from '@/components/CompletedMissionCard.vue'
 
 const completadas = ref([])
 
+const formatFecha = (fecha) => new Date(fecha).toLocaleString()
+
 const cargarCompletadas = async () => {
   try {
-    const res = await fetch('/missions/completed', {
-      method: 'GET',
-      credentials: 'include' // ✅ necesario para que se envíen cookies
-    });
-
+    const res = await fetch('http://localhost:5000/missions/completed', { credentials: 'include' })
     if (res.ok) {
-      const data = await res.json();
-      completadas.value = data.completed || [];
+      const data = await res.json()
+      completadas.value = data
     } else {
-      console.error('❌ Error al cargar misiones completadas');
+      console.error('❌ Error al cargar misiones completadas')
     }
-  } catch (err) {
-    console.error('❌ Error de red:', err);
+  } catch (error) {
+    console.error('❌ Error inesperado:', error)
   }
 }
 

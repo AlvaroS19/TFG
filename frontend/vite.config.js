@@ -38,12 +38,22 @@ export default defineConfig({
     })
   ],
   server: {
-    proxy: {
-      '/auth': {
-        target: 'http://localhost:5000',
-        changeOrigin: true,
-        secure: false
-      }
+  proxy: {
+    '/auth': {
+      target: 'http://localhost:5000',
+      changeOrigin: true,
+      secure: false
+    },
+    '/missions': {
+      target: 'http://localhost:5000',
+      changeOrigin: true,
+      secure: false
+    },
+    '/user': {
+      target: 'http://localhost:5000',
+      changeOrigin: true,
+      secure: false
     }
   }
+}
 })
