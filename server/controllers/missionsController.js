@@ -1,6 +1,6 @@
 const { admin, db } = require("../services/firebase");
 const { getRoleByLevel } = require("../utils/roles");
-const {verificarRegenerarMisiones} = require("../utils/verificarGenerarMisiones.js");
+const {verificarGenerarMisiones} = require("../utils/verificarGenerarMisiones.js");
 
 const getUserMissions = async (req, res) => {
   const uid = req.uid;
@@ -11,7 +11,7 @@ const getUserMissions = async (req, res) => {
     const objetivo = userDoc.data()?.objetivo || "general";
 
     // Verificar regeneración
-    await verificarRegenerarMisiones(uid, objetivo);
+    await verificarGenerarMisiones(uid, objetivo);
 
     // Obtener misiones
     const docRef = db.collection("missions").doc(uid);
@@ -33,13 +33,12 @@ const getUserMissions = async (req, res) => {
 
 const completeMission = async (req, res) => {
   const uid = req.uid;
-  const { description, type } = req.body;
+  const { description, type, dificultad } = req.body;
 
-  if (!description || !type) {
-    return res.status(400).json({ error: "Faltan campos: description o type" });
+  if (!description || !type || !dificultad) {
+    return res.status(400).json({ error: "Faltan campos: description, type o dificultad" });
   }
 
-  // Asignar XP según el tipo de misión
   function getXPForMission(type, difficulty) {
     const table = {
       daily: { easy: 10, medium: 15, hard: 20 },
@@ -50,6 +49,7 @@ const completeMission = async (req, res) => {
     return table[type]?.[difficulty] || 0;
   }
 
+  const xpGained = getXPForMission(type, dificultad);
   const newMission = {
     description,
     type,
@@ -57,36 +57,50 @@ const completeMission = async (req, res) => {
   };
 
   try {
-    // Guardar la misión como completada
-    const completedRef = db.collection("missionsCompleted").doc(uid);
-    const docSnap = await completedRef.get();
+    const missionsRef = db.collection("missions").doc(uid);
+    const docSnap = await missionsRef.get();
+    const data = docSnap.data();
 
-    if (!docSnap.exists) {
+    const updatedList = (data[type] || []).map((m) => {
+      if (m.descripcion === description && m.dificultad === dificultad) {
+        return { ...m, completada: true };
+      }
+      return m;
+    });
+
+    await missionsRef.update({
+      [type]: updatedList,
+    });
+
+    const completedRef = db.collection("missionsCompleted").doc(uid);
+    const completedSnap = await completedRef.get();
+
+    if (!completedSnap.exists) {
       await completedRef.set({ completed: [newMission] });
     } else {
       await completedRef.update({
         completed: admin.firestore.FieldValue.arrayUnion(newMission),
       });
     }
-
-    // Actualizar o crear XP del usuario
+  
     const statsRef = db.collection("userStats").doc(uid);
     const statsSnap = await statsRef.get();
+
+    let newLevel = 1;
+    let updatedXP = xpGained;
+
+    if (statsSnap.exists) {
+      const current = statsSnap.data();
+      updatedXP += current.xp || 0;
+      newLevel = Math.floor(updatedXP / 100) + 1;
+    }
+
     const newRole = getRoleByLevel(newLevel);
 
-    if (!statsSnap.exists) {
-      await statsRef.set({ xp: xpGained, level: 1 });
-    } else {
-      const currentData = statsSnap.data();
-      const updatedXP = (currentData.xp || 0) + xpGained;
-      const newLevel = Math.floor(updatedXP / 100) + 1;
-
-      await statsRef.update({
-        xp: updatedXP,
-        level: newLevel,
-        role: newRole,
-      });
-    }
+    await statsRef.set(
+      { xp: updatedXP, level: newLevel, role: newRole },
+      { merge: true }
+    );
 
     res.status(200).json({
       msg: `✅ Misión completada y ${xpGained} XP añadidos`,

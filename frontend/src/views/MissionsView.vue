@@ -4,33 +4,20 @@
 
     <!-- Filtro de categorías -->
     <div class="flex justify-center gap-2 mb-6 flex-wrap">
-      <button
-        v-for="cat in categoriasDisponibles"
-        :key="cat"
-        @click="categoriaSeleccionada = cat"
-        :class="[
-          'px-4 py-1 rounded-full text-sm font-semibold border transition',
-          categoriaSeleccionada === cat
-            ? 'bg-[#F66B0E] text-white border-[#F66B0E]'
-            : 'bg-transparent text-[#F5F0E1] border-[#F5F0E1]/30 hover:bg-[#F5F0E1]/10'
-        ]"
-      >
+      <button v-for="cat in categoriasDisponibles" :key="cat" @click="categoriaSeleccionada = cat" :class="[
+        'px-4 py-1 rounded-full text-sm font-semibold border transition',
+        categoriaSeleccionada === cat
+          ? 'bg-[#F66B0E] text-white border-[#F66B0E]'
+          : 'bg-transparent text-[#F5F0E1] border-[#F5F0E1]/30 hover:bg-[#F5F0E1]/10'
+      ]">
         {{ cat }}
       </button>
     </div>
 
     <!-- Lista de misiones -->
     <div v-if="misionesFiltradas.length" class="space-y-4">
-      <MissionCard
-        v-for="m in misionesFiltradas"
-        :key="m.id"
-        :titulo="m.titulo"
-        :descripcion="m.descripcion"
-        :dificultad="m.dificultad"
-        :categoria="m.categoria"
-        :xp="m.xp"
-        @completar="completarMision(m.id)"
-      />
+      <MissionCard v-for="m in misionesFiltradas" :key="m.id" :titulo="m.titulo" :descripcion="m.descripcion"
+        :dificultad="m.dificultad" :categoria="m.categoria" :xp="m.xp" @completar="completarMision(m.id)" />
     </div>
 
     <!-- No hay misiones -->
@@ -61,9 +48,24 @@ const cargarMisiones = async () => {
   try {
     const data = await getMissions()
     console.log('📦 Misiones cargadas:', data)
+
+    if (!Array.isArray(data)) {
+      console.error('❌ La respuesta no es un array:', data)
+      misiones.value = []
+      return
+    }
+
+    // Generar id temporal si no viene del backend
     misiones.value = data
+      .filter(m => !m.completada)
+      .map((m, i) => ({
+        ...m,
+        id: m.id || `${m.titulo}-${m.generatedAt || i}`
+      }))
+
   } catch (error) {
     console.error('❌ Error al cargar misiones:', error)
+    misiones.value = []
   }
 }
 

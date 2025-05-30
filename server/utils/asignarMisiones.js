@@ -1,29 +1,26 @@
-const { db } = require('../services/firebase');
+const { db } = require("../services/firebase");
 
-const asignarMisionesIniciales = async (uid, objetivoFromParam = null) => {
-  try {
-    let objetivo = objetivoFromParam;
-    if (!objetivo) {
-      const userSnap = await db.collection('users').doc(uid).get();
-      if (!userSnap.exists) return;
-      objetivo = userSnap.data().objetivo;
-    }
+const asignarMisionesIniciales = async (uid, objetivo) => {
+  console.log('🚀 Asignando misiones iniciales para:', uid, objetivo);
 
-    const catalogSnap = await db.collection('missionsCatalog').doc(objetivo).get();
-    if (!catalogSnap.exists) return;
+  const misionesPorObjetivo = await obtenerMisionesPorObjetivo(objetivo);
 
-    const misionesPorObjetivo = catalogSnap.data();
+  const misionesFormateadas = misionesPorObjetivo.map(m => ({
+    ...m,
+    completada: false,
+    generatedAt: new Date().toISOString()
+  }));
 
-    const data = {
-      daily: misionesPorObjetivo.daily || [],
-      weekly: misionesPorObjetivo.weekly || [],
-      generatedAt: new Date().toISOString(),
-    };
+  const daily = misionesFormateadas.filter(m => m.categoria === 'diaria');
+  const weekly = misionesFormateadas.filter(m => m.categoria === 'semanal');
 
-    await db.collection('missions').doc(uid).set(data);
-  } catch (err) {
-    console.error('❌ Error al asignar misiones iniciales:', err);
-  }
+  await db.collection('missions').doc(uid).set({
+    daily,
+    weekly,
+    generatedAt: new Date().toISOString()
+  });
+
+  console.log('✅ Misiones guardadas en Firebase');
 };
 
 module.exports = { asignarMisionesIniciales };

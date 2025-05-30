@@ -40,7 +40,12 @@ const cargarMisiones = async () => {
 
   if (res.ok) {
     const data = await res.json()
-    todasMisiones.value = [...data.daily, ...data.weekly]
+    todasMisiones.value = data
+      .filter(m => !m.completada)
+      .map((m, i) => ({
+        ...m,
+        id: m.id || `${m.titulo}-${m.generatedAt || i}`
+      }))
     misiones.value = []
     index.value = 0
     cargarMasMisiones()

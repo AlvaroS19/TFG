@@ -1,14 +1,40 @@
-const { db } = require('../services/firebase');
+const { db } = require("../services/firebase");
 
 const verificarGenerarMisiones = async (uid, objetivo) => {
   try {
     console.log("📡 Ejecutando verificarGenerarMisiones con:", uid, objetivo);
 
-    const docRef = db.collection('missions').doc(uid);
+    const docRef = db.collection("missions").doc(uid);
     const docSnap = await docRef.get();
 
     if (!docSnap.exists) {
       console.log("📭 No hay misiones para el usuario:", uid);
+
+      const catalogRef = db.collection("missionsCatalog").doc(objetivo);
+      const catalogSnap = await catalogRef.get();
+
+      if (!catalogSnap.exists) {
+        console.error("❌ No se encontró el catálogo para objetivo:", objetivo);
+        return;
+      }
+
+      const catalogo = catalogSnap.data();
+      const nuevaMision = {
+        ...catalogo.daily[0],
+        generatedAt: new Date().toISOString(),
+        completada: false,
+      };
+
+      await docRef.set({
+        daily: [nuevaMision],
+        weekly: [],
+        generatedAt: new Date().toISOString(),
+      });
+
+      console.log(
+        "🆕 Primera misión asignada automáticamente:",
+        nuevaMision.titulo
+      );
       return;
     }
 
@@ -18,7 +44,7 @@ const verificarGenerarMisiones = async (uid, objetivo) => {
     console.log("📦 Misiones actuales:", misionesActuales.length);
 
     const hoy = new Date();
-    const misionDeHoy = misionesActuales.find(m => {
+    const misionDeHoy = misionesActuales.find((m) => {
       const fecha = new Date(m.generatedAt);
       return (
         fecha.getDate() === hoy.getDate() &&
@@ -32,7 +58,7 @@ const verificarGenerarMisiones = async (uid, objetivo) => {
       return;
     }
 
-    const catalogRef = db.collection('missionsCatalog').doc(objetivo);
+    const catalogRef = db.collection("missionsCatalog").doc(objetivo);
     const catalogSnap = await catalogRef.get();
 
     if (!catalogSnap.exists) {
@@ -51,18 +77,21 @@ const verificarGenerarMisiones = async (uid, objetivo) => {
     const nuevaMision = {
       ...catalogo.daily[index],
       generatedAt: hoy.toISOString(),
+      completada: false,
     };
 
     const nuevasMisiones = [...misionesActuales, nuevaMision];
 
     await docRef.update({
-      daily: nuevasMisiones
+      daily: nuevasMisiones,
     });
 
     console.log("🆕 Misión añadida:", nuevaMision.titulo);
-
   } catch (error) {
-    console.error("❌ Error REAL capturado en verificarGenerarMisiones:", error);
+    console.error(
+      "❌ Error REAL capturado en verificarGenerarMisiones:",
+      error
+    );
     throw error;
   }
 };
