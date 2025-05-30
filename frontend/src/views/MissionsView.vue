@@ -16,8 +16,17 @@
 
     <!-- Lista de misiones -->
     <div v-if="misionesFiltradas.length" class="space-y-4">
-      <MissionCard v-for="m in misionesFiltradas" :key="m.id" :titulo="m.titulo" :descripcion="m.descripcion"
-        :dificultad="m.dificultad" :categoria="m.categoria" :xp="m.xp" @completar="completarMision(m.id)" />
+      <div v-for="m in misionesFiltradas" :key="m.id">
+        <div v-if="isUnlocked(m)">
+          <MissionCard :titulo="m.titulo" :descripcion="m.descripcion" :dificultad="m.dificultad" :categoria="m.categoria" :xp="m.xp" @completar="completarMision(m.id)" />
+        </div>
+        <div v-else class="p-4 border border-[#F5F0E1]/30 rounded bg-[#F5F0E1]/5 flex items-center justify-between">
+          <div>
+            <p class="text-lg font-semibold text-[#F5F0E1]/80">{{ m.titulo }}</p>
+            <p class="text-sm text-[#F5F0E1]/50">🔒 Disponible en {{ tiempoRestante(m.unlockAt) }}</p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- No hay misiones -->
@@ -26,9 +35,10 @@
     </div>
   </div>
 </template>
+
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { getMissions, completeMission } from '../services/missions'
+import { getMissions } from '../services/missions'
 import MissionCard from '../components/MissionCard.vue'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
@@ -44,25 +54,42 @@ const misionesFiltradas = computed(() => {
     : misiones.value.filter(m => m.categoria === categoriaSeleccionada.value)
 })
 
+const isUnlocked = (mision) => {
+  if (!mision.unlockAt) return true
+  return new Date(mision.unlockAt) <= new Date()
+}
+
+const tiempoRestante = (unlockAt) => {
+  const ahora = new Date()
+  const desbloqueo = new Date(unlockAt)
+  const diff = desbloqueo - ahora
+
+  if (diff <= 0) return 'ahora'
+
+  const horas = Math.floor(diff / (1000 * 60 * 60))
+  const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+  const segundos = Math.floor((diff % (1000 * 60)) / 1000)
+
+  return `${horas}h ${minutos}m ${segundos}s`
+}
+
 const cargarMisiones = async () => {
   try {
     const data = await getMissions()
     console.log('📦 Misiones cargadas:', data)
 
-    if (!Array.isArray(data)) {
+    if (!Array.isArray(data.misiones)) {
       console.error('❌ La respuesta no es un array:', data)
       misiones.value = []
       return
     }
 
-    // Generar id temporal si no viene del backend
-    misiones.value = data
+    misiones.value = data.misiones
       .filter(m => !m.completada)
       .map((m, i) => ({
         ...m,
         id: m.id || `${m.titulo}-${m.generatedAt || i}`
       }))
-
   } catch (error) {
     console.error('❌ Error al cargar misiones:', error)
     misiones.value = []
@@ -78,19 +105,15 @@ const completarMision = async (id) => {
       method: 'POST',
       credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        description: mision.descripcion,
-        type: mision.categoria,
-        dificultad: mision.dificultad
-      })
+      body: JSON.stringify({ missionId: id }) // <- usa missionId, ya estás migrado
     })
 
     if (!res.ok) throw new Error()
 
-    // 🧹 Eliminar la misión de la lista
+    // Eliminar la misión de la lista
     misiones.value = misiones.value.filter(m => m.id !== id)
 
-    // ✅ Toast de éxito
+    // Toast de éxito
     toast.success(`¡Misión completada! +${mision.xp} XP`, { autoClose: 3000 })
 
   } catch (error) {

@@ -1,4 +1,4 @@
-const { db } = require('../services/firebase');
+import { db } from '../services/firebase';
 
 const asignarMisionesIniciales = async (uid, objetivo) => {
   try {
@@ -19,4 +19,4 @@ const asignarMisionesIniciales = async (uid, objetivo) => {
   }
 };
 
-module.exports = { asignarMisionesIniciales };
+export default { asignarMisionesIniciales };

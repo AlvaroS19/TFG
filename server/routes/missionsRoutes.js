@@ -8,12 +8,14 @@ router.get('/', verifyToken, getUserMissions);
 router.post('/complete', verifyToken, completeMission);
 router.get('/completed', verifyToken, getCompletedMissions);
 router.post('/create', verifyToken, createMission);
+router.get('/missions', verifyToken, getUserMissions);
 
-router.post('/test/verificar', async (req, res) => {
-  const { uid, objetivo } = req.body;
+router.post('/test/verificar', verifyToken, async (req, res) => {
+  const uid = req.uid;
+  const { objetivo } = req.body;
 
-  if (!uid || !objetivo) {
-    return res.status(400).json({ error: 'Faltan uid u objetivo en el cuerpo' });
+  if (!objetivo) {
+    return res.status(400).json({ error: 'Falta el campo objetivo en el cuerpo' });
   }
 
   try {

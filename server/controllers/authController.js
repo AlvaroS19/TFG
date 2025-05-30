@@ -24,8 +24,20 @@ const registerUser = async (req, res) => {
       objetivo,
       createdAt: new Date().toISOString(),
     });
+    // ✅ CREAR userStats iniciales
+    await db.collection('userStats').doc(userRecord.uid).set({
+      xp: 0,
+      level: 1
+    });
 
-    // ✅ Llamada correcta después de tener el uid
+    // ✅ CREAR userConfig (opcional pero coherente si lo usas en getUserStats)
+    await db.collection('userConfig').doc(userRecord.uid).set({
+      nickname: name,
+      goal: objetivo,
+      difficulty: 'media' // o lo que tenga sentido por defecto
+    });
+
+    // ✅ Asignar misiones al usuario según su objetivo
     await asignarMisionesIniciales(userRecord.uid, objetivo);
 
     res.status(201).json({

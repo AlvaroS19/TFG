@@ -37,6 +37,7 @@ const missionsRoutes = require('./routes/missionsRoutes');
 app.use('/auth', authRoutes);  
 app.use('/user', userRoutes);       
 app.use('/missions', missionsRoutes); 
+app.use('/user', require('./routes/userRoutes')); 
 
 const PORT = process.env.PORT || 5000;
 

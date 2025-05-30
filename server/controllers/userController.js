@@ -1,4 +1,4 @@
-const { admin, db } = require('../services/firebase');
+const { db, admin } = require("../services/firebase")
 
 const getUserStats = async (req, res) => {
   const uid = req.uid;
@@ -11,10 +11,20 @@ const getUserStats = async (req, res) => {
     const configSnap = await configRef.get();
 
     if (!statsSnap.exists) {
-      return res.status(404).json({ error: 'No hay estadísticas para este usuario' });
-    }
+    await statsRef.set({ xp: 0, level: 1 });
+  }
 
-    const { xp = 0, level = 1 } = statsSnap.data();
+    let xp = 0;
+    let level = 1;
+
+    if (statsSnap.exists) {
+      const statsData = statsSnap.data();
+      xp = statsData?.xp || 0;
+      level = statsData?.level || 1;
+    } else {
+      // Crear stats si no existen
+      await statsRef.set({ xp: 0, level: 1 });
+    }
     const { nickname = '', goal = '', difficulty = '' } = configSnap.exists ? configSnap.data() : {};
 
     const progress = xp % 100;
@@ -126,9 +136,6 @@ const getUserRewards = async (req, res) => {
 
 module.exports = {
   getUserStats,
-  updateUserStats,
   getUserProgress,
   getUserRewards
 };
-
-

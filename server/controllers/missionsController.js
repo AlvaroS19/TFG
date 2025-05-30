@@ -1,87 +1,117 @@
 const { admin, db } = require("../services/firebase");
-const { getRoleByLevel } = require("../utils/roles");
 const {verificarGenerarMisiones} = require("../utils/verificarGenerarMisiones.js");
 
 const getUserMissions = async (req, res) => {
   const uid = req.uid;
 
   try {
-    // Obtener objetivo del usuario
-    const userDoc = await db.collection("users").doc(uid).get();
-    const objetivo = userDoc.data()?.objetivo || "general";
+    const missionsSnapshot = await db
+      .collection('users')
+      .doc(uid)
+      .collection('missions')
+      .get();
 
-    // Verificar regeneración
-    await verificarGenerarMisiones(uid, objetivo);
+    const misiones = [];
 
-    // Obtener misiones
-    const docRef = db.collection("missions").doc(uid);
-    const docSnap = await docRef.get();
+    missionsSnapshot.forEach(doc => {
+      misiones.push({
+        id: doc.id,
+        ...doc.data(),
+      });
+    });
 
-    if (!docSnap.exists) {
-      return res.status(404).json({ error: "No hay misiones asignadas" });
-    }
-
-    const data = docSnap.data(); // 🔧 aquí estaba el error
-    const allMissions = [...(data.daily || []), ...(data.weekly || [])];
-    res.json(allMissions);
-
+    return res.status(200).json({
+      ok: true,
+      total: misiones.length,
+      misiones,
+    });
   } catch (error) {
-    console.error("Error al obtener misiones:", error);
-    res.status(500).json({ error: "Error al obtener misiones" });
+    console.error('❌ Error al obtener misiones:', error);
+    return res.status(500).json({ error: 'Error interno al obtener misiones' });
   }
 };
 
 const completeMission = async (req, res) => {
   const uid = req.uid;
-  const { description, type, dificultad } = req.body;
+  const { missionId } = req.body;
 
-  if (!description || !type || !dificultad) {
-    return res.status(400).json({ error: "Faltan campos: description, type o dificultad" });
+  if (!missionId) {
+    return res.status(400).json({ error: "Falta el ID de la misión a completar" });
   }
 
   try {
-    const missionsRef = db.collection("missions").doc(uid);
-    const docSnap = await missionsRef.get();
+    const missionRef = db
+      .collection("users")
+      .doc(uid)
+      .collection("missions")
+      .doc(missionId);
 
-    if (!docSnap.exists) {
-      return res.status(404).json({ error: "No hay misiones activas" });
+    const missionSnap = await missionRef.get();
+
+    if (!missionSnap.exists) {
+      return res.status(404).json({ error: "No se encontró la misión" });
     }
 
-    const data = docSnap.data();
-    const lista = data[type] || [];
+    const missionData = missionSnap.data();
 
-    const actualizada = lista.map(m => {
-      if (m.descripcion === description && m.dificultad === dificultad) {
-        return { ...m, completada: true, completedAt: new Date().toISOString() };
-      }
-      return m;
-    });
-
-    await missionsRef.update({ [type]: actualizada });
-
-    const nueva = {
-      descripcion: description,
-      dificultad,
-      tipo: type,
-      completedAt: new Date().toISOString(),
-    };
-
-    const completedRef = db.collection("missionsCompleted").doc(uid);
-    const completedSnap = await completedRef.get();
-
-    if (!completedSnap.exists) {
-      await completedRef.set({ completed: [nueva] });
-    } else {
-      await completedRef.update({
-        completed: admin.firestore.FieldValue.arrayUnion(nueva)
+    if (missionData.completada) {
+      return res.status(200).json({
+        ok: false,
+        msg: "La misión ya estaba completada",
       });
     }
 
-    res.status(200).json({ ok: true, msg: "Misión completada" });
+    const completedAt = new Date().toISOString();
 
+    // 1. Actualizar misión original
+    await missionRef.update({
+      completada: true,
+      completedAt,
+    });
+
+    // 2. Guardar en missionsCompleted
+    const completedRef = db
+      .collection("users")
+      .doc(uid)
+      .collection("missionsCompleted")
+      .doc(missionId);
+
+    await completedRef.set({
+      ...missionData,
+      completada: true,
+      completedAt,
+    });
+    // Actualizar XP
+    const statsRef = db.collection("userStats").doc(uid);
+    const statsSnap = await statsRef.get();
+
+    let currentXP = 0;
+    let currentLevel = 1;
+
+    if (statsSnap.exists) {
+      const stats = statsSnap.data();
+      currentXP = stats.xp || 0;
+      currentLevel = stats.level || 1;
+    }
+
+    const newXP = currentXP + (missionData.xp || 0);
+    const newLevel = Math.floor(newXP / 100) + 1;
+
+    await statsRef.set({ xp: newXP, level: newLevel }, { merge: true });
+
+    return res.status(200).json({
+      ok: true,
+      msg: "✅ Misión completada correctamente",
+      mission: {
+        id: missionId,
+        ...missionData,
+        completada: true,
+        completedAt,
+      },
+    });
   } catch (error) {
     console.error("❌ Error al completar misión:", error);
-    res.status(500).json({ error: "Error interno al completar misión" });
+    return res.status(500).json({ error: "Error interno al completar misión" });
   }
 };
 
@@ -89,11 +119,22 @@ const getCompletedMissions = async (req, res) => {
   const uid = req.uid;
 
   try {
-    const doc = await db.collection('missionsCompleted').doc(uid).get();
-    if (!doc.exists) return res.json([]);
+    const snap = await db
+      .collection("users")
+      .doc(uid)
+      .collection("missionsCompleted")
+      .get();
 
-    const data = doc.data();
-    res.json(data.completed || []);
+    const misiones = snap.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    res.status(200).json({
+      ok: true,
+      total: misiones.length,
+      misiones,
+    });
   } catch (err) {
     console.error("❌ Error al obtener misiones completadas:", err);
     res.status(500).json({ error: "Error interno" });
@@ -101,42 +142,40 @@ const getCompletedMissions = async (req, res) => {
 };
 
 const createMission = async (req, res) => {
-  const authHeader = req.headers.authorization;
+  const uid = req.uid;
+  const { titulo, descripcion, dificultad, categoria, xp } = req.body;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return res.status(401).json({ error: "Token no proporcionado" });
+  if (!titulo || !descripcion || !dificultad || !categoria || !xp) {
+    return res.status(400).json({ error: 'Faltan campos en la misión' });
   }
 
-  const idToken = authHeader.split(" ")[1];
+  const nuevaMision = {
+    titulo,
+    descripcion,
+    dificultad,
+    categoria,
+    xp,
+    completada: false,
+    generatedAt: new Date().toISOString(),
+  };
 
   try {
-    const decoded = await admin.auth().verifyIdToken(idToken);
-    const userId = decoded.uid;
+    // Cada usuario tiene su propia subcolección "missions"
+    const missionRef = await db
+      .collection('users')
+      .doc(uid)
+      .collection('missions')
+      .add(nuevaMision); // Se crea como documento individual
 
-    const { titulo, descripcion, xp, categoria, dificultad } = req.body;
-
-    if (!titulo || !descripcion || !xp || !categoria || !dificultad) {
-      return res.status(400).json({ error: "Faltan campos obligatorios" });
-    }
-
-    const nuevaMision = {
-      userId,
-      titulo,
-      descripcion,
-      xp,
-      categoria,
-      dificultad,
-      createdAt: new Date().toISOString(),
-    };
-
-    const doc = await db.collection("missions").add(nuevaMision);
-
-    res
-      .status(201)
-      .json({ message: "Misión creada correctamente", id: doc.id });
+    return res.status(201).json({
+      ok: true,
+      msg: '✅ Misión creada correctamente',
+      missionId: missionRef.id,
+      mision: nuevaMision,
+    });
   } catch (error) {
-    console.error("Error al crear misión:", error);
-    res.status(500).json({ error: "Error al crear misión" });
+    console.error('❌ Error al crear misión:', error);
+    return res.status(500).json({ error: 'Error interno al crear misión' });
   }
 };
 

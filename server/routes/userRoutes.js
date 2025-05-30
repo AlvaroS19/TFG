@@ -1,8 +1,9 @@
 const express = require('express');
 const verifyToken = require('../middlewares/verifyToken');
+const router = express.Router();
 const { getUserStats, getUserProgress, getUserRewards } = require('../controllers/userController');
 
-const router = express.Router();
+
 
 router.get('/stats', verifyToken, getUserStats);
 router.get('/progress', verifyToken, getUserProgress);
