@@ -5,6 +5,9 @@ const session = require('express-session');
 require('dotenv').config();
 
 const app = express();
+app.get('/ping', (req, res) => {
+  res.send('pong');
+});
 
 
 app.use(cors({
@@ -34,7 +37,6 @@ const missionsRoutes = require('./routes/missionsRoutes');
 app.use('/auth', authRoutes);  
 app.use('/user', userRoutes);       
 app.use('/missions', missionsRoutes); 
-app.use('/user', userRoutes);
 
 const PORT = process.env.PORT || 5000;
 

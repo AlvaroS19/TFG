@@ -1,10 +1,12 @@
 const { admin, db } = require('../services/firebase');
 const fetch = require('node-fetch');
+const { asignarMisionesIniciales } = require('../utils/asignarMisiones')
 
+// ✅ Registro de usuario + guardar perfil + asignar misiones
 const registerUser = async (req, res) => {
-  const { name, lastName, email, password } = req.body;
+  const { name, lastName, email, password, objetivo } = req.body;
 
-  if (!email || !password || !name || !lastName) {
+  if (!email || !password || !name || !lastName || !objetivo) {
     return res.status(400).json({ error: 'Faltan campos obligatorios' });
   }
 
@@ -23,6 +25,9 @@ const registerUser = async (req, res) => {
       createdAt: new Date().toISOString(),
     });
 
+    // ✅ Llamada correcta después de tener el uid
+    await asignarMisionesIniciales(userRecord.uid, objetivo);
+
     res.status(201).json({
       message: 'Usuario registrado correctamente',
       uid: userRecord.uid,
@@ -33,6 +38,7 @@ const registerUser = async (req, res) => {
   }
 };
 
+// ✅ Login con Firebase REST y guardar sesión
 const login = async (req, res) => {
   const { email, password } = req.body;
 

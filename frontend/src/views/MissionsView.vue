@@ -59,9 +59,11 @@ const misionesFiltradas = computed(() => {
 
 const cargarMisiones = async () => {
   try {
-    misiones.value = await getMissions()
+    const data = await getMissions()
+    console.log('📦 Misiones cargadas:', data)
+    misiones.value = data
   } catch (error) {
-    console.error('Error al cargar misiones:', error)
+    console.error('❌ Error al cargar misiones:', error)
   }
 }
 

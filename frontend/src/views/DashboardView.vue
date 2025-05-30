@@ -1,36 +1,34 @@
 <template>
-  <div class="p-4 text-[#F5F0E1] bg-[#0A1A2F] min-h-screen">
+  <div class="p-4 text-[#F5F0E1] bg-[#0A1A2F] min-h-screen overflow-y-auto">
     <h1 class="text-2xl font-bold mb-2">¡Bienvenido a tu Dashboard!</h1>
-    <p class="mb-4">Nivel: <span class="text-[#FFC107] font-semibold">{{ stats.nivel }}</span> · XP: <span class="text-[#FFC107] font-semibold">{{ stats.xp }}</span></p>
-
+    <p class="mb-4">Nivel: <span class="text-[#FFC107] font-semibold">{{ stats.nivel }}</span> · XP: <span
+        class="text-[#FFC107] font-semibold">{{ stats.xp }}</span></p>
     <h2 class="text-xl font-bold mb-2">Misiones activas</h2>
-    <div class="space-y-4">
-      <div
-        v-for="m in misiones"
-        :key="m.id"
-        class="bg-[#112233] p-4 rounded-xl border border-[#F66B0E]"
-      >
-        <h3 class="text-lg font-semibold">{{ m.titulo }}</h3>
-        <p class="text-sm text-[#F5F0E1] mb-2">{{ m.descripcion }}</p>
-        <p class="text-xs text-[#FFC107] mb-2">+{{ m.xp }} XP</p>
-        <button
-          @click="completarMision(m.id)"
-          class="bg-[#F66B0E] hover:bg-[#BF360C] text-white px-4 py-2 rounded-xl text-sm"
-        >
-          Completar
-        </button>
-      </div>
+    <div class="max-h-[90vh] overflow-y-auto space-y-4">
+      <MissionCard v-for="m in misiones" :key="m.id" :titulo="m.titulo" :descripcion="m.descripcion"
+        :dificultad="m.dificultad" :categoria="m.categoria" :xp="m.xp" @completar="completarMision(m.id)" />
     </div>
+    <div ref="sentinel" class="h-1"></div>
   </div>
 </template>
 
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { getCookie } from '../services/auth';
+import MissionCard from '../components/MissionCard.vue'
 
+const todasMisiones = ref<any[]>([])
 const misiones = ref<any[]>([])
+const batchSize = 10
+const index = ref(0)
 const stats = ref({ xp: 0, nivel: 1 })
+
+const cargarMasMisiones = () => {
+  const siguienteBloque = todasMisiones.value.slice(index.value, index.value + batchSize)
+  misiones.value.push(...siguienteBloque)
+  index.value += batchSize
+}
 
 const cargarMisiones = async () => {
   const token = getCookie('idToken');
@@ -41,7 +39,12 @@ const cargarMisiones = async () => {
   })
 
   if (res.ok) {
-    misiones.value = await res.json()
+    const data = await res.json()
+    todasMisiones.value = [...data.daily, ...data.weekly]
+    misiones.value = []
+    index.value = 0
+    cargarMasMisiones()
+    console.log('🧩 Misiones recibidas:', todasMisiones.value)
   } else {
     console.error('Error al cargar datos')
   }
@@ -95,4 +98,21 @@ onMounted(async () => {
   await cargarMisiones()
   await cargarStats()
 })
+const sentinel = ref(null)
+let observer: IntersectionObserver
+
+onMounted(() => {
+  observer = new IntersectionObserver(entries => {
+    if (entries[0].isIntersecting) {
+      cargarMasMisiones()
+    }
+  })
+
+  if (sentinel.value) observer.observe(sentinel.value)
+})
+
+onUnmounted(() => {
+  if (sentinel.value) observer.unobserve(sentinel.value)
+})
+
 </script>
