@@ -134,8 +134,29 @@ const getUserRewards = async (req, res) => {
   }
 };
 
+const getUserConfig = async (req, res) => {
+  const uid = req.uid;
+
+  try {
+    const doc = await db.collection('users').doc(uid).get();
+
+    if (!doc.exists) {
+      return res.status(404).json({ error: 'No se encontró configuración del usuario' });
+    }
+
+    const { objetivo } = doc.data();
+
+    res.status(200).json({ objetivo });
+  } catch (error) {
+    console.error('❌ Error al obtener configuración del usuario:', error);
+    res.status(500).json({ error: 'Error interno al obtener configuración' });
+  }
+};
+
+
 module.exports = {
   getUserStats,
   getUserProgress,
-  getUserRewards
+  getUserRewards,
+  getUserConfig,
 };

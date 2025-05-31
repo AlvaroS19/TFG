@@ -25,6 +25,7 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { getCookie } from '../services/auth';
 import MissionCard from '../components/MissionCard.vue';
 import UserStatsBar from '../components/UserStatsBar.vue';
+import { getUserConfig } from '../services/user';
 
 const todasMisiones = ref<any[]>([]);
 const misiones = ref<any[]>([]);
@@ -91,6 +92,30 @@ const cargarStats = async () => {
   }
 };
 
+const verificarMisiones = async () => {
+  const token = getCookie('idToken');
+  try {
+    const { objetivo } = await getUserConfig();
+
+    const res = await fetch('http://localhost:5000/missions/test/verificar', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ objetivo })
+    });
+
+    if (res.ok) {
+      console.log('🔄 Misiones verificadas automáticamente');
+    } else {
+      console.error('❌ Error al verificar misiones');
+    }
+  } catch (error) {
+    console.error('❌ Error al obtener objetivo/verificar misiones:', error);
+  }
+};
+
 const completarMision = async (misionId: string) => {
   const token = getCookie('idToken');
   const mision = misiones.value.find(m => m.id === misionId);
@@ -129,10 +154,10 @@ onMounted(async () => {
     return;
   }
 
-  await cargarMisiones();
   await cargarStats();
+  await verificarMisiones();
+  await cargarMisiones();
 
-  // configurar IntersectionObserver
   observer = new IntersectionObserver(entries => {
     if (entries[0].isIntersecting) {
       cargarMasMisiones();

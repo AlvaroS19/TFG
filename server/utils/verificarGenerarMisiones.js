@@ -12,6 +12,7 @@ const verificarGenerarMisiones = async (uid, objetivo) => {
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
 
+    // ✅ Comprobar si ya hay una misión diaria generada hoy
     const snapshot = await missionsRef
       .where("categoria", "==", "diaria")
       .orderBy("generatedAt", "desc")
@@ -19,7 +20,7 @@ const verificarGenerarMisiones = async (uid, objetivo) => {
       .get();
 
     const ultimaMision = snapshot.docs[0]?.data();
-    const fechaUltima = ultimaMision ? new Date(ultimaMision.generatedAt) : null;
+    const fechaUltima = ultimaMision ? new Date(ultimaMision.generatedAt.toDate?.() || ultimaMision.generatedAt) : null;
 
     if (fechaUltima) {
       fechaUltima.setHours(0, 0, 0, 0);
@@ -29,6 +30,7 @@ const verificarGenerarMisiones = async (uid, objetivo) => {
       }
     }
 
+    // ✅ Cargar catálogo según el objetivo
     const catalogRef = db.collection("missionsCatalog").doc(objetivo);
     const catalogSnap = await catalogRef.get();
 
@@ -38,26 +40,36 @@ const verificarGenerarMisiones = async (uid, objetivo) => {
     }
 
     const catalogo = catalogSnap.data();
+
+    if (!catalogo.daily || !Array.isArray(catalogo.daily)) {
+      console.error("❌ El catálogo no tiene misiones diarias válidas.");
+      return;
+    }
+
+    // ✅ Verificar cuáles ya han sido asignadas por título
     const yaAsignadasSnapshot = await missionsRef
       .where("categoria", "==", "diaria")
       .get();
 
-    const index = yaAsignadasSnapshot.size;
+    const yaAsignadas = yaAsignadasSnapshot.docs.map(doc => doc.data().titulo);
+    const misionDisponible = catalogo.daily.find(m => !yaAsignadas.includes(m.titulo));
 
-    if (index >= catalogo.daily.length) {
+    if (!misionDisponible) {
       console.log("📴 Ya se asignaron todas las misiones del catálogo");
       return;
     }
 
+    // ✅ Guardar misión nueva
     const nuevaMision = {
-      ...catalogo.daily[index],
+      ...misionDisponible,
       categoria: "diaria",
-      generatedAt: new Date().toISOString(),
+      generatedAt: new Date(), // ← Timestamp real
       completada: false,
     };
 
     await missionsRef.add(nuevaMision);
     console.log("🆕 Misión diaria asignada:", nuevaMision.titulo);
+
   } catch (error) {
     console.error("❌ Error REAL capturado en verificarGenerarMisiones:", error);
     throw error;
