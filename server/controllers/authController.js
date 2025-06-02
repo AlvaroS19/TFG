@@ -1,21 +1,27 @@
 const { admin, db } = require('../services/firebase');
 const fetch = require('node-fetch');
+const { verificarGenerarMisiones } = require("../utils/verificarGenerarMisiones");
 
+// ✅ Registro de usuario + guardar perfil + asignar misiones
 const registerUser = async (req, res) => {
-  const { name, lastName, email, password } = req.body;
+  const { name, lastName, email, password, objetivo } = req.body;
 
-  if (!email || !password || !name || !lastName) {
+  if (!email || !password || !name || !lastName || !objetivo) {
     return res.status(400).json({ error: 'Faltan campos obligatorios' });
   }
 
   try {
+    // 1️⃣ Crear usuario en Firebase Authentication
     const userRecord = await admin.auth().createUser({
       email,
       password,
       displayName: `${name} ${lastName}`,
     });
 
-    await db.collection('users').doc(userRecord.uid).set({
+    const uid = userRecord.uid;
+
+    // 2️⃣ Guardar datos del usuario
+    await db.collection('users').doc(uid).set({
       name,
       lastName,
       email,
@@ -23,16 +29,33 @@ const registerUser = async (req, res) => {
       createdAt: new Date().toISOString(),
     });
 
+    // 3️⃣ Crear estadísticas iniciales
+    await db.collection('userStats').doc(uid).set({
+      xp: 0,
+      level: 1,
+    });
+
+    // 4️⃣ Guardar configuración inicial
+    await db.collection('userConfig').doc(uid).set({
+      nickname: name,
+      goal: objetivo,
+      difficulty: 'media',
+    });
+
+    // 5️⃣ Asignar primeras misiones personalizadas
+    await verificarGenerarMisiones(uid, objetivo);
+
     res.status(201).json({
       message: 'Usuario registrado correctamente',
-      uid: userRecord.uid,
+      uid,
     });
   } catch (error) {
-    console.error('Error al registrar usuario:', error);
+    console.error('❌ Error al registrar usuario:', error);
     res.status(500).json({ error: error.message });
   }
 };
 
+// ✅ Login con Firebase REST y guardar sesión
 const login = async (req, res) => {
   const { email, password } = req.body;
 

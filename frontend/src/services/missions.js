@@ -1,10 +1,12 @@
-// src/services/missions.js
 import axios from 'axios'
+import { getCookie } from './auth'
 
 const API_URL = '/missions'
 
 export const getMissions = async () => {
-  const res = await axios.get(API_URL, { withCredentials: true })
+  const res = await axios.get('http://localhost:5000/missions', {
+    withCredentials: true
+  })
   return res.data
 }
 
