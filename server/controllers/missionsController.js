@@ -38,7 +38,7 @@ const completeMission = async (req, res) => {
   if (!missionId) {
     return res.status(400).json({ error: "Falta el ID de la misión a completar" });
   }
-
+  console.log("📥 Llamando a completeMission para:", missionId);
   try {
     const missionRef = db
       .collection("users")
@@ -47,7 +47,6 @@ const completeMission = async (req, res) => {
       .doc(missionId);
 
     const missionSnap = await missionRef.get();
-
     if (!missionSnap.exists) {
       return res.status(404).json({ error: "No se encontró la misión" });
     }
@@ -55,32 +54,28 @@ const completeMission = async (req, res) => {
     const missionData = missionSnap.data();
 
     if (missionData.completada) {
-      return res.status(200).json({
-        ok: false,
-        msg: "La misión ya estaba completada",
-      });
+      return res.status(200).json({ok: false,msg: "La misión ya estaba completada"});
     }
 
-    const completedAt = new Date().toISOString();
+    const now = new Date().toISOString();
 
-    // 1. Actualizar misión original
     await missionRef.update({
       completada: true,
-      completedAt,
+      completedAt: now,
     });
 
-    // 2. Guardar en missionsCompleted
     const completedRef = db
       .collection("users")
       .doc(uid)
       .collection("missionsCompleted")
       .doc(missionId);
-
+      
     await completedRef.set({
       ...missionData,
       completada: true,
-      completedAt,
+      completedAt: now,
     });
+
     // Actualizar XP
     const statsRef = db.collection("userStats").doc(uid);
     const statsSnap = await statsRef.get();
@@ -106,7 +101,7 @@ const completeMission = async (req, res) => {
         id: missionId,
         ...missionData,
         completada: true,
-        completedAt,
+        completedAt: now,
       },
     });
   } catch (error) {

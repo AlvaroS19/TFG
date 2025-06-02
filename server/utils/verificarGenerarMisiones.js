@@ -1,18 +1,30 @@
 const { db } = require("../services/firebase");
+const { cleanOldUncompletedMissions } = require("../utils/cleaner");
 
 const verificarGenerarMisiones = async (uid, objetivo) => {
   try {
-    console.log("📡 Ejecutando verificarGenerarMisiones con:", uid, objetivo);
-
-    const missionsRef = db
-      .collection("users")
-      .doc(uid)
-      .collection("missions");
-
+    await cleanOldUncompletedMissions(uid);
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
 
-    // ✅ Comprobar si ya hay una misión diaria generada hoy
+    const configRef = db.collection("userConfig").doc(uid);
+    const configSnap = await configRef.get();
+    const configData = configSnap.exists ? configSnap.data() : {};
+
+    const ultimaFechaVerificada = configData.lastMissionCheck
+      ? new Date(configData.lastMissionCheck)
+      : null;
+
+    if (ultimaFechaVerificada) {
+      ultimaFechaVerificada.setHours(0, 0, 0, 0);
+      if (ultimaFechaVerificada.getTime() === hoy.getTime()) {
+        console.log("✅ Ya se verificó la misión hoy.");
+        return;
+      }
+    }
+
+    const missionsRef = db.collection("users").doc(uid).collection("missions");
+
     const snapshot = await missionsRef
       .where("categoria", "==", "diaria")
       .orderBy("generatedAt", "desc")
@@ -20,58 +32,40 @@ const verificarGenerarMisiones = async (uid, objetivo) => {
       .get();
 
     const ultimaMision = snapshot.docs[0]?.data();
-    const fechaUltima = ultimaMision ? new Date(ultimaMision.generatedAt.toDate?.() || ultimaMision.generatedAt) : null;
+    const fechaUltima = ultimaMision ? new Date(ultimaMision.generatedAt) : null;
 
     if (fechaUltima) {
       fechaUltima.setHours(0, 0, 0, 0);
       if (fechaUltima.getTime() === hoy.getTime()) {
-        console.log("✅ Ya existe una misión diaria para hoy:", ultimaMision.titulo);
+        console.log("✅ Ya hay misión para hoy:", ultimaMision.titulo);
+        await configRef.set({ lastMissionCheck: new Date().toISOString() }, { merge: true });
         return;
       }
     }
 
-    // ✅ Cargar catálogo según el objetivo
-    const catalogRef = db.collection("missionsCatalog").doc(objetivo);
-    const catalogSnap = await catalogRef.get();
-
-    if (!catalogSnap.exists) {
-      console.error("❌ No se encontró el catálogo para objetivo:", objetivo);
-      return;
-    }
-
+    const catalogSnap = await db.collection("missionsCatalog").doc(objetivo).get();
     const catalogo = catalogSnap.data();
 
-    if (!catalogo.daily || !Array.isArray(catalogo.daily)) {
-      console.error("❌ El catálogo no tiene misiones diarias válidas.");
-      return;
-    }
+    const yaAsignadas = await missionsRef.where("categoria", "==", "diaria").get();
+    const index = yaAsignadas.size;
 
-    // ✅ Verificar cuáles ya han sido asignadas por título
-    const yaAsignadasSnapshot = await missionsRef
-      .where("categoria", "==", "diaria")
-      .get();
+    if (index >= catalogo.daily.length) return;
 
-    const yaAsignadas = yaAsignadasSnapshot.docs.map(doc => doc.data().titulo);
-    const misionDisponible = catalogo.daily.find(m => !yaAsignadas.includes(m.titulo));
-
-    if (!misionDisponible) {
-      console.log("📴 Ya se asignaron todas las misiones del catálogo");
-      return;
-    }
-
-    // ✅ Guardar misión nueva
     const nuevaMision = {
-      ...misionDisponible,
+      ...catalogo.daily[index],
       categoria: "diaria",
-      generatedAt: new Date(), // ← Timestamp real
+      generatedAt: new Date().toISOString(),
       completada: false,
+      desbloqueada: false,
+      unlockAt: new Date().toISOString() // Se desbloquea hoy mismo
     };
 
     await missionsRef.add(nuevaMision);
-    console.log("🆕 Misión diaria asignada:", nuevaMision.titulo);
+    console.log("🎉 Nueva misión generada:", nuevaMision.titulo);
 
+    await configRef.set({ lastMissionCheck: new Date().toISOString() }, { merge: true });
   } catch (error) {
-    console.error("❌ Error REAL capturado en verificarGenerarMisiones:", error);
+    console.error("❌ Error al verificar/generar misiones:", error);
     throw error;
   }
 };

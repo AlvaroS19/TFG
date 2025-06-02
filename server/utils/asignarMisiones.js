@@ -1,5 +1,5 @@
 const { db } = require("../services/firebase");
-const { obtenerMisionesPorObjetivo } = require("./obtenerMisionesPorObjeto.js");
+const obtenerMisionesPorObjetivo  = require("./obtenerMisionesPorObjeto.js");
 
 const asignarMisionesIniciales = async (uid, objetivo) => {
   console.log("🚀 Asignando misiones iniciales para:", uid, objetivo);

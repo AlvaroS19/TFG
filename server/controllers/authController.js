@@ -1,6 +1,6 @@
 const { admin, db } = require('../services/firebase');
 const fetch = require('node-fetch');
-const { asignarMisionesIniciales } = require('../utils/asignarMisiones')
+const { verificarGenerarMisiones } = require("../utils/verificarGenerarMisiones");
 
 // ✅ Registro de usuario + guardar perfil + asignar misiones
 const registerUser = async (req, res) => {
@@ -11,41 +11,46 @@ const registerUser = async (req, res) => {
   }
 
   try {
+    // 1️⃣ Crear usuario en Firebase Authentication
     const userRecord = await admin.auth().createUser({
       email,
       password,
       displayName: `${name} ${lastName}`,
     });
 
-    await db.collection('users').doc(userRecord.uid).set({
+    const uid = userRecord.uid;
+
+    // 2️⃣ Guardar datos del usuario
+    await db.collection('users').doc(uid).set({
       name,
       lastName,
       email,
       objetivo,
       createdAt: new Date().toISOString(),
     });
-    // ✅ CREAR userStats iniciales
-    await db.collection('userStats').doc(userRecord.uid).set({
+
+    // 3️⃣ Crear estadísticas iniciales
+    await db.collection('userStats').doc(uid).set({
       xp: 0,
-      level: 1
+      level: 1,
     });
 
-    // ✅ CREAR userConfig (opcional pero coherente si lo usas en getUserStats)
-    await db.collection('userConfig').doc(userRecord.uid).set({
+    // 4️⃣ Guardar configuración inicial
+    await db.collection('userConfig').doc(uid).set({
       nickname: name,
       goal: objetivo,
-      difficulty: 'media' // o lo que tenga sentido por defecto
+      difficulty: 'media',
     });
 
-    // ✅ Asignar misiones al usuario según su objetivo
-    await asignarMisionesIniciales(userRecord.uid, objetivo);
+    // 5️⃣ Asignar primeras misiones personalizadas
+    await verificarGenerarMisiones(uid, objetivo);
 
     res.status(201).json({
       message: 'Usuario registrado correctamente',
-      uid: userRecord.uid,
+      uid,
     });
   } catch (error) {
-    console.error('Error al registrar usuario:', error);
+    console.error('❌ Error al registrar usuario:', error);
     res.status(500).json({ error: error.message });
   }
 };
