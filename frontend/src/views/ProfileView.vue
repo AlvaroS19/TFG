@@ -1,44 +1,46 @@
 <template>
   <div class="flex flex-col items-center bg-[#0A1A2F] min-h-screen text-[#F5F0E1] p-6">
-    <!-- Avatar -->
-    <div class="w-24 h-24 rounded-full bg-[#F66B0E] mb-4 flex items-center justify-center text-4xl">
-      👤
+    <!-- Avatar con inicial -->
+    <div class="w-24 h-24 rounded-full bg-[#F66B0E] mb-4 flex items-center justify-center text-4xl font-bold">
+      {{ perfil.nickname?.charAt(0)?.toUpperCase() || '👤' }}
     </div>
 
-    <!-- Editable: Nickname -->
-    <div class="text-center mb-2">
-      <template v-if="editando">
-        <input
-          v-model="perfil.nickname"
-          class="text-xl text-center font-bold bg-[#112233] border border-[#F5F0E1]/30 rounded px-3 py-1"
-        />
-      </template>
-      <template v-else>
-        <h2 class="text-xl font-bold">{{ perfil.nickname || 'Nombre no configurado' }}</h2>
-      </template>
+    <!-- Nickname editable -->
+    <div class="text-center mb-2 w-full max-w-xs">
+      <input
+        v-if="editando"
+        v-model="perfil.nickname"
+        placeholder="Tu apodo"
+        class="w-full text-xl text-center font-bold bg-[#112233] border border-[#F5F0E1]/30 rounded px-3 py-1"
+      />
+      <h2 v-else class="text-xl font-bold truncate">{{ perfil.nickname || 'Nombre no configurado' }}</h2>
     </div>
 
-    <!-- Email (no editable) -->
-    <p class="text-sm text-[#F5F0E1]/70">{{ perfil.email || 'Correo no disponible' }}</p>
+    <!-- Email -->
+    <p class="text-sm text-[#F5F0E1]/70 mb-1">{{ perfil.email || 'Correo no disponible' }}</p>
 
-    <!-- Editable: Objetivo -->
-    <div class="mt-2 mb-6">
-      <template v-if="editando">
-        <select v-model="perfil.goal" class="bg-[#112233] text-white rounded px-2 py-1 border border-[#F5F0E1]/30">
-          <option value="">Selecciona objetivo</option>
-          <option value="fuerza">Fuerza</option>
-          <option value="resistencia">Resistencia</option>
-          <option value="tonificación">Tonificación</option>
-          <option value="salud">Salud</option>
-        </select>
-      </template>
-      <template v-else>
-        <p class="text-sm text-[#FFC107]">🎯 Objetivo: {{ perfil.goal || 'No establecido' }}</p>
-      </template>
+    <!-- Objetivo editable -->
+    <div class="w-full max-w-xs mb-4">
+      <select
+        v-if="editando"
+        v-model="perfil.goal"
+        class="w-full bg-[#112233] text-white rounded px-2 py-1 border border-[#F5F0E1]/30"
+      >
+        <option value="">Selecciona objetivo</option>
+        <option value="fuerza">Fuerza</option>
+        <option value="resistencia">Resistencia</option>
+        <option value="tonificación">Tonificación</option>
+        <option value="salud">Salud</option>
+      </select>
+      <p v-else class="text-sm text-[#FFC107] text-center">
+        🎯 Objetivo: {{ perfil.goal || 'No establecido' }}
+      </p>
     </div>
 
-    <!-- XP y nivel -->
-    <p class="text-sm text-[#A5B4FC] mb-6">Nivel {{ perfil.level }} · {{ perfil.xp }} XP</p>
+    <!-- XP y Nivel -->
+    <p class="text-sm text-[#A5B4FC] mb-6 text-center">
+      Nivel <strong>{{ perfil.level }}</strong> · <strong>{{ perfil.xp }}</strong> XP
+    </p>
 
     <!-- Botones -->
     <div class="w-full space-y-3 max-w-sm">
@@ -47,6 +49,14 @@
         class="w-full bg-[#F66B0E] text-white py-2 rounded hover:bg-[#e45e0d] transition"
       >
         {{ editando ? 'Guardar cambios' : 'Editar perfil' }}
+      </button>
+
+      <button
+        v-if="editando"
+        @click="cancelarEdicion"
+        class="w-full bg-[#374151] text-white py-2 rounded hover:bg-[#4b5563] transition"
+      >
+        Cancelar
       </button>
 
       <button @click="$router.push('/rewards')" class="w-full bg-[#1E3A8A] text-white py-2 rounded">
@@ -69,7 +79,6 @@ import 'vue3-toastify/dist/index.css'
 
 const router = useRouter()
 const editando = ref(false)
-
 const perfil = ref({
   nickname: '',
   email: '',
@@ -77,12 +86,14 @@ const perfil = ref({
   xp: 0,
   level: 1
 })
+const perfilOriginal = ref({}) // Para cancelar cambios
 
 const cargarPerfil = async () => {
   const token = getCookie('idToken')
   const res = await fetch('http://localhost:5000/user/stats', {
     headers: { Authorization: `Bearer ${token}` },
   })
+
   if (res.ok) {
     const data = await res.json()
     perfil.value = {
@@ -92,6 +103,7 @@ const cargarPerfil = async () => {
       xp: data.xp || 0,
       level: data.level || 1
     }
+    perfilOriginal.value = { ...perfil.value }
   }
 }
 
@@ -122,9 +134,15 @@ const toggleEditar = async () => {
   if (res.ok) {
     toast.success('✅ Perfil actualizado')
     editando.value = false
+    perfilOriginal.value = { ...perfil.value }
   } else {
     toast.error('❌ Error al guardar cambios')
   }
+}
+
+const cancelarEdicion = () => {
+  perfil.value = { ...perfilOriginal.value }
+  editando.value = false
 }
 
 const logout = () => {
