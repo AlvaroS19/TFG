@@ -1,208 +1,124 @@
 <template>
-  <div class="p-4 text-[#F5F0E1] bg-[#0A1A2F] min-h-screen overflow-y-auto">
-    <h1 class="text-2xl font-bold mb-2">¡Bienvenido a tu Dashboard!</h1>
-    <UserStatsBar :level="stats.level" :xp="stats.xp" />
-    
-    <h2 class="text-xl font-bold mt-6 mb-2">Misiones activas</h2>
+  <div class="min-h-screen bg-[#0A1A2F] text-[#F5F0E1] p-6">
+    <XpChart />
+    <h1 class="text-2xl font-bold mb-4">👋 ¡Hola, {{ perfil.nickname || 'Entrenador' }}!</h1>
 
-    <div class="max-h-[90vh] overflow-y-auto space-y-4">
-      <template v-if="misiones.length">
-        <MissionCard
-          v-for="m in misiones"
-          :key="m.id"
-          :titulo="m.titulo"
-          :descripcion="m.descripcion"
-          :dificultad="m.dificultad"
-          :categoria="m.categoria"
-          :xp="m.xp"
-          @completar="completarMision(m.id)"
-        />
-      </template>
+    <!-- Misión del día -->
+    <section class="bg-[#112233] rounded-lg p-4 mb-6">
+      <h2 class="text-lg font-semibold mb-2 text-[#FFC107]">📌 Misión del día</h2>
 
-      <template v-else>
-        <div class="text-center text-[#F5F0E1]/60 italic mt-6">
-          No tienes misiones activas por ahora. ¡Vuelve pronto para nuevas aventuras!
+      <div v-if="misionDelDia">
+        <h3 class="font-bold text-xl mb-1">{{ misionDelDia.titulo }}</h3>
+        <p class="text-sm text-[#F5F0E1]/70 mb-2">{{ misionDelDia.descripcion }}</p>
+        <p class="text-xs text-[#F5F0E1]/50">
+          Dificultad: {{ misionDelDia.dificultad }} · XP: {{ misionDelDia.xp }}
+        </p>
+      </div>
+
+      <div v-else class="text-sm text-[#F5F0E1]/40 italic">
+        No tienes misión asignada para hoy todavía.
+      </div>
+    </section>
+
+    <!-- Tarjeta de progreso -->
+    <section class="bg-[#1E293B] rounded-lg p-4 mb-4">
+      <h2 class="text-lg font-semibold text-[#A5B4FC] mb-2">Progreso</h2>
+      <p class="mb-1">Nivel actual: <strong>{{ stats.level }}</strong></p>
+      <p class="mb-1">XP acumulado: <strong>{{ stats.xp }}</strong></p>
+
+      <!-- Barra de progreso -->
+      <div class="mt-4">
+        <p class="text-sm text-[#F5F0E1]/70 mb-1 text-center">
+          {{ xpRestante }} XP para el nivel {{ stats.level + 1 }}
+        </p>
+        <div class="w-full h-3 bg-[#334155] rounded">
+          <div
+            class="h-3 bg-[#F66B0E] rounded transition-all duration-300"
+            :style="{ width: `${porcentajeNivel}%` }"
+          ></div>
         </div>
-      </template>
-    </div>
+      </div>
+    </section>
 
-    <div ref="sentinel" class="h-1"></div>
+    <!-- Botones -->
+    <div class="flex flex-col gap-2">
+      <button @click="$router.push('/missions')" class="bg-[#F66B0E] text-white rounded py-2">
+        Ver misiones
+      </button>
+      <button @click="$router.push('/profile')" class="bg-[#334155] text-white rounded py-2">
+        Ir a perfil
+      </button>
+      <button @click="$router.push('/stats')" class="bg-[#1D4ED8] text-white rounded py-2">
+        Ver estadísticas
+      </button>
+    </div>
   </div>
 </template>
 
-<script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue';
-import { getCookie } from '../services/auth';
-import { getUserConfig } from '../services/user';
-import MissionCard from '../components/MissionCard.vue';
-import UserStatsBar from '../components/UserStatsBar.vue';
+<script setup>
+import { ref, onMounted, computed } from 'vue'
+import { getCookie } from '@/services/auth'
+import XpChart from '@/components/XpChart.vue'
 
-let misionesVerificadasHoy = false;
+const stats = ref({ xp: 0, level: 1 })
+const perfil = ref({ nickname: '' })
+const misionDelDia = ref(null)
 
-interface Mission {
-  id: string;
-  titulo: string;
-  descripcion: string;
-  categoria: string;
-  dificultad: string;
-  xp: number;
-  completada?: boolean;
-  generatedAt?: string;
-}
+const xpParaNivel = 100
 
-const stats = ref({ xp: 0, level: 1 });
-const todasMisiones = ref<Mission[]>([]);
-const misiones = ref<Mission[]>([]);
-const index = ref(0);
-const batchSize = 10;
-const sentinel = ref<HTMLElement | null>(null);
-let observer: IntersectionObserver;
+const progresoNivel = computed(() => stats.value.xp % xpParaNivel)
+const xpRestante = computed(() => xpParaNivel - progresoNivel.value)
+const porcentajeNivel = computed(() =>
+  Math.min(100, (progresoNivel.value / xpParaNivel) * 100).toFixed(0)
+)
 
 const cargarStats = async () => {
-  try {
-    const token = getCookie('idToken');
-    const res = await fetch('http://localhost:5000/user/stats', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (res.ok) {
-      stats.value = await res.json();
-    } else {
-      console.error('❌ Error al cargar stats del usuario');
-    }
-  } catch (error) {
-    console.error('❌ Error en stats:', error);
+  const token = getCookie('idToken')
+  const res = await fetch('http://localhost:5000/user/stats', {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  if (res.ok) stats.value = await res.json()
+}
+
+const cargarPerfil = async () => {
+  const token = getCookie('idToken')
+  const res = await fetch('http://localhost:5000/user/stats', {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+  if (res.ok) {
+    const data = await res.json()
+    perfil.value.nickname = data.nickname
   }
-};
+}
 
-const cargarMisiones = async () => {
-  try {
-    const token = getCookie('idToken');
-    const res = await fetch('http://localhost:5000/missions/', {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-
-    const data = await res.json();
-    
-    const misionesRecibidas = Array.isArray(data.misiones)
-      ? data.misiones
-      : [];
-    console.log('🔍 Misiones crudas desde backend:', misionesRecibidas);
-
-    const ahora = new Date();
-
-    todasMisiones.value = misionesRecibidas
-      .filter(m => {
-        const completada = m.completada === true;
-        const desbloqueada = !m.unlockAt || new Date(m.unlockAt) <= ahora;
-        return !completada && desbloqueada;
-      })
-      .map((m, i) => ({
-        ...m,
-        id: m.id || `${m.titulo}-${m.generatedAt || i}`,
-      }));
-
-    misiones.value = [];
-    index.value = 0;
-    cargarMasMisiones();
-
-    console.log('🧩 Misiones válidas recibidas:', todasMisiones.value);
-  } catch (error) {
-    console.error('❌ Error al cargar misiones:', error);
-    todasMisiones.value = [];
-  }
-};
-
-const cargarMasMisiones = () => {
-  const siguiente = todasMisiones.value.slice(index.value, index.value + batchSize);
-  const nuevas = siguiente.filter(m => !misiones.value.some(existing => existing.id === m.id));
-  misiones.value.push(...nuevas);
-  index.value += batchSize;
-};
-
-const completarMision = async (misionId: string) => {
-  const token = getCookie('idToken');
-  const mision = misiones.value.find(m => m.id === misionId);
-  if (!mision) return;
-
-  const res = await fetch('http://localhost:5000/missions/complete', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ missionId: misionId }),
-  });
+const cargarMisionDelDia = async () => {
+  const token = getCookie('idToken')
+  const res = await fetch('http://localhost:5000/missions', {
+    headers: { Authorization: `Bearer ${token}` }
+  })
 
   if (res.ok) {
-    console.log('✅ Misión completada con éxito');
-    misiones.value = misiones.value.filter(m => m.id !== misionId);
-    await cargarStats();
-  } else {
-    console.error('❌ Error al completar misión');
-  }
-};
+    const data = await res.json()
+    const misiones = Array.isArray(data.misiones) ? data.misiones : []
 
-let misionesVerificadas = false;
+    const hoy = new Date()
+    hoy.setHours(0, 0, 0, 0)
+
+    const misionHoy = misiones.find(m => {
+      if (m.completada) return false
+      if (!m.generatedAt) return false
+      const fecha = new Date(m.generatedAt)
+      fecha.setHours(0, 0, 0, 0)
+      return fecha.getTime() === hoy.getTime()
+    })
+
+    misionDelDia.value = misionHoy || null
+  }
+}
 
 onMounted(async () => {
-  const token = getCookie('idToken');
-  if (!token) {
-    window.location.href = '/login';
-    return;
-  }
-
-  await cargarStats();
-
-  if (!misionesVerificadas) {
-    await verificarMisiones();
-    misionesVerificadas = true;
-  }
-
-  await verificarMisiones();
-  await cargarMisiones();
-  
-  observer = new IntersectionObserver(entries => {
-    if (entries[0].isIntersecting) {
-      cargarMasMisiones();
-    }
-  });
-
-  if (sentinel.value) observer.observe(sentinel.value);
-});
-
-onUnmounted(() => {
-  if (sentinel.value && observer) observer.unobserve(sentinel.value);
-});
-
-const verificarMisiones = async () => {
-  if (misionesVerificadasHoy) {
-    console.log("🔁 Misiones ya verificadas hoy (evitando duplicado)");
-    return;
-  }
-
-  const token = getCookie('idToken');
-  try {
-    const { objetivo } = await getUserConfig();
-
-    const res = await fetch('http://localhost:5000/missions/test/verificar', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ objetivo })
-    });
-
-    if (res.ok) {
-      console.log('✅ Verificación de misiones exitosa');
-      misionesVerificadasHoy = true;
-    } else {
-      console.warn('⚠️ No se pudo verificar misiones');
-    }
-  } catch (error) {
-    console.error('❌ Error al verificar misiones:', error);
-  }
-};
-
-
+  await cargarPerfil()
+  await cargarStats()
+  await cargarMisionDelDia()
+})
 </script>

@@ -1,105 +1,111 @@
-const { db, admin } = require("../services/firebase")
+const { db } = require('../services/firebase');
+const rewardsCatalog = require('../utils/rewardsCatalog');
 
 const getUserStats = async (req, res) => {
   const uid = req.uid;
 
   try {
+    // 1. Leer estadísticas del usuario (XP, nivel, progreso)
     const statsRef = db.collection('userStats').doc(uid);
-    const statsSnap = await statsRef.get();
+    const statsDoc = await statsRef.get();
+    const stats = statsDoc.exists ? statsDoc.data() : {};
 
+    // 2. Leer configuración del usuario (nickname, objetivo, dificultad)
     const configRef = db.collection('userConfig').doc(uid);
-    const configSnap = await configRef.get();
+    const configDoc = await configRef.get();
+    const config = configDoc.exists ? configDoc.data() : {};
 
-    if (!statsSnap.exists) {
-    await statsRef.set({ xp: 0, level: 1 });
-  }
+    // 3. Contar misiones completadas
+    const completedSnap = await db
+      .collection('users')
+      .doc(uid)
+      .collection('missionsCompleted')
+      .get();
 
-    let xp = 0;
-    let level = 1;
+    let totalMissionsCompleted = 0;
+    let dailyCompleted = 0;
+    let weeklyCompleted = 0;
+    let specialCompleted = 0;
 
-    if (statsSnap.exists) {
-      const statsData = statsSnap.data();
-      xp = statsData?.xp || 0;
-      level = statsData?.level || 1;
-    } else {
-      // Crear stats si no existen
-      await statsRef.set({ xp: 0, level: 1 });
+    completedSnap.forEach(doc => {
+      const m = doc.data();
+      totalMissionsCompleted++;
+      if (m.categoria === 'diaria') dailyCompleted++;
+      if (m.categoria === 'semanal') weeklyCompleted++;
+      if (m.categoria === 'especial') specialCompleted++;
+    });
+        // Calcular dificultad media
+    let dificultadTotal = 0;
+    let dificultadCount = 0;
+
+    completedSnap.forEach(doc => {
+      const m = doc.data();
+
+      // ya estaban estas líneas
+      totalMissionsCompleted++;
+      if (m.categoria === 'diaria') dailyCompleted++;
+      if (m.categoria === 'semanal') weeklyCompleted++;
+      if (m.categoria === 'especial') specialCompleted++;
+
+      // nuevo: sumar dificultad
+      if (m.dificultad) {
+        if (m.dificultad === 'fácil') dificultadTotal += 1;
+        else if (m.dificultad === 'media') dificultadTotal += 2;
+        else if (m.dificultad === 'difícil') dificultadTotal += 3;
+        dificultadCount++;
+      }
+    });
+
+    let dificultadPromedio = '';
+    if (dificultadCount > 0) {
+      const promedio = dificultadTotal / dificultadCount;
+      if (promedio >= 2.5) dificultadPromedio = 'difícil';
+      else if (promedio >= 1.5) dificultadPromedio = 'media';
+      else dificultadPromedio = 'fácil';
     }
-    const { nickname = '', goal = '', difficulty = '' } = configSnap.exists ? configSnap.data() : {};
 
-    const progress = xp % 100;
 
+    // 4. Contar recompensas desbloqueadas
+    const rewardsSnap = await db
+      .collection('users')
+      .doc(uid)
+      .collection('userRewards')
+      .get();
+
+    const totalRewardsUnlocked = rewardsSnap.size;
+
+    // 5. Enviar respuesta combinada
     res.status(200).json({
       uid,
-      xp,
-      level,
-      progress,
-      nickname,
-      goal,
-      difficulty,
+      xp: stats.xp || 0,
+      level: stats.level || 1,
+      progress: stats.progress || 0,
+      nickname: config.nickname || '',
+      goal: config.goal || '',
+      difficulty: dificultadPromedio,
+      totalMissionsCompleted,
+      dailyCompleted,
+      weeklyCompleted,
+      specialCompleted,
+      totalRewardsUnlocked
     });
-  } catch (error) {
-    console.error('Error al obtener estadísticas del usuario:', error);
+  } catch (err) {
+    console.error('❌ Error al obtener estadísticas:', err);
     res.status(500).json({ error: 'Error al obtener estadísticas' });
-  }
-};
-
-const updateUserStats = async (req, res) => {
-  const uid = req.uid;
-  const data = req.body;
-
-  try {
-    await db.collection('userStats').doc(uid).set(data, { merge: true });
-    res.status(200).json({ message: 'Datos actualizados correctamente' });
-  } catch (error) {
-    console.error('Error al actualizar datos:', error);
-    res.status(500).json({ error: 'Error al actualizar datos' });
-  }
-};
-
-const getUserProgress = async (req, res) => {
-  const uid = req.uid;
-
-  try {
-    const docRef = db.collection('missionsCompleted').doc(uid);
-    const docSnap = await docRef.get();
-
-    if (!docSnap.exists) {
-      return res.status(200).json({
-        totalCompleted: 0,
-        lastCompleted: null
-      });
-    }
-
-    const data = docSnap.data();
-    const completedMissions = data.completed || [];
-
-    const totalCompleted = completedMissions.length;
-    const lastCompleted = completedMissions
-      .sort((a, b) => new Date(b.completedAt) - new Date(a.completedAt))[0]?.completedAt || null;
-
-    res.status(200).json({
-      totalCompleted,
-      lastCompleted
-    });
-
-  } catch (error) {
-    console.error('Error al obtener progreso del usuario:', error);
-    res.status(500).json({ error: 'Error al obtener progreso del usuario' });
   }
 };
 
 const getUserRewards = async (req, res) => {
   const uid = req.uid;
-  const rewards = [];
+  const now = new Date().toISOString();
 
   try {
-    // Obtener stats del usuario
+    // 📊 Stats del usuario
     const statsSnap = await db.collection('userStats').doc(uid).get();
     const stats = statsSnap.exists ? statsSnap.data() : { xp: 0, level: 1 };
     const { xp = 0, level = 1 } = stats;
 
-    // Obtener misiones completadas
+    // 🧠 Misiones completadas
     const completedSnap = await db
       .collection('users')
       .doc(uid)
@@ -109,68 +115,56 @@ const getUserRewards = async (req, res) => {
     const completed = completedSnap.docs.map(doc => doc.data());
     const totalCompleted = completed.length;
 
-    // 🚀 Clasificación y fechas
     const completadasDiarias = completed.filter(m => m.categoria === 'diaria');
     const completadasSemanales = completed.filter(m => m.categoria === 'semanal');
-    const completadasDificiles = completed.filter(m => m.dificultad === 'difícil' || m.dificultad === 'dificil');
+    const completadasDificiles = completed.filter(m => 
+      m.dificultad === 'difícil' || m.dificultad === 'dificil'
+    );
 
     const fechasCompletadas = completed.map(m => new Date(m.completedAt));
     const diasUnicos = new Set(fechasCompletadas.map(f => f.toISOString().split('T')[0]));
 
-    // 🧠 Lógica de logros
-    if (totalCompleted >= 1) rewards.push('Primeros pasos');
-    if (xp >= 100) rewards.push('nivel');
-    if (totalCompleted >= 5) rewards.push('Constancia');
-    if (level >= 3) rewards.push('Pro');
+    // ✅ Cargar recompensas ya guardadas
+    const existingRewardsSnap = await db
+      .collection('users')
+      .doc(uid)
+      .collection('userRewards')
+      .get();
 
-    if (completadasDiarias.length >= 10) rewards.push('diarias10');
-    if (completadasSemanales.length >= 5) rewards.push('semanales5');
-    if (totalCompleted >= 20) rewards.push('misiones20');
-    if (level >= 5) rewards.push('nivel5');
-    if (diasUnicos.size >= 30) rewards.push('veterano');
-    if (completadasDificiles.length >= 1) rewards.push('dificil1');
+    const existingIds = existingRewardsSnap.docs.map(doc => doc.data().id);
 
-    // Logro: 3 misiones en un solo día
-    const contadorPorDia = {};
-    for (const fecha of fechasCompletadas) {
-      const dia = fecha.toISOString().split('T')[0];
-      contadorPorDia[dia] = (contadorPorDia[dia] || 0) + 1;
-    }
-    if (Object.values(contadorPorDia).some(count => count >= 3)) {
-      rewards.push('3diarias1dia');
-    }
+    // 🧩 Nuevas recompensas a validar
+    const posibles = [];
 
-    // Logro: Racha de 7 días seguidos
-    const fechasOrdenadas = [...diasUnicos].sort();
-    let rachaMax = 1;
-    let actual = 1;
+    if (diasUnicos.size >= 7) posibles.push('semanaPerfecta');
+    if (level >= 5) posibles.push('nivel5Maestro');
+    if (diasUnicos.size >= 30) posibles.push('constante30dias');
+    if (level >= 10) posibles.push('proGamer');
 
-    for (let i = 1; i < fechasOrdenadas.length; i++) {
-      const anterior = new Date(fechasOrdenadas[i - 1]);
-      const actualDia = new Date(fechasOrdenadas[i]);
+    const nuevas = posibles.filter(id => !existingIds.includes(id));
 
-      const diff = (actualDia - anterior) / (1000 * 60 * 60 * 24);
-      if (diff === 1) {
-        actual++;
-        rachaMax = Math.max(rachaMax, actual);
-      } else {
-        actual = 1;
-      }
-    }
-    if (rachaMax >= 7) {
-      rewards.push('racha7');
+    // 📝 Guardar nuevas recompensas
+    const userRewardsRef = db.collection('users').doc(uid).collection('userRewards');
+    for (const id of nuevas) {
+      const recompensa = rewardsCatalog[id];
+      if (!recompensa) continue;
+
+      await userRewardsRef.add({
+        id,
+        nombre: recompensa.nombre,
+        descripcion: recompensa.descripcion,
+        fecha: now
+      });
     }
 
-    return res.status(200).json({
-      uid,
-      xp,
-      level,
-      totalCompleted,
-      rewards
-    });
+    // 🧾 Juntar todas las recompensas
+    const finalSnap = await userRewardsRef.get();
+    const finalRewards = finalSnap.docs.map(doc => doc.data());
+
+    return res.status(200).json(finalRewards);
   } catch (error) {
-    console.error('❌ Error al obtener recompensas del usuario:', error);
-    res.status(500).json({ error: 'Error al obtener recompensas' });
+    console.error('❌ Error al obtener recompensas:', error);
+    res.status(500).json({ error: 'Error al obtener recompensas del usuario' });
   }
 };
 
@@ -270,6 +264,75 @@ const saveUserConfig = async (req, res) => {
   }
 };
 
+const getXpHistory = async (req, res) => {
+  const uid = req.uid;
+  try {
+    const snapshot = await db
+      .collection('users')
+      .doc(uid)
+      .collection('missionsCompleted')
+      .get();
+
+    const xpByDate = {};
+
+    snapshot.forEach(doc => {
+      const { completedAt, xp } = doc.data();
+      if (!completedAt) return;
+
+      const fecha = new Date(completedAt).toISOString().slice(0, 10); // yyyy-mm-dd
+      xpByDate[fecha] = (xpByDate[fecha] || 0) + (xp || 0);
+    });
+
+    return res.json({ xpByDate });
+  } catch (error) {
+    console.error('❌ Error al obtener historial XP:', error);
+    return res.status(500).json({ error: 'Error al obtener historial de XP' });
+  }
+};
+const getXpSummary = async (req, res) => {
+  const uid = req.uid;
+
+  try {
+    const snapshot = await db
+      .collection('users')
+      .doc(uid)
+      .collection('missionsCompleted')
+      .get();
+
+    let xpHoy = 0;
+    let xpSemana = 0;
+
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    const hace7dias = new Date();
+    hace7dias.setDate(hace7dias.getDate() - 6); // incluye hoy
+    hace7dias.setHours(0, 0, 0, 0);
+
+    snapshot.forEach(doc => {
+      const { completedAt, xp } = doc.data();
+      if (!completedAt || !xp) return;
+
+      const fecha = new Date(completedAt);
+      const fechaCorta = new Date(fecha);
+      fechaCorta.setHours(0, 0, 0, 0);
+
+      if (fechaCorta.getTime() === hoy.getTime()) {
+        xpHoy += xp;
+      }
+
+      if (fechaCorta >= hace7dias && fechaCorta <= hoy) {
+        xpSemana += xp;
+      }
+    });
+
+    return res.json({ xpHoy, xpSemana });
+  } catch (error) {
+    console.error('❌ Error al obtener resumen XP:', error);
+    return res.status(500).json({ error: 'Error al obtener resumen de XP' });
+  }
+};
+
 module.exports = {
   getUserStats,
   getUserProgress,
@@ -278,4 +341,6 @@ module.exports = {
   getUserObjective,
   updateUserConfig,
   saveUserConfig,
+  getXpHistory,
+  getXpSummary,
 };

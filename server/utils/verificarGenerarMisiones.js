@@ -4,9 +4,9 @@ const { cleanOldUncompletedMissions } = require("../utils/cleaner");
 const verificarGenerarMisiones = async (uid, objetivo) => {
   try {
     await cleanOldUncompletedMissions(uid);
+
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
-
     const configRef = db.collection("userConfig").doc(uid);
     const configSnap = await configRef.get();
     const configData = configSnap.exists ? configSnap.data() : {};
@@ -25,43 +25,55 @@ const verificarGenerarMisiones = async (uid, objetivo) => {
 
     const missionsRef = db.collection("users").doc(uid).collection("missions");
 
-    const snapshot = await missionsRef
-      .where("categoria", "==", "diaria")
-      .orderBy("generatedAt", "desc")
-      .limit(1)
-      .get();
+    // Obtener TODAS las diarias del usuario
+    const todasDiariasSnap = await missionsRef.where("categoria", "==", "diaria").get();
+    const todasDiarias = todasDiariasSnap.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }));
 
-    const ultimaMision = snapshot.docs[0]?.data();
-    const fechaUltima = ultimaMision ? new Date(ultimaMision.generatedAt) : null;
+    // Filtrar las que ya son de hoy
+    const diariasDeHoy = todasDiarias.filter(m => {
+      const fecha = new Date(m.generatedAt);
+      fecha.setHours(0, 0, 0, 0);
+      return fecha.getTime() === hoy.getTime();
+    });
 
-    if (fechaUltima) {
-      fechaUltima.setHours(0, 0, 0, 0);
-      if (fechaUltima.getTime() === hoy.getTime()) {
-        console.log("✅ Ya hay misión para hoy:", ultimaMision.titulo);
-        await configRef.set({ lastMissionCheck: new Date().toISOString() }, { merge: true });
-        return;
-      }
+    const CANTIDAD_MISIONES_POR_DIA = 3;
+
+    if (diariasDeHoy.length >= CANTIDAD_MISIONES_POR_DIA) {
+      console.log(`✅ Ya hay ${diariasDeHoy.length} misiones generadas hoy`);
+      await configRef.set({ lastMissionCheck: new Date().toISOString() }, { merge: true });
+      return;
     }
 
+    // Obtener catálogo
     const catalogSnap = await db.collection("missionsCatalog").doc(objetivo).get();
     const catalogo = catalogSnap.data();
+    if (!catalogo || !catalogo.daily || !catalogo.daily.length) {
+      console.log("⚠️ No hay misiones en el catálogo para ese objetivo");
+      return;
+    }
 
-    const yaAsignadas = await missionsRef.where("categoria", "==", "diaria").get();
-    const index = yaAsignadas.size;
+    const yaAsignadasTotal = todasDiarias.length;
+    const faltanPorAsignar = CANTIDAD_MISIONES_POR_DIA - diariasDeHoy.length;
 
-    if (index >= catalogo.daily.length) return;
+    for (let i = 0; i < faltanPorAsignar; i++) {
+      const index = yaAsignadasTotal + i;
+      if (index >= catalogo.daily.length) break;
 
-    const nuevaMision = {
-      ...catalogo.daily[index],
-      categoria: "diaria",
-      generatedAt: new Date().toISOString(),
-      completada: false,
-      desbloqueada: false,
-      unlockAt: new Date().toISOString() // Se desbloquea hoy mismo
-    };
+      const nuevaMision = {
+        ...catalogo.daily[index],
+        categoria: "diaria",
+        generatedAt: new Date().toISOString(),
+        completada: false,
+        desbloqueada: false,
+        unlockAt: new Date().toISOString()
+      };
 
-    await missionsRef.add(nuevaMision);
-    console.log("🎉 Nueva misión generada:", nuevaMision.titulo);
+      await missionsRef.add(nuevaMision);
+      console.log("🎯 Nueva misión generada:", nuevaMision.titulo);
+    }
 
     await configRef.set({ lastMissionCheck: new Date().toISOString() }, { merge: true });
   } catch (error) {
