@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#0A1A2F] text-[#F5F0E1] p-6">
+  <div class="min-h-screen overflow-y-auto bg-[#0A1A2F] text-[#F5F0E1] p-6">
     <h1 class="text-2xl font-bold text-center mb-6">📋 Todas tus misiones</h1>
 
     <!-- Filtro de categoría -->
@@ -23,6 +23,7 @@
     <div v-if="misionesFiltradas.length" class="space-y-4">
       <div v-for="m in misionesFiltradas" :key="m.id">
         <div v-if="isUnlocked(m)">
+          <!-- 🔓 Mostrar misión desbloqueada -->
           <MissionCard
             :titulo="m.titulo"
             :descripcion="m.descripcion"
@@ -32,7 +33,8 @@
             @completar="completarMision(m.id)"
           />
         </div>
-        <div class="p-4 border border-[#F5F0E1]/30 rounded bg-[#F5F0E1]/5">
+        <div v-else class="p-4 border border-[#F5F0E1]/30 rounded bg-[#F5F0E1]/5">
+          <!-- 🔒 Mostrar bloqueada -->
           <p class="text-lg font-semibold text-[#F5F0E1]/80">{{ m.titulo }}</p>
           <p class="text-sm text-[#F5F0E1]/50">🔒 Disponible en {{ tiempoRestante(m.unlockAt) }}</p>
         </div>
@@ -125,3 +127,19 @@ onMounted(() => {
   cargarMisiones()
 })
 </script>
+<style scoped>
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0A1A2F;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #F66B0E;
+  border-radius: 8px;
+  border: 2px solid #0A1A2F;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #fb923c; /* más claro al hacer hover */
+}
+</style>

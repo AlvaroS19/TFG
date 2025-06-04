@@ -1,5 +1,5 @@
 {
-  "fuerza": {
+    "fuerza": {
     "daily": [
       {
         "titulo": "Flexiones nivel 1",
@@ -146,5 +146,449 @@
         "categoria": "especial"
       }
     ]
-  }
+  },
+"resistencia": {
+  "daily": [
+    {
+      "titulo": "Trote constante",
+      "descripcion": "Trota durante 20 minutos sin parar.",
+      "xp": 15,
+      "dificultad": "media",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Saltos de tijera",
+      "descripcion": "Haz 100 saltos de tijera.",
+      "xp": 12,
+      "dificultad": "media",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Burpees rápidos",
+      "descripcion": "Haz 15 burpees en menos de 2 minutos.",
+      "xp": 18,
+      "dificultad": "difícil",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Cuerda 5 minutos",
+      "descripcion": "Salta la cuerda durante 5 minutos (puedes dividir en sets).",
+      "xp": 15,
+      "dificultad": "media",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Sube escaleras",
+      "descripcion": "Haz 5 rondas subiendo y bajando escaleras.",
+      "xp": 14,
+      "dificultad": "media",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Mountain climbers",
+      "descripcion": "Haz 3 sets de 40 mountain climbers.",
+      "xp": 15,
+      "dificultad": "media",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Saltar con rodillas altas",
+      "descripcion": "Haz 2 series de 30 segundos.",
+      "xp": 10,
+      "dificultad": "fácil",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Circuito 3x3",
+      "descripcion": "3 rondas de 3 ejercicios aeróbicos.",
+      "xp": 16,
+      "dificultad": "media",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Zancadas dinámicas",
+      "descripcion": "Haz 2 sets de 20 zancadas con salto.",
+      "xp": 15,
+      "dificultad": "media",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Cardio sin parar",
+      "descripcion": "Haz 15 minutos de actividad aeróbica continua.",
+      "xp": 15,
+      "dificultad": "media",
+      "categoria": "diaria"
+    }
+  ],
+  "weekly": [
+    {
+      "titulo": "Corre 10 km",
+      "descripcion": "Completa 10 kilómetros de trote esta semana.",
+      "xp": 70,
+      "dificultad": "media",
+      "categoria": "semanal"
+    },
+    {
+      "titulo": "Cuerda acumulada",
+      "descripcion": "Salta la cuerda al menos 30 minutos en la semana.",
+      "xp": 60,
+      "dificultad": "media",
+      "categoria": "semanal"
+    },
+    {
+      "titulo": "6 sesiones cardio",
+      "descripcion": "Realiza 6 entrenamientos de cardio.",
+      "xp": 75,
+      "dificultad": "difícil",
+      "categoria": "semanal"
+    },
+    {
+      "titulo": "Burpees total",
+      "descripcion": "Haz 100 burpees a lo largo de la semana.",
+      "xp": 70,
+      "dificultad": "media",
+      "categoria": "semanal"
+    },
+    {
+      "titulo": "Escaleras acumuladas",
+      "descripcion": "Sube 30 pisos durante la semana.",
+      "xp": 65,
+      "dificultad": "media",
+      "categoria": "semanal"
+    }
+  ],
+  "especial": [
+    {
+      "titulo": "Desafío maratón indoor",
+      "descripcion": "Camina o trota 42 km en 10 días.",
+      "xp": 100,
+      "dificultad": "difícil",
+      "categoria": "especial"
+    },
+    {
+      "titulo": "Sesión sin parar",
+      "descripcion": "30 minutos de cardio sin descanso.",
+      "xp": 80,
+      "dificultad": "difícil",
+      "categoria": "especial"
+    },
+    {
+      "titulo": "Sprint challenge",
+      "descripcion": "Haz 10 sprints de 30 segundos con 1 min de descanso.",
+      "xp": 90,
+      "dificultad": "difícil",
+      "categoria": "especial"
+    },
+    {
+      "titulo": "Cuesta arriba",
+      "descripcion": "Sube una colina/cuesta 10 veces.",
+      "xp": 75,
+      "dificultad": "difícil",
+      "categoria": "especial"
+    },
+    {
+      "titulo": "Cardio nocturno",
+      "descripcion": "Haz un entrenamiento aeróbico completo después de las 21:00.",
+      "xp": 70,
+      "dificultad": "media",
+      "categoria": "especial"
+    }
+  ]
+},
+"tonificación": {
+  "daily": [
+    {
+      "titulo": "Abdominales nivel 1",
+      "descripcion": "Haz 3 series de 20 abdominales.",
+      "xp": 10,
+      "dificultad": "fácil",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Sentadillas con pausa",
+      "descripcion": "Haz 15 sentadillas manteniendo 2s abajo.",
+      "xp": 12,
+      "dificultad": "fácil",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Elevaciones laterales",
+      "descripcion": "Haz 3 series de 15 elevaciones sin peso.",
+      "xp": 12,
+      "dificultad": "fácil",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Plancha activa",
+      "descripcion": "Mantén plancha 30s y luego 10 planchas laterales.",
+      "xp": 14,
+      "dificultad": "media",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Glúteos nivel 1",
+      "descripcion": "Haz 20 patadas traseras por pierna.",
+      "xp": 10,
+      "dificultad": "fácil",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Piernas y abdomen",
+      "descripcion": "20 sentadillas + 20 crunches + 1 min plancha.",
+      "xp": 16,
+      "dificultad": "media",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Brazos definidos",
+      "descripcion": "Haz 2 sets de 15 flexiones apoyando rodillas.",
+      "xp": 12,
+      "dificultad": "fácil",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Circuito tonificación",
+      "descripcion": "3 rondas de 3 ejercicios básicos de tonificación.",
+      "xp": 15,
+      "dificultad": "media",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Sentadillas con peso corporal",
+      "descripcion": "Haz 30 sentadillas continuas.",
+      "xp": 14,
+      "dificultad": "media",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Plancha inversa",
+      "descripcion": "Mantén posición 20 segundos, 3 veces.",
+      "xp": 12,
+      "dificultad": "fácil",
+      "categoria": "diaria"
+    }
+  ],
+  "weekly": [
+    {
+      "titulo": "Tonifica tren inferior",
+      "descripcion": "Haz ejercicios de piernas 4 días esta semana.",
+      "xp": 60,
+      "dificultad": "media",
+      "categoria": "semanal"
+    },
+    {
+      "titulo": "Core definido",
+      "descripcion": "Completa 100 abdominales en la semana.",
+      "xp": 65,
+      "dificultad": "media",
+      "categoria": "semanal"
+    },
+    {
+      "titulo": "Brazos sin pesas",
+      "descripcion": "3 entrenos centrados en brazos.",
+      "xp": 60,
+      "dificultad": "media",
+      "categoria": "semanal"
+    },
+    {
+      "titulo": "Rutina combinada",
+      "descripcion": "Haz rutinas de cuerpo completo 3 veces.",
+      "xp": 70,
+      "dificultad": "difícil",
+      "categoria": "semanal"
+    },
+    {
+      "titulo": "Glúteos activos",
+      "descripcion": "Haz 100 repeticiones de ejercicios de glúteos.",
+      "xp": 60,
+      "dificultad": "media",
+      "categoria": "semanal"
+    }
+  ],
+  "especial": [
+    {
+      "titulo": "Desafío fullbody",
+      "descripcion": "Tonifica todo el cuerpo en una sesión de 40 min.",
+      "xp": 100,
+      "dificultad": "difícil",
+      "categoria": "especial"
+    },
+    {
+      "titulo": "Reto abdominales",
+      "descripcion": "150 abdominales en 3 series diferentes.",
+      "xp": 90,
+      "dificultad": "difícil",
+      "categoria": "especial"
+    },
+    {
+      "titulo": "Tonificación nocturna",
+      "descripcion": "Entrena después de las 21:00 solo zonas tonificadas.",
+      "xp": 75,
+      "dificultad": "media",
+      "categoria": "especial"
+    },
+    {
+      "titulo": "Sin parar 20",
+      "descripcion": "20 minutos seguidos de tonificación sin pausas.",
+      "xp": 85,
+      "dificultad": "difícil",
+      "categoria": "especial"
+    },
+    {
+      "titulo": "Tonifica con música",
+      "descripcion": "Sigue una coreografía fitness completa.",
+      "xp": 80,
+      "dificultad": "media",
+      "categoria": "especial"
+    }
+  ]
+},
+"salud": {
+  "daily": [
+    {
+      "titulo": "Camina 20 minutos",
+      "descripcion": "Sal a caminar durante al menos 20 minutos.",
+      "xp": 10,
+      "dificultad": "fácil",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Estiramientos básicos",
+      "descripcion": "Haz 10 minutos de estiramientos de cuerpo completo.",
+      "xp": 10,
+      "dificultad": "fácil",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Respiración consciente",
+      "descripcion": "Haz 5 minutos de respiración profunda.",
+      "xp": 8,
+      "dificultad": "fácil",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Movilidad articular",
+      "descripcion": "Haz una rutina suave de movilidad.",
+      "xp": 12,
+      "dificultad": "fácil",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Postura correcta",
+      "descripcion": "Mantén postura correcta durante 30 minutos.",
+      "xp": 10,
+      "dificultad": "fácil",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Tensión fuera",
+      "descripcion": "Haz una pausa activa de 10 minutos.",
+      "xp": 10,
+      "dificultad": "fácil",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Paseo al aire libre",
+      "descripcion": "Camina 15 minutos en exterior si es posible.",
+      "xp": 10,
+      "dificultad": "fácil",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Relajación guiada",
+      "descripcion": "Sigue un audio de meditación guiada.",
+      "xp": 12,
+      "dificultad": "fácil",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Movimientos suaves",
+      "descripcion": "Haz 10 minutos de ejercicios lentos como yoga suave.",
+      "xp": 10,
+      "dificultad": "fácil",
+      "categoria": "diaria"
+    },
+    {
+      "titulo": "Revisión corporal",
+      "descripcion": "Haz un chequeo físico de cómo te sientes.",
+      "xp": 8,
+      "dificultad": "fácil",
+      "categoria": "diaria"
+    }
+  ],
+  "weekly": [
+    {
+      "titulo": "Camina 5 días",
+      "descripcion": "Haz 5 caminatas durante la semana.",
+      "xp": 50,
+      "dificultad": "fácil",
+      "categoria": "semanal"
+    },
+    {
+      "titulo": "Estira a diario",
+      "descripcion": "Haz estiramientos todos los días de la semana.",
+      "xp": 60,
+      "dificultad": "media",
+      "categoria": "semanal"
+    },
+    {
+      "titulo": "Dormir bien",
+      "descripcion": "Consigue al menos 7h de sueño 5 días.",
+      "xp": 55,
+      "dificultad": "media",
+      "categoria": "semanal"
+    },
+    {
+      "titulo": "Menos pantallas",
+      "descripcion": "Evita pantallas 1h antes de dormir 3 días.",
+      "xp": 50,
+      "dificultad": "media",
+      "categoria": "semanal"
+    },
+    {
+      "titulo": "Hidratación correcta",
+      "descripcion": "Bebe suficiente agua toda la semana.",
+      "xp": 55,
+      "dificultad": "fácil",
+      "categoria": "semanal"
+    }
+  ],
+  "especial": [
+    {
+      "titulo": "Desconexión digital",
+      "descripcion": "Pasa un día entero sin redes sociales.",
+      "xp": 80,
+      "dificultad": "media",
+      "categoria": "especial"
+    },
+    {
+      "titulo": "Día completo saludable",
+      "descripcion": "Haz al menos 3 acciones saludables en un día.",
+      "xp": 90,
+      "dificultad": "media",
+      "categoria": "especial"
+    },
+    {
+      "titulo": "Jornada de spa en casa",
+      "descripcion": "Haz una tarde de autocuidado y descanso.",
+      "xp": 85,
+      "dificultad": "media",
+      "categoria": "especial"
+    },
+    {
+      "titulo": "Desafío de sueño",
+      "descripcion": "Duerme 8h seguidas durante 5 noches.",
+      "xp": 100,
+      "dificultad": "difícil",
+      "categoria": "especial"
+    },
+    {
+      "titulo": "Mindfulness en acción",
+      "descripcion": "Haz 3 sesiones de meditación en la semana.",
+      "xp": 90,
+      "dificultad": "media",
+      "categoria": "especial"
+    }
+  ]
+}
 }

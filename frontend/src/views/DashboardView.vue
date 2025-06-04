@@ -48,7 +48,7 @@
       <button @click="$router.push('/profile')" class="bg-[#334155] text-white rounded py-2">
         Ir a perfil
       </button>
-      <button @click="$router.push('/stats')" class="bg-[#1D4ED8] text-white rounded py-2">
+      <button @click="$router.push('/user/stats')" class="bg-[#1D4ED8] text-white rounded py-2">
         Ver estadísticas
       </button>
     </div>

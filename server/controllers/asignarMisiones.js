@@ -1,4 +1,5 @@
 import { db } from '../services/firebase';
+import { generarTodasLasMisiones } from '../utils/generarTodasLasMisiones.js';
 
 const asignarMisionesIniciales = async (uid, objetivo) => {
   try {
@@ -14,7 +15,10 @@ const asignarMisionesIniciales = async (uid, objetivo) => {
     };
 
     await db.collection('missions').doc(uid).set(data);
-  } catch (err) {
+    await generarTodasLasMisiones(uid, objetivo);
+  }
+  
+  catch (err) {
     console.error('❌ Error al asignar misiones iniciales:', err);
   }
 };

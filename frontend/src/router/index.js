@@ -17,20 +17,20 @@ import AchievementsView from '@/views/AchievementsView.vue'
 import RewardsView from '@/views/RewardsView.vue'
 
 const routes = [
-  // 🔁 Redirección base
+  // Redirección base
   {
     path: '/',
     redirect: () => (isAuthenticated() ? '/dashboard' : '/landing')
   },
 
-  // 🌐 Rutas públicas
+  // Rutas públicas
   { path: '/landing', name: 'Landing', component: LandingView },
   { path: '/login', name: 'Login', component: LoginView },
   { path: '/register', name: 'Register', component: RegisterView },
   { path: '/reset-password', name: 'ResetPassword', component: ResetPasswordView },
   { path: '/reset-password/:token', name: 'ResetPasswordToken', component: ResetPasswordTokenView },
 
-  // 🔐 Rutas protegidas bajo layout
+  // Rutas protegidas bajo layout
   {
     path: '/',
     component: AppLayout,
@@ -53,7 +53,7 @@ const router = createRouter({
   routes
 })
 
-// 🔐 Guard global de rutas protegidas
+// Guard global de rutas protegidas
 router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !isAuthenticated()) {
     console.warn('⚠️ No hay sesión, redirigiendo a login');

@@ -15,13 +15,21 @@
       <h2 class="text-lg font-semibold text-[#A5B4FC] mb-2">Progreso</h2>
       <p><strong>Nivel:</strong> {{ stats.level }}</p>
       <p><strong>XP:</strong> {{ stats.xp }}</p>
-      <div class="w-full bg-[#334155] h-3 rounded overflow-hidden">
-        <div
-          class="bg-[#22c55e] h-full transition-all duration-500"
-          :style="{ width: stats.progress + '%' }"
-        ></div>
+
+      <div class="mt-4">
+        <p class="text-sm text-[#F5F0E1]/70 mb-1 text-center">
+          {{ xpRestante }} XP para el nivel {{ stats.level + 1 }}
+        </p>
+        <div class="w-full h-3 bg-[#334155] rounded overflow-hidden">
+          <div
+            class="bg-[#22c55e] h-full transition-all duration-500"
+            :style="{ width: `${porcentajeNivel}%` }"
+          ></div>
+        </div>
+        <p class="text-sm mt-1 text-center text-[#94a3b8]/50">
+          {{ porcentajeNivel }}% al siguiente nivel
+        </p>
       </div>
-      <p class="text-sm mt-1 text-[#94a3b8]/50">{{ stats.progress }}% al siguiente nivel</p>
     </section>
 
     <!-- Misiones -->
@@ -44,14 +52,15 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { getCookie } from '@/services/auth'
+
+const xpParaNivel = 100
 
 const stats = ref({
   uid: '',
   xp: 0,
   level: 1,
-  progress: 0,
   nickname: '',
   goal: '',
   difficulty: '',
@@ -61,6 +70,12 @@ const stats = ref({
   specialCompleted: 0,
   totalRewardsUnlocked: 0,
 })
+
+const progresoNivel = computed(() => stats.value.xp % xpParaNivel)
+const xpRestante = computed(() => xpParaNivel - progresoNivel.value)
+const porcentajeNivel = computed(() =>
+  Math.min(100, (progresoNivel.value / xpParaNivel) * 100).toFixed(0)
+)
 
 onMounted(async () => {
   const token = getCookie('idToken')
