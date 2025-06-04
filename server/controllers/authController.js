@@ -1,6 +1,6 @@
 const { admin, db } = require('../services/firebase');
 const fetch = require('node-fetch');
-const { verificarGenerarMisiones } = require("../utils/verificarGenerarMisiones");
+const { generarTodasLasMisiones } = require("../utils/generarTodasLasMisiones");
 
 // ✅ Registro de usuario + guardar perfil + asignar misiones
 const registerUser = async (req, res) => {
@@ -43,7 +43,7 @@ const registerUser = async (req, res) => {
     });
 
     // 5️⃣ Asignar primeras misiones personalizadas
-    await verificarGenerarMisiones(uid, objetivo);
+    await generarTodasLasMisiones(uid, objetivo);
 
     res.status(201).json({
       message: 'Usuario registrado correctamente',

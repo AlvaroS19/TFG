@@ -1,7 +1,8 @@
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
-import path from 'path'
-import { VitePWA } from 'vite-plugin-pwa'
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import path from 'path';
+import { VitePWA } from 'vite-plugin-pwa';
+
 
 export default defineConfig({
   resolve: {
@@ -38,22 +39,22 @@ export default defineConfig({
     })
   ],
   server: {
-  proxy: {
-    '/auth': {
-      target: 'http://localhost:5000',
-      changeOrigin: true,
-      secure: false
-    },
-    '/missions': {
-      target: 'http://localhost:5000',
-      changeOrigin: true,
-      secure: false
-    },
-    '/user': {
-      target: 'http://localhost:5000',
-      changeOrigin: true,
-      secure: false
+    proxy: {
+      '/auth': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false
+      },
+      '/missions': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false
+      },
+      '/user': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+        secure: false
+      }
     }
   }
-}
 })

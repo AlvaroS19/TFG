@@ -1,13 +1,12 @@
 const express = require('express');
 const verifyToken = require('../middlewares/verifyToken');
 const router = express.Router();
-const { getUserStats, getUserProgress, getUserRewards, getUserConfig, 
+const { getUserStats, getUserRewards, getUserConfig, 
         getUserObjective, updateUserConfig,saveUserConfig, getXpHistory, getXpSummary } = require('../controllers/userController');
 
 
 
 router.get('/stats', verifyToken, getUserStats);
-router.get('/progress', verifyToken, getUserProgress);
 router.get('/rewards', verifyToken, getUserRewards);
 router.get('/config', verifyToken, getUserConfig, updateUserConfig);
 router.get('/objective', verifyToken, getUserObjective);

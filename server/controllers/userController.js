@@ -1,19 +1,25 @@
 const { db } = require('../services/firebase');
 const rewardsCatalog = require('../utils/rewardsCatalog');
+const { generarTodasLasMisiones } = require('../utils/generarTodasLasMisiones');
 
 const getUserStats = async (req, res) => {
   const uid = req.uid;
 
   try {
-    // 1. Leer estadísticas del usuario (XP, nivel, progreso)
+    // 1. Leer estadísticas del usuario
     const statsRef = db.collection('userStats').doc(uid);
     const statsDoc = await statsRef.get();
     const stats = statsDoc.exists ? statsDoc.data() : {};
 
-    // 2. Leer configuración del usuario (nickname, objetivo, dificultad)
+    // 2. Leer configuración del usuario
     const configRef = db.collection('userConfig').doc(uid);
     const configDoc = await configRef.get();
     const config = configDoc.exists ? configDoc.data() : {};
+
+    // ✅ Generar misiones si no están asignadas
+    if (config.goal) {
+      await generarTodasLasMisiones(uid, config.goal);
+    }
 
     // 3. Contar misiones completadas
     const completedSnap = await db
@@ -27,27 +33,16 @@ const getUserStats = async (req, res) => {
     let weeklyCompleted = 0;
     let specialCompleted = 0;
 
-    completedSnap.forEach(doc => {
-      const m = doc.data();
-      totalMissionsCompleted++;
-      if (m.categoria === 'diaria') dailyCompleted++;
-      if (m.categoria === 'semanal') weeklyCompleted++;
-      if (m.categoria === 'especial') specialCompleted++;
-    });
-        // Calcular dificultad media
     let dificultadTotal = 0;
     let dificultadCount = 0;
 
     completedSnap.forEach(doc => {
       const m = doc.data();
-
-      // ya estaban estas líneas
       totalMissionsCompleted++;
       if (m.categoria === 'diaria') dailyCompleted++;
       if (m.categoria === 'semanal') weeklyCompleted++;
       if (m.categoria === 'especial') specialCompleted++;
 
-      // nuevo: sumar dificultad
       if (m.dificultad) {
         if (m.dificultad === 'fácil') dificultadTotal += 1;
         else if (m.dificultad === 'media') dificultadTotal += 2;
@@ -64,7 +59,6 @@ const getUserStats = async (req, res) => {
       else dificultadPromedio = 'fácil';
     }
 
-
     // 4. Contar recompensas desbloqueadas
     const rewardsSnap = await db
       .collection('users')
@@ -74,7 +68,7 @@ const getUserStats = async (req, res) => {
 
     const totalRewardsUnlocked = rewardsSnap.size;
 
-    // 5. Enviar respuesta combinada
+    // 5. Respuesta
     res.status(200).json({
       uid,
       xp: stats.xp || 0,
@@ -335,7 +329,6 @@ const getXpSummary = async (req, res) => {
 
 module.exports = {
   getUserStats,
-  getUserProgress,
   getUserRewards,
   getUserConfig,
   getUserObjective,
