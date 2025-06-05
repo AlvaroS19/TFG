@@ -1,24 +1,22 @@
 const { admin, db } = require("../services/firebase");
-const {verificarGenerarMisiones} = require("../utils/verificarGenerarMisiones.js");
+const { actualizarMisionesDesbloqueadas } = require('../utils/actualizarDesbloqueadas')
 
 const getUserMissions = async (req, res) => {
   const uid = req.uid;
 
   try {
+    await actualizarMisionesDesbloqueadas(uid);
+
     const missionsSnapshot = await db
       .collection('users')
       .doc(uid)
       .collection('missions')
       .get();
 
-    const misiones = [];
-
-    missionsSnapshot.forEach(doc => {
-      misiones.push({
-        id: doc.id,
-        ...doc.data(),
-      });
-    });
+    const misiones = missionsSnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
 
     return res.status(200).json({
       ok: true,

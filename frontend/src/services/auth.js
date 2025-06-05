@@ -1,15 +1,16 @@
 const API = import.meta.env.VITE_API_URL || 'http://localhost:5000/auth'// Ajusta el puerto si tu backend usa otro
 
-export async function registerUser(email, password) {
+export async function registerUser({ name, lastName, email, password, objetivo }) {
   const res = await fetch(`${API}/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password })
-  })
+    body: JSON.stringify({ name, lastName, email, password, objetivo })
+  });
 
-  if (!res.ok) throw new Error((await res.json()).error)
-  return res.json()
-}
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || 'Registro fallido');
+  }}
 
 export async function loginUser(email, password) {
   const res = await fetch('/auth/login', {

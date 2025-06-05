@@ -43,17 +43,17 @@ export default defineConfig({
       '/auth': {
         target: 'http://localhost:5000',
         changeOrigin: true,
-        secure: false
+        secure: false,
       },
       '/missions': {
         target: 'http://localhost:5000',
         changeOrigin: true,
-        secure: false
+        secure: false,
       },
       '/user': {
         target: 'http://localhost:5000',
         changeOrigin: true,
-        secure: false
+        secure: false,
       }
     }
   }
