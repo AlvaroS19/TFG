@@ -1,6 +1,5 @@
 const { db } = require('../services/firebase');
 const rewardsCatalog = require('../utils/rewardsCatalog');
-const { generarTodasLasMisiones } = require('../utils/generarTodasLasMisiones');
 
 const getUserStats = async (req, res) => {
   const uid = req.uid;
@@ -15,11 +14,6 @@ const getUserStats = async (req, res) => {
     const configRef = db.collection('userConfig').doc(uid);
     const configDoc = await configRef.get();
     const config = configDoc.exists ? configDoc.data() : {};
-
-    // ✅ Generar misiones si no están asignadas
-    if (config.goal) {
-      await generarTodasLasMisiones(uid, config.goal);
-    }
 
     // 3. Contar misiones completadas
     const completedSnap = await db

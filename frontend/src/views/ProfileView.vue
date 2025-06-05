@@ -74,8 +74,7 @@
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getCookie } from '@/services/auth'
-import { toast } from 'vue3-toastify'
-import 'vue3-toastify/dist/index.css'
+import { notifySuccess, notifyError } from '@/utils/toastNotify'
 
 const router = useRouter()
 const editando = ref(false)
@@ -86,12 +85,12 @@ const perfil = ref({
   xp: 0,
   level: 1
 })
-const perfilOriginal = ref({}) // Para cancelar cambios
+const perfilOriginal = ref({})
 
 const cargarPerfil = async () => {
   const token = getCookie('idToken')
   const res = await fetch('http://localhost:5000/user/stats', {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: { Authorization: `Bearer ${token}` }
   })
 
   if (res.ok) {
@@ -104,6 +103,8 @@ const cargarPerfil = async () => {
       level: data.level || 1
     }
     perfilOriginal.value = { ...perfil.value }
+  } else {
+    notifyError('Error al cargar perfil')
   }
 }
 
@@ -114,7 +115,7 @@ const toggleEditar = async () => {
   }
 
   if (!perfil.value.nickname.trim() || !perfil.value.goal) {
-    toast.error('⚠️ Rellena todos los campos antes de guardar')
+    notifyError('Rellena todos los campos antes de guardar')
     return
   }
 
@@ -123,20 +124,20 @@ const toggleEditar = async () => {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
     body: JSON.stringify({
       nickname: perfil.value.nickname.trim(),
       objetivo: perfil.value.goal
-    }),
+    })
   })
 
   if (res.ok) {
-    toast.success('✅ Perfil actualizado')
+    notifySuccess('Perfil actualizado')
     editando.value = false
     perfilOriginal.value = { ...perfil.value }
   } else {
-    toast.error('❌ Error al guardar cambios')
+    notifyError('Error al guardar cambios')
   }
 }
 

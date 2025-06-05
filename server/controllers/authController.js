@@ -1,14 +1,15 @@
 const { admin, db } = require('../services/firebase');
 const fetch = require('node-fetch');
-const { generarTodasLasMisiones } = require("../utils/generarTodasLasMisiones");
+const { verificarGenerarMisiones } = require("../utils/verificarGenerarMisiones"); // ✅ USO CORRECTO
 
-// ✅ Registro de usuario + guardar perfil + asignar misiones
 const registerUser = async (req, res) => {
   const { name, lastName, email, password, objetivo } = req.body;
 
   if (!email || !password || !name || !lastName || !objetivo) {
     return res.status(400).json({ error: 'Faltan campos obligatorios' });
   }
+
+  console.log('📥 Body recibido en registro:', req.body);
 
   try {
     // 1️⃣ Crear usuario en Firebase Authentication
@@ -42,8 +43,8 @@ const registerUser = async (req, res) => {
       difficulty: 'media',
     });
 
-    // 5️⃣ Asignar primeras misiones personalizadas
-    await generarTodasLasMisiones(uid, objetivo);
+    // ✅ 5️⃣ Generar misiones iniciales con control de desbloqueo
+    await verificarGenerarMisiones(uid, objetivo);
 
     res.status(201).json({
       message: 'Usuario registrado correctamente',
@@ -55,7 +56,6 @@ const registerUser = async (req, res) => {
   }
 };
 
-// ✅ Login con Firebase REST y guardar sesión
 const login = async (req, res) => {
   const { email, password } = req.body;
 

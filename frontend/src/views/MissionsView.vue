@@ -1,6 +1,7 @@
 <template>
-  <div class="min-h-screen overflow-y-auto bg-[#0A1A2F] text-[#F5F0E1] p-6">
-    <h1 class="text-2xl font-bold text-center mb-6">📋 Todas tus misiones</h1>
+  <div class="min-h-screen bg-[#0A1A2F] text-[#F5F0E1]">
+    <div class="max-w-4xl mx-auto px-4 py-6 overflow-y-auto h-screen">
+      <h1 class="text-2xl font-bold text-center mb-6">📋 Todas tus misiones</h1>
 
     <!-- Filtro de categoría -->
     <div class="flex justify-center gap-2 mb-8 flex-wrap">
@@ -23,7 +24,6 @@
     <div v-if="misionesFiltradas.length" class="space-y-4">
       <div v-for="m in misionesFiltradas" :key="m.id">
         <div v-if="isUnlocked(m)">
-          <!-- 🔓 Mostrar misión desbloqueada -->
           <MissionCard
             :titulo="m.titulo"
             :descripcion="m.descripcion"
@@ -34,7 +34,6 @@
           />
         </div>
         <div v-else class="p-4 border border-[#F5F0E1]/30 rounded bg-[#F5F0E1]/5">
-          <!-- 🔒 Mostrar bloqueada -->
           <p class="text-lg font-semibold text-[#F5F0E1]/80">{{ m.titulo }}</p>
           <p class="text-sm text-[#F5F0E1]/50">🔒 Disponible en {{ tiempoRestante(m.unlockAt) }}</p>
         </div>
@@ -46,29 +45,27 @@
       No hay misiones de esta categoría ahora mismo.
     </div>
   </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import MissionCard from '../components/MissionCard.vue'
-import { getCookie } from '@/services/auth'
-import { toast } from 'vue3-toastify'
-import 'vue3-toastify/dist/index.css'
+import MissionCard from '@/components/MissionCard.vue'
+import { notifySuccess, notifyError } from '@/utils/toastNotify'
+import { getMissions, completeMission } from '@/services/missions'
 
 const misiones = ref([])
 const categoriaSeleccionada = ref('todas')
 const categoriasDisponibles = ['todas', 'diaria', 'semanal', 'especial']
 
-// Filtrado
-const misionesFiltradas = computed(() => {
-  return categoriaSeleccionada.value === 'todas'
+const misionesFiltradas = computed(() =>
+  categoriaSeleccionada.value === 'todas'
     ? misiones.value
     : misiones.value.filter(m => m.categoria === categoriaSeleccionada.value)
-})
+)
 
 const isUnlocked = (mision) => {
-  if (!mision.unlockAt) return true
-  return new Date(mision.unlockAt) <= new Date()
+  return mision.desbloqueada === true;
 }
 
 const tiempoRestante = (unlockAt) => {
@@ -83,51 +80,35 @@ const tiempoRestante = (unlockAt) => {
 }
 
 const cargarMisiones = async () => {
-  const token = getCookie('idToken')
-  const res = await fetch('http://localhost:5000/missions', {
-    headers: { Authorization: `Bearer ${token}` }
-  })
-
-  if (res.ok) {
-    const data = await res.json()
+  try {
+    const data = await getMissions()
     const recibidas = Array.isArray(data.misiones) ? data.misiones : []
     misiones.value = recibidas
-      .filter(m => !m.completada)
-      .map((m, i) => ({
-        ...m,
-        id: m.id || `${m.titulo}-${m.generatedAt || i}`
-      }))
-  } else {
-    console.error('❌ Error al cargar misiones')
+    .filter(m => !m.completada && m.desbloqueada === true)
+    .map((m, i) => ({
+      ...m,
+      id: m.id || `${m.titulo}-${m.generatedAt || i}`
+    }))
+  } catch (e) {
+    notifyError('❌ Error al cargar misiones')
   }
 }
 
 const completarMision = async (id) => {
-  const token = getCookie('idToken')
   try {
-    const res = await fetch('http://localhost:5000/missions/complete', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({ missionId: id })
-    })
-
-    if (!res.ok) throw new Error()
-
+    await completeMission(id)
     misiones.value = misiones.value.filter(m => m.id !== id)
-    toast.success('✅ Misión completada', { autoClose: 3000 })
-  } catch (error) {
-    toast.error('❌ Error al completar misión', { autoClose: 3000 })
+    notifySuccess('✅ Misión completada')
+  } catch {
+    notifyError('❌ Error al completar misión')
   }
 }
 
-onMounted(() => {
-  cargarMisiones()
-})
+onMounted(cargarMisiones)
 </script>
+
 <style scoped>
+/* Scroll personalizado */
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -140,6 +121,24 @@ onMounted(() => {
   border: 2px solid #0A1A2F;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #fb923c; /* más claro al hacer hover */
+  background-color: #fb923c;
+}
+
+/* Asegurar scroll vertical en pantallas pequeñas */
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+body > #app {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+body > #app > * {
+  flex: 1;
+  overflow-y: auto;
 }
 </style>

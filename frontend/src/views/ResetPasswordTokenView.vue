@@ -3,7 +3,6 @@
     <h1 class="text-2xl font-bold mb-6 text-center">Nueva contraseña</h1>
 
     <form @submit.prevent="handleReset" class="w-full max-w-xs flex flex-col gap-4">
-      <!-- Nueva contraseña -->
       <div class="relative w-full">
         <BaseInput
           label="Nueva contraseña"
@@ -21,7 +20,6 @@
       </div>
       <p v-if="passwordError" class="text-red-500 text-sm -mt-2">{{ passwordError }}</p>
 
-      <!-- Confirmar contraseña -->
       <BaseInput
         label="Confirmar contraseña"
         v-model="repeatPassword"
@@ -32,6 +30,10 @@
 
       <BaseButton type="submit">Actualizar contraseña</BaseButton>
     </form>
+
+    <p v-if="!token" class="mt-6 text-red-500 text-sm text-center max-w-xs">
+      ⚠️ Token inválido o ausente. No puedes restablecer tu contraseña sin un enlace válido.
+    </p>
   </div>
 </template>
 
@@ -41,6 +43,7 @@ import { useRoute, useRouter } from 'vue-router'
 import BaseInput from '@/components/BaseInput.vue'
 import BaseButton from '@/components/BaseButton.vue'
 import { Eye, EyeOff } from 'lucide-vue-next'
+import { notifySuccess, notifyError } from '@/utils/toastNotify'
 
 const route = useRoute()
 const router = useRouter()
@@ -62,9 +65,14 @@ function isValidPassword(pwd) {
   return regex.test(pwd)
 }
 
-function handleReset() {
+async function handleReset() {
   passwordError.value = ''
   repeatError.value = ''
+
+  if (!token.value) {
+    notifyError('❌ No puedes restablecer sin un token válido')
+    return
+  }
 
   if (!isValidPassword(password.value)) {
     passwordError.value = 'Debe tener mínimo 8 caracteres, una mayúscula y un número'
@@ -76,13 +84,13 @@ function handleReset() {
     return
   }
 
-  if (!token.value) {
-    console.error('Error al cargar datos')
-    return
+  // Simulación de llamada a backend:
+  try {
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    notifySuccess('Contraseña restablecida correctamente')
+    router.push('/login')
+  } catch (err) {
+    notifyError('Error al actualizar contraseña')
   }
-
-  // Simulación de llamada real
-  console.log('Operación completada')
-  router.push('/login')
 }
 </script>
