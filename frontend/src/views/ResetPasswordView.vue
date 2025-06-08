@@ -26,9 +26,9 @@
 
 <script setup>
 import { ref } from 'vue'
-import BaseInput from '@/components/BaseInput.vue'
-import BaseButton from '@/components/BaseButton.vue'
-import { notifySuccess, notifyError } from '@/utils/toastNotify'
+import BaseInput from '../components/BaseInput.vue'
+import BaseButton from '../components/BaseButton.vue'
+import { notifySuccess, notifyError } from '../utils/toastNotify'
 
 const email = ref('')
 const emailError = ref('')

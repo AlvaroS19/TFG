@@ -13,8 +13,8 @@
 </template>
 
 <script setup>
-import BottomNav from '@/components/BottomNav.vue'
-import Sidebar from '@/components/Sidebar.vue'
-import { toggleSidebar } from '@/composables/useSidebar'
+import BottomNav from '../components/BottomNav.vue'
+import Sidebar from '../components/Sidebar.vue'
+import { toggleSidebar } from '../composables/useSidebar'
 import { Menu } from 'lucide-vue-next'
 </script>

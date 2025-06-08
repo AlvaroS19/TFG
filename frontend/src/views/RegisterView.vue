@@ -73,11 +73,11 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Eye, EyeOff } from 'lucide-vue-next'
-import { notifySuccess, notifyError } from '@/utils/toastNotify'
+import { notifySuccess, notifyError } from '../utils/toastNotify'
 
-import BaseInput from '@/components/BaseInput.vue'
-import BaseButton from '@/components/BaseButton.vue'
-import { registerUser } from '@/services/auth'
+import BaseInput from '../components/BaseInput.vue'
+import BaseButton from '../components/BaseButton.vue'
+import { registerUser } from '../services/auth'
 
 const router = useRouter()
 
@@ -152,10 +152,13 @@ async function handleRegister() {
       objetivo: goal.value
     })
 
-    notifySuccess('Registro exitoso. Inicia sesión.')
-    router.push('/login')
+    notifySuccess('Cuenta creada correctamente. Redirigiendo al login...')
+    setTimeout(() => {
+      router.push('/login')
+    }, 2000)
+
   } catch (err) {
-    notifyError('Error al registrar. Intenta con otro correo.')
+    notifyError('Error al registrar.')
   }
 }
 </script>

@@ -57,8 +57,9 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { getCookie } from '@/services/auth'
-import XpChart from '@/components/XpChart.vue'
+import { getCookie } from '../services/auth'
+import XpChart from '../components/XpChart.vue'
+import { apiFetch } from '../services/api';
 
 const stats = ref({ xp: 0, level: 1 })
 const perfil = ref({ nickname: '' })
@@ -74,7 +75,7 @@ const porcentajeNivel = computed(() =>
 
 const cargarStats = async () => {
   const token = getCookie('idToken')
-  const res = await fetch('http://localhost:5000/user/stats', {
+  const res = await apiFetch('/user/stats', {
     headers: { Authorization: `Bearer ${token}` }
   })
   if (res.ok) stats.value = await res.json()
@@ -82,7 +83,7 @@ const cargarStats = async () => {
 
 const cargarPerfil = async () => {
   const token = getCookie('idToken')
-  const res = await fetch('http://localhost:5000/user/stats', {
+  const res = await apiFetch('/user/stats', {
     headers: { Authorization: `Bearer ${token}` }
   })
   if (res.ok) {
@@ -93,7 +94,7 @@ const cargarPerfil = async () => {
 
 const cargarMisionDelDia = async () => {
   const token = getCookie('idToken')
-  const res = await fetch('http://localhost:5000/missions', {
+  const res = await apiFetch('/missions', {
     headers: { Authorization: `Bearer ${token}` }
   })
 

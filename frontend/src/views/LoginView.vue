@@ -47,11 +47,11 @@
 import { ref, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { Eye, EyeOff } from 'lucide-vue-next'
-import { notifySuccess, notifyError } from '@/utils/toastNotify'
+import { notifySuccess, notifyError } from '../utils/toastNotify'
 
-import BaseInput from '@/components/BaseInput.vue'
-import BaseButton from '@/components/BaseButton.vue'
-import { loginUser, getCookie } from '@/services/auth'
+import BaseInput from '../components/BaseInput.vue'
+import BaseButton from '../components/BaseButton.vue'
+import { loginUser, getCookie } from '../services/auth'
 
 const email = ref('')
 const password = ref('')

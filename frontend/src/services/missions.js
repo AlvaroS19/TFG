@@ -7,12 +7,16 @@ export async function getMissions() {
   return res.data;
 };
 
-export const completeMission = async (id) => {
-  const res = await axios.post(`${API_URL}/complete`, { id });
+export const completeMission = async (missionId) => {
+  const res = await axios.post(`${API_URL}/complete`, { missionId }, {
+    withCredentials: true
+  });
   return res.data;
 };
 
 export const getCompletedMissions = async () => {
-  const res = await axios.get(`${API_URL}/completed`);
+  const res = await axios.get(`${API_URL}/completed`, {
+    withCredentials: true
+  });
   return res.data;
 };

@@ -27,6 +27,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { getCookie } from '@/services/auth'
+import { apiFetch } from '../services/api.js';
 
 const xpHoy = ref(0)
 const xpSemana = ref(0)
@@ -36,7 +37,7 @@ const metaSemanal = 150
 const fetchXpData = async () => {
   try {
     const token = getCookie('idToken')
-    const res = await fetch('http://localhost:5000/user/xp-history', {
+    const res = await apiFetch('/user/xp-history', {
       headers: { Authorization: `Bearer ${token}` }
     })
 

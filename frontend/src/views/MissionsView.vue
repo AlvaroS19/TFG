@@ -50,9 +50,9 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import MissionCard from '@/components/MissionCard.vue'
-import { notifySuccess, notifyError } from '@/utils/toastNotify'
-import { getMissions, completeMission } from '@/services/missions'
+import MissionCard from '../components/MissionCard.vue'
+import { notifySuccess, notifyError } from '../utils/toastNotify'
+import { getMissions, completeMission } from '../services/missions'
 
 const misiones = ref([])
 const categoriaSeleccionada = ref('todas')

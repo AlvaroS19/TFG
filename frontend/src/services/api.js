@@ -1,7 +1,9 @@
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+
 export async function apiFetch(path, options = {}) {
   const defaultOptions = {
     headers: { 'Content-Type': 'application/json' },
-    credentials: 'include' // 👈 ENVÍA LAS COOKIES de sesión al backend
+    credentials: 'include' // Envía cookies de sesión
   };
 
   const finalOptions = {
@@ -13,7 +15,7 @@ export async function apiFetch(path, options = {}) {
     }
   };
 
-  const response = await fetch(path, finalOptions);
+  const response = await fetch(`${BASE_URL}${path}`, finalOptions);
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));

@@ -73,8 +73,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { getCookie } from '@/services/auth'
-import { notifySuccess, notifyError } from '@/utils/toastNotify'
+import { getCookie } from '../services/auth'
+import { notifySuccess, notifyError } from '../utils/toastNotify'
+import { apiFetch } from '../services/api';
 
 const router = useRouter()
 const editando = ref(false)
@@ -89,7 +90,7 @@ const perfilOriginal = ref({})
 
 const cargarPerfil = async () => {
   const token = getCookie('idToken')
-  const res = await fetch('http://localhost:5000/user/stats', {
+  const res = await apiFetch('/user/stats', {
     headers: { Authorization: `Bearer ${token}` }
   })
 
@@ -120,7 +121,7 @@ const toggleEditar = async () => {
   }
 
   const token = getCookie('idToken')
-  const res = await fetch('http://localhost:5000/user/config', {
+  const res = await apiFetch('/user/config', {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,

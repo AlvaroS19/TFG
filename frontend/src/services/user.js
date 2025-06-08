@@ -1,8 +1,9 @@
 import { getCookie } from './auth';
+import { apiFetch } from '../services/api';
 
 export const getUserConfig = async () => {
   const token = getCookie('idToken');
-  const res = await fetch('http://localhost:5000/user/objective', {
+  const res = await apiFetch('/user/objective', {
     headers: {
       Authorization: `Bearer ${token}`
     }

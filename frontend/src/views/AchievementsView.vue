@@ -42,9 +42,10 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getCookie } from '@/services/auth'
+import { getCookie } from '../services/auth'
 import { toast } from 'vue3-toastify'
 import 'vue3-toastify/dist/index.css'
+import { apiFetch } from '../services/api';
 
 const logrosDesbloqueados = ref([])
 
@@ -132,7 +133,7 @@ const esDesbloqueado = (logro) => {
 const cargarLogros = async () => {
   try {
     const token = getCookie('idToken')
-    const res = await fetch('http://localhost:5000/user/rewards', {
+    const res = await apiFetch('/user/rewards', {
       headers: {
         Authorization: `Bearer ${token}`
       }

@@ -29,13 +29,14 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { apiFetch } from '../services/api';
 
 const completadas = ref([]);
 const totalCompletadas = computed(() => completadas.value.length);
 
 const cargarCompletadas = async () => {
   try {
-    const res = await fetch('http://localhost:5000/missions/completed', {
+    const res = await apiFetch('/missions/completed', {
       credentials: 'include',
     });
 

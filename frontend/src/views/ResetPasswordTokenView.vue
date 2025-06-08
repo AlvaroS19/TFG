@@ -40,10 +40,10 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import BaseInput from '@/components/BaseInput.vue'
-import BaseButton from '@/components/BaseButton.vue'
+import BaseInput from '../components/BaseInput.vue'
+import BaseButton from '../components/BaseButton.vue'
 import { Eye, EyeOff } from 'lucide-vue-next'
-import { notifySuccess, notifyError } from '@/utils/toastNotify'
+import { notifySuccess, notifyError } from '../utils/toastNotify'
 
 const route = useRoute()
 const router = useRouter()
