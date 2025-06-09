@@ -36,12 +36,12 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { X, Gift, LogOut, Home, Trophy, User, Target } from 'lucide-vue-next'
+import { X, Gift, Trophy, Target } from 'lucide-vue-next'
 import { toast } from 'vue3-toastify'
-import { getCookie } from '@/services/auth';
+import { getCookie } from '@/services/auth'
+import { isSidebarOpen } from '@/composables/useSidebar' // 👈 global reactive
 
 const router = useRouter()
-const isOpen = ref(false)
 
 const links = [
   { label: 'Misiones completadas', route: '/missions/completed', icon: Target },
@@ -50,22 +50,16 @@ const links = [
 ]
 
 function navigate(routePath) {
-  isOpen.value = false
+  isSidebarOpen.value = false // ✅ cerrar sidebar global
   router.push(routePath)
 }
 
 function logout() {
-  document.cookie = 'idToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC';
-
-  const token = getCookie('idToken');
-
-  toast('Sesión cerrada correctamente', { type: 'success' });
-
-  router.push('/login');
+  document.cookie = 'idToken=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC'
+  const token = getCookie('idToken')
+  toast('Sesión cerrada correctamente', { type: 'success' })
+  router.push('/login')
 }
-
-import { isSidebarOpen, toggleSidebar } from '@/composables/useSidebar'
-
 </script>
 <style scoped>
 .slide-enter-active, .slide-leave-active {

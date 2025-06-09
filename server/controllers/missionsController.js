@@ -172,9 +172,66 @@ const createMission = async (req, res) => {
   }
 };
 
+const regenerateMissions = async (req, res) => {
+  const uid = req.uid;
+
+  try {
+    const userRef = db.collection('users').doc(uid);
+    const userSnap = await userRef.get();
+    const userData = userSnap.data();
+    const objetivo = userData?.objetivo;
+
+    if (!objetivo) {
+      return res.status(400).json({ error: 'El usuario no tiene un objetivo definido' });
+    }
+
+    // Leer catálogo desde Firestore
+    const catalogSnap = await db.collection('missionsCatalog')
+      .where('objetivo', '==', objetivo)
+      .get();
+
+    const catalogo = catalogSnap.docs.map(doc => doc.data());
+
+    if (!catalogo.length) {
+      return res.status(404).json({ error: 'No hay misiones para este objetivo' });
+    }
+
+    // Eliminar misiones anteriores
+    const missionsRef = db.collection('users').doc(uid).collection('missions');
+    const oldSnap = await missionsRef.get();
+    const deleteBatch = db.batch();
+
+    oldSnap.forEach(doc => deleteBatch.delete(doc.ref));
+    await deleteBatch.commit();
+
+    // Crear nuevas misiones
+    const now = new Date().toISOString();
+    const createBatch = db.batch();
+
+    catalogo.slice(0, 5).forEach(m => {
+      const newRef = missionsRef.doc();
+      createBatch.set(newRef, {
+        ...m,
+        completada: false,
+        generatedAt: now,
+        desbloqueada: true
+      });
+    });
+
+    await createBatch.commit();
+
+    return res.status(200).json({ ok: true, msg: 'Misiones regeneradas desde Firebase' });
+  } catch (err) {
+    console.error('❌ Error en regenerateMissions:', err);
+    return res.status(500).json({ error: 'Error al regenerar misiones' });
+  }
+}
+
+
 module.exports = {
   getUserMissions,
   completeMission,
   getCompletedMissions,
   createMission,
+  regenerateMissions,
 };

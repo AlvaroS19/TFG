@@ -37,20 +37,19 @@ const metaSemanal = 150
 const fetchXpData = async () => {
   try {
     const token = getCookie('idToken')
-    const res = await apiFetch('/user/xp-history', {
+    const { xpByDate } = await apiFetch('/user/xp-history', {
       headers: { Authorization: `Bearer ${token}` }
     })
 
-    const { xpByDate } = await res.json()
-
     const today = new Date().toISOString().slice(0, 10)
-    const hoyXP = xpByDate?.[today] || 0
-    xpHoy.value = hoyXP
+    xpHoy.value = xpByDate?.[today] || 0
 
-    const xp7dias = Object.entries(xpByDate || {}).filter(([fecha]) => {
-      const diff = (new Date() - new Date(fecha)) / (1000 * 60 * 60 * 24)
-      return diff <= 6
-    }).reduce((acc, [, xp]) => acc + xp, 0)
+    const xp7dias = Object.entries(xpByDate || {})
+      .filter(([fecha]) => {
+        const diff = (new Date() - new Date(fecha)) / (1000 * 60 * 60 * 24)
+        return diff <= 6
+      })
+      .reduce((acc, [, xp]) => acc + xp, 0)
 
     xpSemana.value = xp7dias
   } catch (error) {

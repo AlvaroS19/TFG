@@ -227,6 +227,7 @@ const updateUserConfig = async (req, res) => {
     res.status(500).json({ error: 'Error al actualizar configuración' });
   }
 };
+
 const saveUserConfig = async (req, res) => {
   const uid = req.uid;
   const { nickname, objetivo } = req.body;

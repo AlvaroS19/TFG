@@ -68,23 +68,22 @@ const catalogoCompleto = {
 }
 
 const cargarRecompensas = async () => {
-  const token = getCookie('idToken')
+  try {
+    const token = getCookie('idToken')
+    const desbloqueadas = await apiFetch('/user/rewards', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
 
-  const res = await apiFetch('/user/rewards', {
-    headers: { Authorization: `Bearer ${token}` }
-  })
+    const logrosDesbloqueados = desbloqueadas.map(r => r.id)
+    const bloqueadas = Object.entries(catalogoCompleto)
+      .filter(([clave]) => !logrosDesbloqueados.includes(clave))
+      .map(([clave, datos]) => ({ ...datos, logro: clave }))
 
-  if (!res.ok) return console.error('Error al cargar recompensas')
-
-  const desbloqueadas = await res.json()
-
-  const logrosDesbloqueados = desbloqueadas.map(r => r.logro)
-  const bloqueadas = Object.entries(catalogoCompleto)
-    .filter(([clave]) => !logrosDesbloqueados.includes(clave))
-    .map(([clave, datos]) => ({ ...datos, logro: clave }))
-
-  recompensasDesbloqueadas.value = desbloqueadas
-  recompensasBloqueadas.value = bloqueadas
+    desbloqueadas.sort((a, b) => new Date(b.fecha) - new Date(a.fecha))
+    recompensasDesbloqueadas.value = desbloqueadas
+    recompensasBloqueadas.value = bloqueadas
+  } catch (err) {
+  }
 }
 
 onMounted(() => {

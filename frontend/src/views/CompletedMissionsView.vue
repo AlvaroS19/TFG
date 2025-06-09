@@ -36,18 +36,13 @@ const totalCompletadas = computed(() => completadas.value.length);
 
 const cargarCompletadas = async () => {
   try {
-    const res = await apiFetch('/missions/completed', {
+    const data = await apiFetch('/missions/completed', {
       credentials: 'include',
     });
 
-    if (res.ok) {
-      const data = await res.json();
-      completadas.value = Array.isArray(data.misiones) ? data.misiones : [];
-    } else {
-      console.error('❌ Error al cargar misiones completadas');
-    }
+    completadas.value = Array.isArray(data?.misiones) ? data.misiones : [];
   } catch (error) {
-    console.error('❌ Error inesperado:', error);
+    console.error('❌ Error al cargar misiones completadas:', error);
   }
 };
 
@@ -55,7 +50,11 @@ const agrupadas = computed(() => {
   const grupos = {};
   completadas.value.forEach(m => {
     const fecha = m.completedAt
-      ? new Date(m.completedAt).toLocaleDateString()
+      ? new Date(m.completedAt).toLocaleDateString('es-ES', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric'
+      })
       : 'Fecha desconocida';
 
     if (!grupos[fecha]) grupos[fecha] = [];

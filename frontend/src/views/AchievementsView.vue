@@ -127,22 +127,19 @@ const TODOS_LOS_LOGROS = [
 ]
 
 const esDesbloqueado = (logro) => {
-  return logrosDesbloqueados.value.some(r => r.includes(logro.clave))
+  return logrosDesbloqueados.value.some(r => r.id === logro.clave)
 }
 
 const cargarLogros = async () => {
   try {
     const token = getCookie('idToken')
-    const res = await apiFetch('/user/rewards', {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    })
+    const data = await apiFetch('/user/rewards', {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
 
-    if (!res.ok) throw new Error()
-
-    const data = await res.json()
-    logrosDesbloqueados.value = data.rewards || []
+  logrosDesbloqueados.value = data || []
   } catch (error) {
     console.error('❌ Error al cargar logros:', error)
     toast.error('No se pudieron cargar los logros', { autoClose: 3000 })

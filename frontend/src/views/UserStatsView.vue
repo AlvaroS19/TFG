@@ -81,14 +81,13 @@ const porcentajeNivel = computed(() =>
 onMounted(async () => {
   const token = getCookie('idToken')
   try {
-    const res = await apiFetch('/user/stats', {
+    const data = await apiFetch('/user/stats', {
       headers: { Authorization: `Bearer ${token}` },
     })
-    const data = await res.json()
-    if (!res.ok) throw new Error(data.error)
     stats.value = data
   } catch (err) {
-    console.error('❌ Error al cargar estadísticas:', err)
+    console.error('Error al cargar estadísticas:', err)
   }
 })
+
 </script>

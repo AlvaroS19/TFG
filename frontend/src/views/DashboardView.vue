@@ -59,7 +59,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { getCookie } from '../services/auth'
 import XpChart from '../components/XpChart.vue'
-import { apiFetch } from '../services/api';
+import { apiFetch } from '../services/api'
 
 const stats = ref({ xp: 0, level: 1 })
 const perfil = ref({ nickname: '' })
@@ -74,51 +74,46 @@ const porcentajeNivel = computed(() =>
 )
 
 const cargarStats = async () => {
-  const token = getCookie('idToken')
-  const res = await apiFetch('/user/stats', {
-    headers: { Authorization: `Bearer ${token}` }
-  })
-  if (res.ok) stats.value = await res.json()
-}
-
-const cargarPerfil = async () => {
-  const token = getCookie('idToken')
-  const res = await apiFetch('/user/stats', {
-    headers: { Authorization: `Bearer ${token}` }
-  })
-  if (res.ok) {
-    const data = await res.json()
-    perfil.value.nickname = data.nickname
+  try {
+    const token = getCookie('idToken')
+    const data = await apiFetch('/user/stats', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    stats.value = data
+    perfil.value.nickname = data.nickname || ''
+  } catch (err) {
+    console.error('❌ Error cargando stats:', err)
   }
 }
 
 const cargarMisionDelDia = async () => {
-  const token = getCookie('idToken')
-  const res = await apiFetch('/missions', {
-    headers: { Authorization: `Bearer ${token}` }
-  })
+  try {
+    const token = getCookie('idToken')
+    const data = await apiFetch('/missions', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
 
-  if (res.ok) {
-    const data = await res.json()
-    const misiones = Array.isArray(data.misiones) ? data.misiones : []
+    const misiones = Array.isArray(data?.misiones) ? data.misiones : []
 
     const hoy = new Date()
     hoy.setHours(0, 0, 0, 0)
 
     const misionHoy = misiones.find(m => {
       if (m.completada) return false
-      if (!m.generatedAt) return false
-      const fecha = new Date(m.generatedAt)
-      fecha.setHours(0, 0, 0, 0)
-      return fecha.getTime() === hoy.getTime()
+      const gen = m.generatedAt ? new Date(m.generatedAt) : null
+      if (!gen) return false
+
+      gen.setHours(0, 0, 0, 0)
+      return gen.getTime() === hoy.getTime()
     })
 
     misionDelDia.value = misionHoy || null
+  } catch (err) {
+    console.error('❌ Error cargando misión del día:', err)
   }
 }
 
 onMounted(async () => {
-  await cargarPerfil()
   await cargarStats()
   await cargarMisionDelDia()
 })

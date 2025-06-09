@@ -16,9 +16,6 @@
       <h2 v-else class="text-xl font-bold truncate">{{ perfil.nickname || 'Nombre no configurado' }}</h2>
     </div>
 
-    <!-- Email -->
-    <p class="text-sm text-[#F5F0E1]/70 mb-1">{{ perfil.email || 'Correo no disponible' }}</p>
-
     <!-- Objetivo editable -->
     <div class="w-full max-w-xs mb-4">
       <select
@@ -90,12 +87,11 @@ const perfilOriginal = ref({})
 
 const cargarPerfil = async () => {
   const token = getCookie('idToken')
-  const res = await apiFetch('/user/stats', {
-    headers: { Authorization: `Bearer ${token}` }
-  })
+  try {
+    const data = await apiFetch('/user/stats', {
+      headers: { Authorization: `Bearer ${token}` }
+    })
 
-  if (res.ok) {
-    const data = await res.json()
     perfil.value = {
       nickname: data.nickname || '',
       email: data.email || '',
@@ -104,8 +100,9 @@ const cargarPerfil = async () => {
       level: data.level || 1
     }
     perfilOriginal.value = { ...perfil.value }
-  } else {
+  } catch (err) {
     notifyError('Error al cargar perfil')
+    console.error(err)
   }
 }
 
@@ -121,24 +118,25 @@ const toggleEditar = async () => {
   }
 
   const token = getCookie('idToken')
-  const res = await apiFetch('/user/config', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      nickname: perfil.value.nickname.trim(),
-      objetivo: perfil.value.goal
+  try {
+    await apiFetch('/user/config', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        nickname: perfil.value.nickname.trim(),
+        objetivo: perfil.value.goal
+      })
     })
-  })
 
-  if (res.ok) {
     notifySuccess('Perfil actualizado')
     editando.value = false
     perfilOriginal.value = { ...perfil.value }
-  } else {
+  } catch (err) {
     notifyError('Error al guardar cambios')
+    console.error(err)
   }
 }
 
