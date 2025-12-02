@@ -8,8 +8,15 @@ require('dotenv').config();
 const app = express();
 
 app.use(cors({
-  origin: (origin, callback) => callback(null, true),
-  credentials: true
+  origin: [
+    'https://fitquest-puce.vercel.app',
+    'http://localhost:5173',  // Para desarrollo local
+    'http://localhost:5174',
+    'http://192.168.1.131:5173'  // Tu IP local
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
 }));
 
 app.use(cookieParser());
