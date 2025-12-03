@@ -82,10 +82,10 @@ El resultado: **un sistema de progresión que hace que el ejercicio físico sea 
 <img src="screenshots/5-stats.png" alt="Estadísticas" width="700"/>
 
 ### Logros
-<img src="screenshots/Logros.png" alt="Logros" width="700"/>
+<img src="screenshots/6-achievements.png" alt="Logros" width="700"/>
 
 ### Recompensas
-<img src="screenshots/Recompensas.png" alt="Recompensas" width="700"/>
+<img src="screenshots/7-rewards.png" alt="Recompensas" width="700"/>
 
 </div>
 
