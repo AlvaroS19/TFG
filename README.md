@@ -220,7 +220,6 @@ El backend estará disponible en `http://localhost:5000`
 ## 🌐 Demo en Producción
 
 - **🌍 Aplicación:** [https://fitquest-puce.vercel.app](https://fitquest-puce.vercel.app)
-- **🔗 API Backend:** [https://tfg-production-6ac5.up.railway.app](https://tfg-production-6ac5.up.railway.app)
 
 ---
 
