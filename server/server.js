@@ -7,59 +7,17 @@ require('dotenv').config();
 
 const app = express();
 
-// 🔧 CORS Configuration
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    
-    const allowedOrigins = [
-      'https://fitquest-puce.vercel.app',
-      'http://localhost:5173',
-      'http://localhost:5174',
-      'http://192.168.1.131:5173'
-    ];
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      return callback(null, true);
-    }
-    
-    if (origin.includes('vercel.app')) {
-      return callback(null, true);
-    }
-    
-    callback(null, true);
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie', 'X-Requested-With'],
-  exposedHeaders: ['Set-Cookie'],
-  optionsSuccessStatus: 200
-};
-
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
-
-// 🔧 Middleware adicional para asegurar headers CORS en todas las respuestas
+// CORS ultra-permisivo para testing
 app.use((req, res, next) => {
-  const origin = req.headers.origin;
+  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Cookie');
+  res.header('Access-Control-Expose-Headers', 'Set-Cookie');
   
-  if (origin && (
-    origin === 'https://fitquest-puce.vercel.app' ||
-    origin.includes('vercel.app') ||
-    origin.includes('localhost')
-  )) {
-    res.setHeader('Access-Control-Allow-Origin', origin);
-    res.setHeader('Access-Control-Allow-Credentials', 'true');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie, X-Requested-With');
-    res.setHeader('Access-Control-Expose-Headers', 'Set-Cookie');
-  }
-  
-  // Manejar preflight
   if (req.method === 'OPTIONS') {
     return res.sendStatus(200);
   }
-  
   next();
 });
 
@@ -71,11 +29,16 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     httpOnly: true, 
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    secure: true,
+    sameSite: 'none',
     maxAge: 24 * 60 * 60 * 1000
   }
 }));
+
+// Ruta de prueba
+app.get('/test', (req, res) => {
+  res.json({ message: 'Backend funcionando correctamente', timestamp: new Date() });
+});
 
 // 📦 Rutas API
 const authRoutes = require('./routes/auth');
@@ -100,4 +63,5 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
   console.log(`🌍 Entorno: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`🔗 Servidor accesible en: http://0.0.0.0:${PORT}`);
 });
