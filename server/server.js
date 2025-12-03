@@ -7,7 +7,7 @@ require('dotenv').config();
 
 const app = express();
 
-// 🔧 CORS Configuration - MUST BE BEFORE OTHER MIDDLEWARE
+// CORS Configuration
 const corsOptions = {
   origin: function (origin, callback) {
     // Permitir peticiones sin origin (como Postman, apps móviles, etc.)
@@ -20,13 +20,18 @@ const corsOptions = {
       'http://192.168.1.131:5173'
     ];
     
+    // Verificar si es un origen permitido exacto
     if (allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      // En desarrollo, permitir cualquier origen
-      // En producción, esto debería ser más restrictivo
-      callback(null, true);
+      return callback(null, true);
     }
+    
+    // Verificar si es un subdominio de Vercel (deployments preview)
+    if (origin.includes('vercel.app')) {
+      return callback(null, true);
+    }
+    
+    // En desarrollo, permitir cualquier origen
+    callback(null, true);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
@@ -54,7 +59,7 @@ app.use(session({
   }
 }));
 
-// 📦 Rutas API
+// Rutas API
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/userRoutes');
 const missionsRoutes = require('./routes/missionsRoutes');
