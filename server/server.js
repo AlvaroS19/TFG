@@ -7,10 +7,9 @@ require('dotenv').config();
 
 const app = express();
 
-// CORS Configuration
+// 🔧 CORS Configuration
 const corsOptions = {
   origin: function (origin, callback) {
-    // Permitir peticiones sin origin (como Postman, apps móviles, etc.)
     if (!origin) return callback(null, true);
     
     const allowedOrigins = [
@@ -20,17 +19,14 @@ const corsOptions = {
       'http://192.168.1.131:5173'
     ];
     
-    // Verificar si es un origen permitido exacto
     if (allowedOrigins.indexOf(origin) !== -1) {
       return callback(null, true);
     }
     
-    // Verificar si es un subdominio de Vercel (deployments preview)
     if (origin.includes('vercel.app')) {
       return callback(null, true);
     }
     
-    // En desarrollo, permitir cualquier origen
     callback(null, true);
   },
   credentials: true,
@@ -41,9 +37,31 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
-// Manejar preflight requests explícitamente
 app.options('*', cors(corsOptions));
+
+// 🔧 Middleware adicional para asegurar headers CORS en todas las respuestas
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  
+  if (origin && (
+    origin === 'https://fitquest-puce.vercel.app' ||
+    origin.includes('vercel.app') ||
+    origin.includes('localhost')
+  )) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS, PATCH');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, Cookie, X-Requested-With');
+    res.setHeader('Access-Control-Expose-Headers', 'Set-Cookie');
+  }
+  
+  // Manejar preflight
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  
+  next();
+});
 
 app.use(cookieParser());
 app.use(express.json());
@@ -53,13 +71,13 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     httpOnly: true, 
-    secure: process.env.NODE_ENV === 'production', // true en producción
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' en producción para CORS
-    maxAge: 24 * 60 * 60 * 1000 // 24 horas
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    maxAge: 24 * 60 * 60 * 1000
   }
 }));
 
-// Rutas API
+// 📦 Rutas API
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/userRoutes');
 const missionsRoutes = require('./routes/missionsRoutes');
