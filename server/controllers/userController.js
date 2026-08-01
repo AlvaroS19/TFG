@@ -156,52 +156,6 @@ const getUserRewards = async (req, res) => {
   }
 };
 
-const getUserConfig = async (req, res) => {
-  const uid = req.uid;
-
-  try {
-    const doc = await db.collection("users").doc(uid).get();
-
-    if (!doc.exists) {
-      return res.status(404).json({ error: "No se encontró la configuración del usuario" });
-    }
-
-    const { objetivo } = doc.data();
-
-    if (!objetivo) {
-      return res.status(400).json({ error: "No se pudo obtener el objetivo" });
-    }
-
-    res.status(200).json({ objetivo });
-  } catch (err) {
-    console.error("❌ Error en getUserConfig:", err);
-    res.status(500).json({ error: "Error interno al obtener objetivo" });
-  }
-};
-
-const getUserObjective = async (req, res) => {
-  const uid = req.uid;
-
-  try {
-    const userRef = db.collection('users').doc(uid);
-    const userSnap = await userRef.get();
-
-    if (!userSnap.exists) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
-    }
-
-    const { objetivo } = userSnap.data();
-    if (!objetivo) {
-      return res.status(404).json({ error: 'El usuario no tiene objetivo definido' });
-    }
-
-    res.status(200).json({ objetivo });
-  } catch (err) {
-    console.error('❌ Error al obtener objetivo del usuario:', err);
-    res.status(500).json({ error: 'Error al obtener el objetivo' });
-  }
-};
-
 const updateUserConfig = async (req, res) => {
   const uid = req.uid;
   const { nickname, objetivo } = req.body;
@@ -225,31 +179,6 @@ const updateUserConfig = async (req, res) => {
   } catch (error) {
     console.error('❌ Error al actualizar userConfig:', error);
     res.status(500).json({ error: 'Error al actualizar configuración' });
-  }
-};
-
-const saveUserConfig = async (req, res) => {
-  const uid = req.uid;
-  const { nickname, objetivo } = req.body;
-
-  if (!nickname || !objetivo) {
-    return res.status(400).json({ error: 'Faltan campos obligatorios' });
-  }
-
-  try {
-    const userRef = db.collection('users').doc(uid);
-
-    // Guarda nickname y objetivo en el documento de usuario
-    await userRef.set({ name: nickname, objetivo }, { merge: true });
-
-    // Además, si usas userConfig en otro lado, también lo puedes mantener ahí
-    const configRef = db.collection('userConfig').doc(uid);
-    await configRef.set({ objetivo }, { merge: true });
-
-    res.json({ ok: true, message: 'Configuración actualizada correctamente' });
-  } catch (error) {
-    console.error('❌ Error al guardar configuración:', error);
-    res.status(500).json({ error: 'Error al guardar configuración' });
   }
 };
 
@@ -325,10 +254,7 @@ const getXpSummary = async (req, res) => {
 module.exports = {
   getUserStats,
   getUserRewards,
-  getUserConfig,
-  getUserObjective,
   updateUserConfig,
-  saveUserConfig,
   getXpHistory,
   getXpSummary,
 };

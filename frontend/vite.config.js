@@ -41,15 +41,15 @@ export default defineConfig({
   server: {
     proxy: {
         '/auth': {
-        target: 'http://192.168.1.131:5000',
+        target: 'http://localhost:5000',
         changeOrigin: true,
       },
       '/missions': {
-        target: 'http://192.168.1.131:5000',
+        target: 'http://localhost:5000',
         changeOrigin: true,
       },
       '/user': {
-        target: 'http://192.168.1.131:5000',
+        target: 'http://localhost:5000',
         changeOrigin: true,
       },
     }

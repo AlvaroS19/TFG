@@ -36,9 +36,7 @@ const totalCompletadas = computed(() => completadas.value.length);
 
 const cargarCompletadas = async () => {
   try {
-    const data = await apiFetch('/missions/completed', {
-      credentials: 'include',
-    });
+    const data = await apiFetch('/missions/completed');
 
     completadas.value = Array.isArray(data?.misiones) ? data.misiones : [];
   } catch (error) {

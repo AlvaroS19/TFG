@@ -4,22 +4,14 @@ const router = express.Router();
 const {
   getUserStats,
   getUserRewards,
-  getUserConfig,
-  getUserObjective,
   updateUserConfig,
-  saveUserConfig,
   getXpHistory,
   getXpSummary
 } = require('../controllers/userController');
 
 router.get('/stats', verifyToken, getUserStats);
 router.get('/rewards', verifyToken, getUserRewards);
-router.get('/config', verifyToken, getUserConfig);
 router.post('/config', verifyToken, updateUserConfig);
-
-router.get('/objective', verifyToken, getUserObjective);
-router.post('/save-config', verifyToken, saveUserConfig);
-
 router.get('/xp-history', verifyToken, getXpHistory);
 router.get('/xp/summary', verifyToken, getXpSummary);
 
