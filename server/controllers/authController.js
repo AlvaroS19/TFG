@@ -1,6 +1,6 @@
 const { admin, db } = require('../services/firebase');
 const fetch = require('node-fetch');
-const { verificarGenerarMisiones } = require("../utils/verificarGenerarMisiones"); // ✅ USO CORRECTO
+const { verificarGenerarMisiones } = require("../utils/verificarGenerarMisiones");
 
 const registerUser = async (req, res) => {
   const { name, lastName, email, password, objetivo } = req.body;
@@ -9,10 +9,7 @@ const registerUser = async (req, res) => {
     return res.status(400).json({ error: 'Faltan campos obligatorios' });
   }
 
-  console.log('📥 Body recibido en registro:', req.body);
-
   try {
-    // 1️⃣ Crear usuario en Firebase Authentication
     const userRecord = await admin.auth().createUser({
       email,
       password,
@@ -21,7 +18,6 @@ const registerUser = async (req, res) => {
 
     const uid = userRecord.uid;
 
-    // 2️⃣ Guardar datos del usuario
     await db.collection('users').doc(uid).set({
       name,
       lastName,
@@ -30,20 +26,17 @@ const registerUser = async (req, res) => {
       createdAt: new Date().toISOString(),
     });
 
-    // 3️⃣ Crear estadísticas iniciales
     await db.collection('userStats').doc(uid).set({
       xp: 0,
       level: 1,
     });
 
-    // 4️⃣ Guardar configuración inicial
     await db.collection('userConfig').doc(uid).set({
       nickname: name,
       goal: objetivo,
       difficulty: 'media',
     });
 
-    // ✅ 5️⃣ Generar misiones iniciales con control de desbloqueo
     await verificarGenerarMisiones(uid, objetivo);
 
     res.status(201).json({
@@ -52,7 +45,15 @@ const registerUser = async (req, res) => {
     });
   } catch (error) {
     console.error('❌ Error al registrar usuario:', error);
-    res.status(500).json({ error: error.message });
+
+    if (error.code === 'auth/email-already-exists') {
+      return res.status(409).json({ error: 'Ese correo ya está registrado' });
+    }
+    if (error.code === 'auth/invalid-password') {
+      return res.status(400).json({ error: 'La contraseña no cumple los requisitos mínimos' });
+    }
+
+    res.status(500).json({ error: 'No se pudo completar el registro. Inténtalo de nuevo.' });
   }
 };
 
@@ -76,7 +77,9 @@ const login = async (req, res) => {
     const data = await response.json();
 
     if (data.error) {
-      return res.status(401).json({ error: data.error.message });
+      // Mensaje genérico siempre, para no revelar si el email existe o no
+      console.warn('⚠️ Login fallido:', data.error.message);
+      return res.status(401).json({ error: 'Email o contraseña incorrectos' });
     }
 
     res.json({
@@ -87,7 +90,7 @@ const login = async (req, res) => {
     });
   } catch (error) {
     console.error('Error al iniciar sesión:', error);
-    res.status(500).json({ error: error.message || 'Error desconocido' });
+    res.status(500).json({ error: 'No se pudo iniciar sesión. Inténtalo de nuevo.' });
   }
 };
 
