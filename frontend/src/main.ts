@@ -1,3 +1,5 @@
+/// <reference types="vite/client" />
+
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
@@ -19,8 +21,8 @@ const toastOptions: ToastContainerOptions = {
 
 const app = createApp(App)
 
-app.use(router)
 app.use(createPinia())
+app.use(router)
 app.use(Vue3Toastify, toastOptions)
 app.use(Toast, { autoClose: 3000 })
 

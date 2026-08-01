@@ -70,7 +70,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { getCookie } from '../services/auth'
 import { notifySuccess, notifyError } from '../utils/toastNotify'
 import { apiFetch } from '../services/api';
 
@@ -86,10 +85,8 @@ const perfil = ref({
 const perfilOriginal = ref({})
 
 const cargarPerfil = async () => {
-  const token = getCookie('idToken')
   try {
     const data = await apiFetch('/user/stats', {
-      headers: { Authorization: `Bearer ${token}` }
     })
 
     perfil.value = {
@@ -116,8 +113,7 @@ const toggleEditar = async () => {
     notifyError('Rellena todos los campos antes de guardar')
     return
   }
-
-  const token = getCookie('idToken')
+  
   try {
     await apiFetch('/user/config', {
       method: 'POST',

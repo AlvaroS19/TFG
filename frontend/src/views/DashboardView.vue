@@ -57,7 +57,6 @@
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { getCookie } from '../services/auth'
 import XpChart from '../components/XpChart.vue'
 import { apiFetch } from '../services/api'
 
@@ -75,10 +74,7 @@ const porcentajeNivel = computed(() =>
 
 const cargarStats = async () => {
   try {
-    const token = getCookie('idToken')
-    const data = await apiFetch('/user/stats', {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    const data = await apiFetch('/user/stats')
     stats.value = data
     perfil.value.nickname = data.nickname || ''
   } catch (err) {
@@ -88,10 +84,7 @@ const cargarStats = async () => {
 
 const cargarMisionDelDia = async () => {
   try {
-    const token = getCookie('idToken')
-    const data = await apiFetch('/missions', {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    const data = await apiFetch('/missions')
 
     const misiones = Array.isArray(data?.misiones) ? data.misiones : []
 

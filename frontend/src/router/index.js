@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { isAuthenticated } from '../core/auth.service'
+import { useAuthStore } from '../stores/auth'
 
 import LandingView from '@/views/LandingView.vue'
 import LoginView from '@/views/LoginView.vue'
@@ -17,20 +17,12 @@ import AchievementsView from '@/views/AchievementsView.vue'
 import RewardsView from '@/views/RewardsView.vue'
 
 const routes = [
-  // Redirección base
-  {
-    path: '/',
-    redirect: () => (isAuthenticated() ? '/dashboard' : '/landing')
-  },
-
-  // Rutas públicas
-  { path: '/landing', name: 'Landing', component: LandingView },
+  { path: '/', name: 'Landing', component: LandingView },
   { path: '/login', name: 'Login', component: LoginView },
   { path: '/register', name: 'Register', component: RegisterView },
   { path: '/reset-password', name: 'ResetPassword', component: ResetPasswordView },
   { path: '/reset-password/:token', name: 'ResetPasswordToken', component: ResetPasswordTokenView },
 
-  // Rutas protegidas bajo layout
   {
     path: '/',
     component: AppLayout,
@@ -43,7 +35,6 @@ const routes = [
       { path: 'profile', name: 'Profile', component: ProfileView },
       { path: 'achievements', name: 'Achievements', component: AchievementsView },
       { path: 'rewards', name: 'Rewards', component: RewardsView },
-    
     ]
   }
 ]
@@ -53,14 +44,19 @@ const router = createRouter({
   routes
 })
 
-// Guard global de rutas protegidas
 router.beforeEach((to, from, next) => {
-  if (to.meta.requiresAuth && !isAuthenticated()) {
+  const authStore = useAuthStore()
+
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     console.warn('⚠️ No hay sesión, redirigiendo a login');
-    next('/login')
-  } else {
-    next()
+    return next('/login')
   }
+
+  if (to.path === '/' && authStore.isAuthenticated) {
+    return next('/dashboard')
+  }
+
+  next()
 })
 
 export default router

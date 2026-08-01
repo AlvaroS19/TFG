@@ -26,7 +26,6 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getCookie } from '@/services/auth'
 import { apiFetch } from '../services/api.js';
 
 const xpHoy = ref(0)
@@ -36,10 +35,8 @@ const metaSemanal = 150
 
 const fetchXpData = async () => {
   try {
-    const token = getCookie('idToken')
-    const { xpByDate } = await apiFetch('/user/xp-history', {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    const { xpByDate } = await apiFetch('/user/xp-history',
+    )
 
     const today = new Date().toISOString().slice(0, 10)
     xpHoy.value = xpByDate?.[today] || 0

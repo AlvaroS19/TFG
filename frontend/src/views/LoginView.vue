@@ -4,25 +4,12 @@
 
     <div class="w-full max-w-xs flex flex-col gap-5">
       <!-- Email -->
-      <BaseInput
-        v-model="email"
-        type="email"
-        placeholder="Correo electrónico"
-        label="Correo"
-        :error="emailError"
-        autocomplete="email"
-      />
+      <BaseInput v-model="email" type="email" placeholder="Correo electrónico" label="Correo" :error="emailError"
+        autocomplete="email" />
 
       <!-- Contraseña -->
-      <BaseInput
-        ref="inputRef"
-        v-model="password"
-        :type="showPassword ? 'text' : 'password'"
-        placeholder="Contraseña"
-        label="Contraseña"
-        :error="passwordError"
-        autocomplete="current-password"
-      >
+      <BaseInput ref="inputRef" v-model="password" :type="showPassword ? 'text' : 'password'" placeholder="Contraseña"
+        label="Contraseña" :error="passwordError" autocomplete="current-password">
         <template #right>
           <button type="button" @click="alternarPassword" aria-label="Mostrar/ocultar contraseña">
             <component :is="showPassword ? EyeOff : Eye" class="w-5 h-5 text-gray-400" />
@@ -51,7 +38,8 @@ import { notifySuccess, notifyError } from '../utils/toastNotify'
 
 import BaseInput from '../components/BaseInput.vue'
 import BaseButton from '../components/BaseButton.vue'
-import { loginUser, getCookie } from '../services/auth'
+import { loginUser } from '../services/auth'
+import { useAuthStore } from '../stores/auth'
 
 const email = ref('')
 const password = ref('')
@@ -60,6 +48,7 @@ const passwordError = ref('')
 const showPassword = ref(false)
 const inputRef = ref(null)
 const router = useRouter()
+const authStore = useAuthStore()
 
 const alternarPassword = async () => {
   showPassword.value = !showPassword.value
@@ -87,17 +76,9 @@ const handleLogin = async () => {
   try {
     const data = await loginUser(email.value, password.value)
 
-    document.cookie = `idToken=${data.idToken}; path=/; max-age=3600; SameSite=Lax`
-
-    setTimeout(() => {
-      const token = getCookie('idToken')
-      if (token) {
-        notifySuccess('Sesión iniciada correctamente')
-        router.push('/dashboard')
-      } else {
-        notifyError('Error al establecer la sesión')
-      }
-    }, 150)
+    authStore.setToken(data.idToken)
+    notifySuccess('Sesión iniciada correctamente')
+    router.push('/dashboard')
   } catch (err) {
     passwordError.value = 'Email o contraseña incorrectos'
     notifyError('Email o contraseña incorrectos')

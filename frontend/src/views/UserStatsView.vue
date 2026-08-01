@@ -53,7 +53,6 @@
 
 <script setup>
 import { onMounted, ref, computed } from 'vue'
-import { getCookie } from '../services/auth'
 import { apiFetch } from '../services/api';
 
 const xpParaNivel = 100
@@ -79,10 +78,8 @@ const porcentajeNivel = computed(() =>
 )
 
 onMounted(async () => {
-  const token = getCookie('idToken')
   try {
     const data = await apiFetch('/user/stats', {
-      headers: { Authorization: `Bearer ${token}` },
     })
     stats.value = data
   } catch (err) {

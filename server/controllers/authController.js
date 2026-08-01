@@ -79,8 +79,6 @@ const login = async (req, res) => {
       return res.status(401).json({ error: data.error.message });
     }
 
-    req.session.userId = data.localId;
-
     res.json({
       message: 'Login correcto',
       idToken: data.idToken,

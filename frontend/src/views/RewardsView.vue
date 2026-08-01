@@ -42,7 +42,6 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getCookie } from '../services/auth'
 import { apiFetch } from '../services/api';
 
 const recompensasDesbloqueadas = ref([])
@@ -69,9 +68,7 @@ const catalogoCompleto = {
 
 const cargarRecompensas = async () => {
   try {
-    const token = getCookie('idToken')
     const desbloqueadas = await apiFetch('/user/rewards', {
-      headers: { Authorization: `Bearer ${token}` }
     })
 
     const logrosDesbloqueados = desbloqueadas.map(r => r.id)
