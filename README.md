@@ -6,7 +6,7 @@
   ### Transforma tu rutina de ejercicio en una aventura épica
   
   [![Demo en vivo](https://img.shields.io/badge/Demo-En%20Vivo-success?style=for-the-badge&logo=vercel)](https://fitquest-puce.vercel.app)
-  [![GitHub](https://img.shields.io/badge/GitHub-Repositorio-blue?style=for-the-badge&logo=github)](https://github.com/AlvaroS19/TFG)
+  [![GitHub](https://img.shields.io/badge/GitHub-Repositorio-blue?style=for-the-badge&logo=github)](https://github.com/AlvaroS19/FitQuest)
   [![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
   
   **Proyecto Final de Grado Superior en Desarrollo de Aplicaciones Web**  
@@ -157,8 +157,8 @@ TFG/
 
 ### 1. Clonar el Repositorio
 ```bash
-git clone https://github.com/AlvaroS19/TFG.git
-cd TFG
+git clone https://github.com/AlvaroS19/FitQuest.git
+cd FitQuest
 ```
 
 ### 2. Configurar Variables de Entorno
@@ -221,6 +221,17 @@ El backend estará disponible en `http://localhost:5000`
 
 - **🌍 Aplicación:** [https://fitquest-puce.vercel.app](https://fitquest-puce.vercel.app)
 
+### 🔑 Cuenta de prueba
+
+Para probar la aplicación sin necesidad de registrarte:
+
+| Campo | Valor |
+|---|---|
+| Email | `prueba@fitquest.com` |
+| Contraseña | `Prueba1234` |
+
+> Es una cuenta compartida de demostración — sus datos (misiones, XP) pueden cambiar con el uso de otras personas que la prueben.
+
 ---
 
 ## 📊 Modelo Entidad-Relación
@@ -231,17 +242,36 @@ El backend estará disponible en `http://localhost:5000`
 
 ---
 
+## 🔒 Seguridad y Arquitectura
+
+Además de las funcionalidades principales, el proyecto ha pasado por una revisión de seguridad y arquitectura tras la entrega del TFG:
+
+- **Autenticación centralizada:** toda la gestión del token JWT vive en un único store (Pinia), en vez de repetirse en cada componente
+- **CORS restringido:** solo el dominio de producción puede llamar a la API, sin comodines ni orígenes abiertos
+- **Sin filtrado de información interna:** los errores del servidor devuelven mensajes genéricos al cliente, sin exponer detalles de Firebase o del stack interno
+- **Prevención de enumeración de usuarios:** el login responde igual ante un email inexistente o una contraseña incorrecta
+- **Eliminación de código y dependencias muertas:** limpieza de endpoints duplicados, librerías sin uso, y credenciales hardcodeadas
+- **Backend desplegado en Render**, con base de datos en Firebase Firestore
+
+---
+
 ## 🗺️ Roadmap - Futuras Mejoras
 
+### Producto
 - [ ] **Sistema de amigos:** Añadir y desafiar a otros usuarios
 - [ ] **Notificaciones push:** Recordatorios de misiones diarias
-- [ ] **Integración con wearables:** Sincronización con Fitbit, Apple Watch, Garmin
-- [ ] **Modo oscuro:** Tema dark para mejor experiencia visual
 - [ ] **Desafíos grupales:** Competiciones entre equipos
-- [ ] **Estadísticas avanzadas:** Gráficos más detallados con filtros personalizados
 - [ ] **Sistema de racha:** Días consecutivos completando misiones
+- [ ] **Estadísticas avanzadas:** Gráficos más detallados con filtros personalizados
 - [ ] **Compartir en redes sociales:** Publicar logros en Instagram/Twitter
-- [ ] **Versión móvil nativa:** App para iOS y Android con React Native
+- [ ] **Modo claro:** Tema alternativo al oscuro actual
+- [ ] **Mejor soporte offline en la PWA**
+- [ ] **Integración con wearables** (Fitbit, Apple Watch, Garmin) — exploratorio, sujeto a las políticas de acceso de cada plataforma
+
+### Técnico
+- [ ] **Tests automatizados** (unitarios e integración) en frontend y backend
+- [ ] **Rate limiting** en los endpoints de login y registro
+- [ ] **Migración completa a TypeScript** en el frontend
 
 ---
 
