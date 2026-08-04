@@ -1,22 +1,18 @@
 const express = require('express');
 const verifyToken = require('../middlewares/verifyToken');
-
 const router = express.Router();
+const {
+  getUserStats,
+  getUserRewards,
+  updateUserConfig,
+  getXpHistory,
+  getXpSummary
+} = require('../controllers/userController');
 
-router.get('/stats', verifyToken, (req, res) => {
-  res.json({ msg: `Stats del usuario ${req.uid}` });
-});
-
-router.get('/progress', verifyToken, (req, res) => {
-  res.json({ msg: `Progreso del usuario ${req.uid}` });
-});
-
-router.get('/rewards', verifyToken, (req, res) => {
-  res.json({ msg: `Recompensas de ${req.uid}` });
-});
-
-router.put('/config', verifyToken, (req, res) => {
-  res.json({ msg: `Configuración actualizada para ${req.uid}` });
-});
+router.get('/stats', verifyToken, getUserStats);
+router.get('/rewards', verifyToken, getUserRewards);
+router.post('/config', verifyToken, updateUserConfig);
+router.get('/xp-history', verifyToken, getXpHistory);
+router.get('/xp/summary', verifyToken, getXpSummary);
 
 module.exports = router;

@@ -1,0 +1,32 @@
+import { useAuthStore } from '../stores/auth'
+
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+
+export async function apiFetch(path, options = {}) {
+  const authStore = useAuthStore()
+
+  const defaultOptions = {
+    headers: {
+      'Content-Type': 'application/json',
+      ...(authStore.token ? { Authorization: `Bearer ${authStore.token}` } : {}),
+    },
+  };
+
+  const finalOptions = {
+    ...defaultOptions,
+    ...options,
+    headers: {
+      ...defaultOptions.headers,
+      ...(options.headers || {})
+    }
+  };
+
+  const response = await fetch(`${BASE_URL}${path}`, finalOptions);
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error || 'Error desconocido');
+  }
+
+  return await response.json();
+}

@@ -1,12 +1,18 @@
 const express = require('express');
-const verifyToken = require('../middlewares/verifyToken');
-const { getUserMissions, completeMission, getCompletedMissions } = require('../controllers/missionsController');
-
 const router = express.Router();
+const verifyToken = require('../middlewares/verifyToken');
+const {
+  getUserMissions,
+  completeMission,
+  getCompletedMissions,
+  createMission,
+  regenerateMissions // 👈 Asegúrate de importar esto
+} = require('../controllers/missionsController');
 
-// Middleware to verify token
 router.get('/', verifyToken, getUserMissions);
 router.post('/complete', verifyToken, completeMission);
 router.get('/completed', verifyToken, getCompletedMissions);
+router.post('/create', verifyToken, createMission);
+router.post('/regenerate', verifyToken, regenerateMissions); // 👈 Añade esta línea
 
 module.exports = router;

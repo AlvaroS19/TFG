@@ -1,0 +1,27 @@
+.Toastify__toast--success {
+  background-color: #16a34a; /* Tailwind bg-green-600 */
+  color: #fff; /* Tailwind text-white */
+  font-weight: 600; /* Tailwind font-semibold */
+  border-radius: 0.5rem; /* Tailwind rounded-lg */
+}
+.Toastify__toast--error {
+  background-color: #dc2626; /* Tailwind bg-red-600 */
+  color: #fff; /* Tailwind text-white */
+  font-weight: 600; /* Tailwind font-semibold */
+  border-radius: 0.5rem; /* Tailwind rounded-lg */
+}
+.Toastify__toast--info {
+  background-color: #2563eb; /* Tailwind bg-blue-600 */
+  color: #fff; /* Tailwind text-white */
+  font-weight: 500; /* Tailwind font-medium */
+  border-radius: 0.5rem; /* Tailwind rounded-lg */
+}
+.Toastify__toast {
+  padding-left: 1rem; /* Tailwind px-4 */
+  padding-right: 1rem; /* Tailwind px-4 */
+  padding-top: 0.75rem; /* Tailwind py-3 */
+  padding-bottom: 0.75rem; /* Tailwind py-3 */
+}
+.Toastify__progress-bar {
+  background-color: #fff; /* Tailwind bg-white */
+}
