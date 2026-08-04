@@ -1,6 +1,8 @@
 const admin = require('firebase-admin')
 require('dotenv').config()
-
+console.log('🔍 DEBUG longitud de la clave:', process.env.FIREBASE_PRIVATE_KEY?.length);
+console.log('🔍 DEBUG primeros 40 caracteres:', JSON.stringify(process.env.FIREBASE_PRIVATE_KEY?.slice(0, 40)));
+console.log('🔍 DEBUG últimos 40 caracteres:', JSON.stringify(process.env.FIREBASE_PRIVATE_KEY?.slice(-40)));
 // Configuración usando variables de entorno
 const serviceAccount = {
   type: "service_account",
