@@ -1,10 +1,10 @@
 <template>
   <div class="flex flex-col items-center bg-[#0A1A2F] min-h-screen text-[#F5F0E1] p-6">
-    <!-- Avatar con inicial -->
-    <div class="w-24 h-24 rounded-full bg-[#F66B0E] mb-4 flex items-center justify-center text-4xl font-bold">
-      {{ perfil.nickname?.charAt(0)?.toUpperCase() || '👤' }}
+    <div v-if="cargando" class="flex items-center justify-center py-20">
+      <span class="text-sm text-[#A5B4FC]">Cargando perfil...</span>
     </div>
 
+    <template v-else>
     <!-- Nickname editable -->
     <div class="text-center mb-2 w-full max-w-xs">
       <input
@@ -64,6 +64,7 @@
         Cerrar sesión
       </button>
     </div>
+    </template>
   </div>
 </template>
 
@@ -82,12 +83,12 @@ const perfil = ref({
   xp: 0,
   level: 1
 })
+const cargando = ref(true)
 const perfilOriginal = ref({})
 
 const cargarPerfil = async () => {
   try {
-    const data = await apiFetch('/user/stats', {
-    })
+    const data = await apiFetch('/user/stats')
 
     perfil.value = {
       nickname: data.nickname || '',
@@ -100,6 +101,8 @@ const cargarPerfil = async () => {
   } catch (err) {
     notifyError('Error al cargar perfil')
     console.error(err)
+  } finally {
+    cargando.value = false
   }
 }
 

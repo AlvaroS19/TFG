@@ -77,9 +77,17 @@ const login = async (req, res) => {
     const data = await response.json();
 
     if (data.error) {
-      // Mensaje genérico siempre, para no revelar si el email existe o no
       console.warn('⚠️ Login fallido:', data.error.message);
       return res.status(401).json({ error: 'Email o contraseña incorrectos' });
+    }
+
+    // Aseguramos que las misiones diarias estén al día en cada login
+    const userDoc = await db.collection('users').doc(data.localId).get();
+    if (userDoc.exists) {
+      const { objetivo } = userDoc.data();
+      if (objetivo) {
+        await verificarGenerarMisiones(data.localId, objetivo);
+      }
     }
 
     res.json({
