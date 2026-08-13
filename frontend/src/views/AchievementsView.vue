@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen bg-[#0A1A2F] text-[#F5F0E1] p-6">
+  <div class="min-h-screen bg-background text-text p-6">
     <h1 class="text-2xl font-bold text-center mb-4">🏆 Tus logros</h1>
-    <p class="text-center text-sm text-[#F5F0E1]/60 mb-8">
+    <p class="text-center text-sm text-text/60 mb-8">
       Completa misiones y sube de nivel para desbloquear recompensas.
     </p>
 
@@ -11,7 +11,7 @@
         :key="index"
         class="rounded-xl p-4 border transition-all duration-300 shadow-md flex items-start gap-4"
         :class="esDesbloqueado(logro)
-          ? 'border-[#F66B0E] bg-[#1A2C45]'
+          ? 'border-primary bg-[#1A2C45]'
           : 'border-[#333] bg-[#111827] opacity-50'"
       >
         <!-- Icono -->
@@ -22,19 +22,19 @@
           <h2
             :class="[
               'font-bold text-lg mb-1',
-              esDesbloqueado(logro) ? 'text-[#FFC107]' : 'text-gray-400'
+              esDesbloqueado(logro) ? 'text-warning' : 'text-gray-400'
             ]"
           >
             {{ logro.nombre }}
           </h2>
-          <p class="text-sm text-[#F5F0E1]/70 leading-snug">
+          <p class="text-sm text-text/70 leading-snug">
             {{ logro.descripcion }}
           </p>
         </div>
       </div>
     </div>
 
-    <div v-if="!logrosDesbloqueados.length" class="text-center text-[#F5F0E1]/40 mt-10 italic">
+    <div v-if="!logrosDesbloqueados.length" class="text-center text-text/40 mt-10 italic">
       Aún no has desbloqueado logros.
     </div>
   </div>

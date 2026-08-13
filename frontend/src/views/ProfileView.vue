@@ -1,7 +1,7 @@
 <template>
-  <div class="flex flex-col items-center bg-[#0A1A2F] min-h-screen text-[#F5F0E1] p-6">
+  <div class="flex flex-col items-center bg-background min-h-screen text-text p-6">
     <div v-if="cargando" class="flex items-center justify-center py-20">
-      <span class="text-sm text-[#A5B4FC]">Cargando perfil...</span>
+      <span class="text-sm text-info">Cargando perfil...</span>
     </div>
 
     <template v-else>
@@ -11,7 +11,7 @@
         v-if="editando"
         v-model="perfil.nickname"
         placeholder="Tu apodo"
-        class="w-full text-xl text-center font-bold bg-[#112233] border border-[#F5F0E1]/30 rounded px-3 py-1"
+        class="w-full text-xl text-center font-bold bg-surface border border-text/30 rounded px-3 py-1"
       />
       <h2 v-else class="text-xl font-bold truncate">{{ perfil.nickname || 'Nombre no configurado' }}</h2>
     </div>
@@ -21,7 +21,7 @@
       <select
         v-if="editando"
         v-model="perfil.goal"
-        class="w-full bg-[#112233] text-white rounded px-2 py-1 border border-[#F5F0E1]/30"
+        class="w-full bg-surface text-white rounded px-2 py-1 border border-text/30"
       >
         <option value="">Selecciona objetivo</option>
         <option value="fuerza">Fuerza</option>
@@ -29,13 +29,13 @@
         <option value="tonificación">Tonificación</option>
         <option value="salud">Salud</option>
       </select>
-      <p v-else class="text-sm text-[#FFC107] text-center">
+      <p v-else class="text-sm text-warning text-center">
         🎯 Objetivo: {{ perfil.goal || 'No establecido' }}
       </p>
     </div>
 
     <!-- XP y Nivel -->
-    <p class="text-sm text-[#A5B4FC] mb-6 text-center">
+    <p class="text-sm text-info mb-6 text-center">
       Nivel <strong>{{ perfil.level }}</strong> · <strong>{{ perfil.xp }}</strong> XP
     </p>
 
@@ -43,7 +43,7 @@
     <div class="w-full space-y-3 max-w-sm">
       <button
         @click="toggleEditar"
-        class="w-full bg-[#F66B0E] text-white py-2 rounded hover:bg-[#e45e0d] transition"
+        class="w-full bg-primary text-white py-2 rounded hover:bg-[#e45e0d] transition"
       >
         {{ editando ? 'Guardar cambios' : 'Editar perfil' }}
       </button>

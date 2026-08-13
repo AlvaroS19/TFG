@@ -1,19 +1,19 @@
 <template>
-  <div class="bg-[#112233] rounded-lg p-4 shadow w-full max-w-md mx-auto text-sm text-[#F5F0E1] space-y-6 mb-6">
+  <div class="bg-surface rounded-lg p-4 shadow w-full max-w-md mx-auto text-sm text-text space-y-6 mb-6">
     <h2 class="font-semibold text-lg mb-2">Progreso de XP</h2>
 
     <div>
-      <p class="mb-1 text-[#F5F0E1]/70">Hoy: {{ xpHoy }} XP</p>
+      <p class="mb-1 text-text/70">Hoy: {{ xpHoy }} XP</p>
       <div class="w-full bg-gray-700 h-4 rounded">
         <div
-          class="bg-[#F66B0E] h-4 rounded transition-all duration-300"
+          class="bg-primary h-4 rounded transition-all duration-300"
           :style="{ width: `${Math.min((xpHoy / metaDiaria) * 100, 100)}%` }"
         />
       </div>
     </div>
 
     <div>
-      <p class="mb-1 text-[#F5F0E1]/70">Últimos 7 días: {{ xpSemana }} XP</p>
+      <p class="mb-1 text-text/70">Últimos 7 días: {{ xpSemana }} XP</p>
       <div class="w-full bg-gray-700 h-4 rounded">
         <div
           class="bg-blue-500 h-4 rounded transition-all duration-300"

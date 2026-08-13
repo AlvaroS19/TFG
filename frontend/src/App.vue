@@ -1,5 +1,5 @@
 <template>
-  <div class="app-wrapper relative w-screen min-h-screen overflow-x-hidden bg-[#0A1A2F] text-[#F5F0E1]">
+  <div class="app-wrapper relative w-screen min-h-screen overflow-x-hidden bg-background text-text">
     <transition name="fade-slide" mode="out-in">
       <router-view />
     </transition>
