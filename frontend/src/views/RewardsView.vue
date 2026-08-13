@@ -1,10 +1,10 @@
 <template>
-  <div class="p-4 text-[#F5F0E1] bg-[#0A1A2F] min-h-screen">
+  <div class="p-4 text-text bg-background min-h-screen">
     <h1 class="text-2xl font-bold mb-6 text-center">🎁 Tus Recompensas</h1>
 
     <!-- Desbloqueadas -->
     <section class="mb-8">
-      <h2 class="text-lg font-semibold mb-2 text-[#22C55E]">🔓 Desbloqueadas</h2>
+      <h2 class="text-lg font-semibold mb-2 text-success">🔓 Desbloqueadas</h2>
       <div v-if="recompensasDesbloqueadas.length === 0" class="text-gray-400">
         Aún no has desbloqueado recompensas.
       </div>
@@ -13,10 +13,10 @@
         <li
           v-for="(r, index) in recompensasDesbloqueadas"
           :key="'desbloqueada-' + index"
-          class="bg-[#112233] p-4 rounded-xl border border-[#22C55E]"
+          class="bg-surface p-4 rounded-xl border border-success"
         >
           <h3 class="text-lg font-semibold">{{ r.nombre }}</h3>
-          <p class="text-sm text-[#F5F0E1]/80">{{ r.descripcion }}</p>
+          <p class="text-sm text-text/80">{{ r.descripcion }}</p>
           <p class="text-xs text-gray-400">Fecha: {{ new Date(r.fecha).toLocaleDateString() }}</p>
         </li>
       </ul>
@@ -24,15 +24,15 @@
 
     <!-- Bloqueadas -->
     <section>
-      <h2 class="text-lg font-semibold mb-2 text-[#F87171]">🔒 Bloqueadas</h2>
+      <h2 class="text-lg font-semibold mb-2 text-error">🔒 Bloqueadas</h2>
       <ul class="space-y-4">
         <li
           v-for="(r, index) in recompensasBloqueadas"
           :key="'bloqueada-' + index"
-          class="bg-[#1E293B] p-4 rounded-xl border border-[#F87171]/40 opacity-60"
+          class="bg-surface-alt p-4 rounded-xl border border-error/40 opacity-60"
         >
           <h3 class="text-lg font-semibold">{{ r.nombre }}</h3>
-          <p class="text-sm text-[#F5F0E1]/60">{{ r.descripcion }}</p>
+          <p class="text-sm text-text/60">{{ r.descripcion }}</p>
           <p class="text-xs text-gray-400 italic">Desbloquea el logro asociado para conseguirla</p>
         </li>
       </ul>

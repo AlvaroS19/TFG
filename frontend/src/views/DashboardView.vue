@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen bg-[#0A1A2F] text-[#F5F0E1] p-6">
+  <div class="min-h-screen bg-background text-text p-6">
     <div v-if="cargando" class="flex items-center justify-center py-20">
-      <span class="text-sm text-[#F5F0E1]/50">Cargando...</span>
+      <span class="text-sm text-text/50">Cargando...</span>
     </div>
 
     <template v-else>
@@ -9,35 +9,35 @@
       <h1 class="text-2xl font-bold mb-4">👋 ¡Hola, {{ perfil.nickname || 'Entrenador' }}!</h1>
 
       <!-- Misión del día -->
-      <section class="bg-[#112233] rounded-lg p-4 mb-6">
-        <h2 class="text-lg font-semibold mb-2 text-[#FFC107]">📌 Misión del día</h2>
+      <section class="bg-surface rounded-lg p-4 mb-6">
+        <h2 class="text-lg font-semibold mb-2 text-warning">📌 Misión del día</h2>
 
         <div v-if="misionDelDia">
           <h3 class="font-bold text-xl mb-1">{{ misionDelDia.titulo }}</h3>
-          <p class="text-sm text-[#F5F0E1]/70 mb-2">{{ misionDelDia.descripcion }}</p>
-          <p class="text-xs text-[#F5F0E1]/50">
+          <p class="text-sm text-text/70 mb-2">{{ misionDelDia.descripcion }}</p>
+          <p class="text-xs text-text/50">
             Dificultad: {{ misionDelDia.dificultad }} · XP: {{ misionDelDia.xp }}
           </p>
         </div>
 
-        <div v-else class="text-sm text-[#F5F0E1]/40 italic">
+        <div v-else class="text-sm text-text/40 italic">
           No tienes misión asignada para hoy todavía.
         </div>
       </section>
 
       <!-- Tarjeta de progreso -->
-      <section class="bg-[#1E293B] rounded-lg p-4 mb-4">
-        <h2 class="text-lg font-semibold text-[#A5B4FC] mb-2">Progreso</h2>
+      <section class="bg-surface-alt rounded-lg p-4 mb-4">
+        <h2 class="text-lg font-semibold text-info mb-2">Progreso</h2>
         <p class="mb-1">Nivel actual: <strong>{{ stats.level }}</strong></p>
         <p class="mb-1">XP acumulado: <strong>{{ stats.xp }}</strong></p>
 
         <div class="mt-4">
-          <p class="text-sm text-[#F5F0E1]/70 mb-1 text-center">
+          <p class="text-sm text-text/70 mb-1 text-center">
             {{ xpRestante }} XP para el nivel {{ stats.level + 1 }}
           </p>
-          <div class="w-full h-3 bg-[#334155] rounded">
+          <div class="w-full h-3 bg-muted rounded">
             <div
-              class="h-3 bg-[#F66B0E] rounded transition-all duration-300"
+              class="h-3 bg-primary rounded transition-all duration-300"
               :style="{ width: `${porcentajeNivel}%` }"
             ></div>
           </div>
@@ -46,10 +46,10 @@
 
       <!-- Botones -->
       <div class="flex flex-col gap-2">
-        <button @click="$router.push('/missions')" class="bg-[#F66B0E] text-white rounded py-2">
+        <button @click="$router.push('/missions')" class="bg-primary text-white rounded py-2">
           Ver misiones
         </button>
-        <button @click="$router.push('/profile')" class="bg-[#334155] text-white rounded py-2">
+        <button @click="$router.push('/profile')" class="bg-muted text-white rounded py-2">
           Ir a perfil
         </button>
         <button @click="$router.push('/user/stats')" class="bg-[#1D4ED8] text-white rounded py-2">

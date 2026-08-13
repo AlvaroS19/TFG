@@ -3,7 +3,7 @@
     <div
       v-for="(n, index) in notificaciones"
       :key="index"
-      class="px-4 py-3 rounded-xl shadow-lg bg-[#1F2937] text-[#F5F0E1] w-72 animate-slide-in"
+      class="px-4 py-3 rounded-xl shadow-lg bg-[#1F2937] text-text w-72 animate-slide-in"
     >
       <p class="text-sm">{{ n }}</p>
     </div>

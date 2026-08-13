@@ -1,27 +1,27 @@
 <template>
-  <div class="min-h-screen bg-[#0A1A2F] text-[#F5F0E1] p-4">
+  <div class="min-h-screen bg-background text-text p-4">
     <h1 class="text-2xl font-bold text-center mb-4">🏁 Misiones completadas</h1>
-    <p class="text-center text-sm mb-6 text-[#F5F0E1]/70">
+    <p class="text-center text-sm mb-6 text-text/70">
       Total: <strong>{{ totalCompletadas }}</strong> misiones completadas
     </p>
 
     <div v-if="agrupadas.length" class="space-y-8">
       <div v-for="(grupo, index) in agrupadas" :key="index">
-        <h2 class="text-lg font-semibold mb-2 text-[#F66B0E]">{{ grupo.fecha }}</h2>
+        <h2 class="text-lg font-semibold mb-2 text-primary">{{ grupo.fecha }}</h2>
 
-        <div v-for="(m, i) in grupo.misiones" :key="i" class="border border-[#F66B0E] rounded-xl p-4 bg-[#111827]">
-          <h3 class="font-bold text-[#FFC107]">{{ m.titulo || 'Misión sin título' }}</h3>
-          <p class="text-sm text-[#F5F0E1]/70">
+        <div v-for="(m, i) in grupo.misiones" :key="i" class="border border-primary rounded-xl p-4 bg-[#111827]">
+          <h3 class="font-bold text-warning">{{ m.titulo || 'Misión sin título' }}</h3>
+          <p class="text-sm text-text/70">
             {{ m.descripcion }}<br />
-            <span class="text-[#A5B4FC]">Tipo:</span> {{ m.categoria || m.tipo }} ·
-            <span class="text-[#A5B4FC]">Dificultad:</span> {{ m.dificultad }} ·
-            <span class="text-[#A5B4FC]">XP:</span> {{ m.xp || 0 }}
+            <span class="text-info">Tipo:</span> {{ m.categoria || m.tipo }} ·
+            <span class="text-info">Dificultad:</span> {{ m.dificultad }} ·
+            <span class="text-info">XP:</span> {{ m.xp || 0 }}
           </p>
         </div>
       </div>
     </div>
 
-    <div v-else class="text-center text-[#F5F0E1]/50 mt-10 italic">
+    <div v-else class="text-center text-text/50 mt-10 italic">
       Aún no has completado ninguna misión.
     </div>
   </div>

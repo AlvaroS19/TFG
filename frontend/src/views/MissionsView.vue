@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen overflow-y-auto bg-[#0A1A2F] text-[#F5F0E1]">
+  <div class="min-h-screen overflow-y-auto bg-background text-text">
     <div class="max-w-4xl mx-auto px-4 pt-6 pb-28">
       <h1 class="text-2xl font-bold text-center mb-6">📋 Todas tus misiones</h1>
 
@@ -7,7 +7,7 @@
       <div class="flex justify-center mb-4">
         <button
           @click="regenerarMisiones"
-          class="bg-[#F66B0E] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#d55306] transition"
+          class="bg-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#d55306] transition"
         >
           🔄 Regenerar misiones
         </button>
@@ -22,8 +22,8 @@
           :class="[
             'px-4 py-1 rounded-full text-sm font-semibold border transition',
             categoriaSeleccionada === cat
-              ? 'bg-[#F66B0E] text-white border-[#F66B0E]'
-              : 'bg-transparent text-[#F5F0E1] border-[#F5F0E1]/30 hover:bg-[#F5F0E1]/10'
+              ? 'bg-primary text-white border-primary'
+              : 'bg-transparent text-text border-text/30 hover:bg-text/10'
           ]"
         >
           {{ cat }}
@@ -43,15 +43,15 @@
               @completar="completarMision(m.id)"
             />
           </div>
-          <div v-else class="p-4 border border-[#F5F0E1]/30 rounded bg-[#F5F0E1]/5">
-            <p class="text-lg font-semibold text-[#F5F0E1]/80">{{ m.titulo }}</p>
-            <p class="text-sm text-[#F5F0E1]/50">🔒 Disponible en {{ tiempoRestante(m.unlockAt) }}</p>
+          <div v-else class="p-4 border border-text/30 rounded bg-text/5">
+            <p class="text-lg font-semibold text-text/80">{{ m.titulo }}</p>
+            <p class="text-sm text-text/50">🔒 Disponible en {{ tiempoRestante(m.unlockAt) }}</p>
           </div>
         </div>
       </div>
 
       <!-- Si no hay misiones -->
-      <div v-else class="text-center text-[#F5F0E1]/50 mt-10 italic">
+      <div v-else class="text-center text-text/50 mt-10 italic">
         No hay misiones de esta categoría ahora mismo.
       </div>
     </div>
