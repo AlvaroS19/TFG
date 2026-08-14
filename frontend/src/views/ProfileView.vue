@@ -5,65 +5,63 @@
     </div>
 
     <template v-else>
-    <!-- Nickname editable -->
-    <div class="text-center mb-2 w-full max-w-xs">
-      <input
-        v-if="editando"
-        v-model="perfil.nickname"
-        placeholder="Tu apodo"
-        class="w-full text-xl text-center font-bold bg-surface border border-text/30 rounded px-3 py-1"
-      />
-      <h2 v-else class="text-xl font-bold truncate">{{ perfil.nickname || 'Nombre no configurado' }}</h2>
-    </div>
+      <!-- Avatar -->
+      <div class="w-20 h-20 rounded-full bg-primary/20 border-2 border-primary flex items-center justify-center text-3xl font-bold text-primary mb-4">
+        {{ (perfil.nickname || '?').charAt(0).toUpperCase() }}
+      </div>
 
-    <!-- Objetivo editable -->
-    <div class="w-full max-w-xs mb-4">
-      <select
-        v-if="editando"
-        v-model="perfil.goal"
-        class="w-full bg-surface text-white rounded px-2 py-1 border border-text/30"
-      >
-        <option value="">Selecciona objetivo</option>
-        <option value="fuerza">Fuerza</option>
-        <option value="resistencia">Resistencia</option>
-        <option value="tonificación">Tonificación</option>
-        <option value="salud">Salud</option>
-      </select>
-      <p v-else class="text-sm text-warning text-center">
-        🎯 Objetivo: {{ perfil.goal || 'No establecido' }}
+      <!-- Nickname editable -->
+      <div class="text-center mb-2 w-full max-w-xs">
+        <input
+          v-if="editando"
+          v-model="perfil.nickname"
+          placeholder="Tu apodo"
+          class="w-full text-xl text-center font-bold bg-surface border border-text/30 rounded px-3 py-1"
+        />
+        <h2 v-else class="text-xl font-bold truncate">{{ perfil.nickname || 'Nombre no configurado' }}</h2>
+      </div>
+
+      <!-- Objetivo editable -->
+      <div class="w-full max-w-xs mb-4">
+        <select
+          v-if="editando"
+          v-model="perfil.goal"
+          class="w-full bg-surface text-white rounded px-2 py-1 border border-text/30"
+        >
+          <option value="">Selecciona objetivo</option>
+          <option value="fuerza">Fuerza</option>
+          <option value="resistencia">Resistencia</option>
+          <option value="tonificación">Tonificación</option>
+          <option value="salud">Salud</option>
+        </select>
+        <p v-else class="text-sm text-warning text-center flex items-center justify-center gap-1">
+          <Target :size="14" /> Objetivo: {{ perfil.goal || 'No establecido' }}
+        </p>
+      </div>
+
+      <!-- XP y Nivel -->
+      <p class="text-sm text-info mb-6 text-center flex items-center gap-1">
+        <TrendingUp :size="14" /> Nivel <strong>{{ perfil.level }}</strong> · <strong>{{ perfil.xp }}</strong> XP
       </p>
-    </div>
 
-    <!-- XP y Nivel -->
-    <p class="text-sm text-info mb-6 text-center">
-      Nivel <strong>{{ perfil.level }}</strong> · <strong>{{ perfil.xp }}</strong> XP
-    </p>
+      <!-- Botones -->
+      <div class="w-full space-y-3 max-w-sm">
+        <BaseButton :icon="editando ? Save : Pencil" @click="toggleEditar">
+          {{ editando ? 'Guardar cambios' : 'Editar perfil' }}
+        </BaseButton>
 
-    <!-- Botones -->
-    <div class="w-full space-y-3 max-w-sm">
-      <button
-        @click="toggleEditar"
-        class="w-full bg-primary text-white py-2 rounded hover:bg-[#e45e0d] transition"
-      >
-        {{ editando ? 'Guardar cambios' : 'Editar perfil' }}
-      </button>
+        <BaseButton v-if="editando" :icon="X" variant="secondary" @click="cancelarEdicion">
+          Cancelar
+        </BaseButton>
 
-      <button
-        v-if="editando"
-        @click="cancelarEdicion"
-        class="w-full bg-[#374151] text-white py-2 rounded hover:bg-[#4b5563] transition"
-      >
-        Cancelar
-      </button>
+        <BaseButton :icon="Gift" variant="secondary" @click="$router.push('/rewards')">
+          Ver recompensas
+        </BaseButton>
 
-      <button @click="$router.push('/rewards')" class="w-full bg-[#1E3A8A] text-white py-2 rounded">
-        Ver recompensas
-      </button>
-
-      <button @click="logout" class="w-full bg-[#DC2626] text-white py-2 rounded">
-        Cerrar sesión
-      </button>
-    </div>
+        <BaseButton :icon="LogOut" variant="danger" @click="logout">
+          Cerrar sesión
+        </BaseButton>
+      </div>
     </template>
   </div>
 </template>
@@ -71,7 +69,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { Target, TrendingUp, Pencil, Save, X, Gift, LogOut } from 'lucide-vue-next'
 import { notifySuccess, notifyError } from '../utils/toastNotify'
+import BaseButton from '../components/BaseButton.vue'
 import { apiFetch } from '../services/api';
 
 const router = useRouter()
@@ -116,13 +116,11 @@ const toggleEditar = async () => {
     notifyError('Rellena todos los campos antes de guardar')
     return
   }
-  
+
   try {
     await apiFetch('/user/config', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         nickname: perfil.value.nickname.trim(),
         objetivo: perfil.value.goal
