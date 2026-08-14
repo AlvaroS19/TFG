@@ -23,7 +23,7 @@ const obtenerMisionesPorObjetivo = async (objetivo, tipo = null, limit = null) =
   }
 
   // Si se define un límite, devolvemos misiones aleatorias hasta ese límite
-  if (limit && typeof limit === '3') {
+  if (limit) {
     // Barajamos aleatoriamente
     misiones = misiones.sort(() => 0.5 - Math.random()).slice(0, limit);
   }
