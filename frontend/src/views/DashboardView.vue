@@ -6,11 +6,15 @@
 
     <template v-else>
       <XpChart />
-      <h1 class="text-2xl font-bold mb-4">👋 ¡Hola, {{ perfil.nickname || 'Entrenador' }}!</h1>
+      <h1 class="text-2xl font-bold mb-4 flex items-center gap-2">
+        <Hand :size="24" class="text-warning" /> ¡Hola, {{ perfil.nickname || 'Entrenador' }}!
+      </h1>
 
       <!-- Misión del día -->
-      <section class="bg-surface rounded-lg p-4 mb-6">
-        <h2 class="text-lg font-semibold mb-2 text-warning">📌 Misión del día</h2>
+      <section class="bg-surface rounded-lg p-4 mb-6 border-l-4 border-warning">
+        <h2 class="text-lg font-semibold mb-2 text-warning flex items-center gap-2">
+          <Pin :size="18" /> Misión del día
+        </h2>
 
         <div v-if="misionDelDia">
           <h3 class="font-bold text-xl mb-1">{{ misionDelDia.titulo }}</h3>
@@ -26,8 +30,10 @@
       </section>
 
       <!-- Tarjeta de progreso -->
-      <section class="bg-surface-alt rounded-lg p-4 mb-4">
-        <h2 class="text-lg font-semibold text-info mb-2">Progreso</h2>
+      <section class="bg-surface-alt rounded-lg p-4 mb-4 border-l-4 border-info">
+        <h2 class="text-lg font-semibold text-info mb-2 flex items-center gap-2">
+          <TrendingUp :size="18" /> Progreso
+        </h2>
         <p class="mb-1">Nivel actual: <strong>{{ stats.level }}</strong></p>
         <p class="mb-1">XP acumulado: <strong>{{ stats.xp }}</strong></p>
 
@@ -46,15 +52,15 @@
 
       <!-- Botones -->
       <div class="flex flex-col gap-2">
-        <button @click="$router.push('/missions')" class="bg-primary text-white rounded py-2">
+        <BaseButton :icon="Target" @click="$router.push('/missions')">
           Ver misiones
-        </button>
-        <button @click="$router.push('/profile')" class="bg-muted text-white rounded py-2">
+        </BaseButton>
+        <BaseButton :icon="User" variant="secondary" @click="$router.push('/profile')">
           Ir a perfil
-        </button>
-        <button @click="$router.push('/user/stats')" class="bg-[#1D4ED8] text-white rounded py-2">
+        </BaseButton>
+        <BaseButton :icon="BarChart3" variant="secondary" @click="$router.push('/user/stats')">
           Ver estadísticas
-        </button>
+        </BaseButton>
       </div>
     </template>
   </div>
@@ -63,6 +69,8 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import XpChart from '../components/XpChart.vue'
+import BaseButton from '../components/BaseButton.vue'
+import { Hand, Pin, TrendingUp, Target, User, BarChart3 } from 'lucide-vue-next'
 import { apiFetch } from '../services/api'
 
 const cargando = ref(true)
