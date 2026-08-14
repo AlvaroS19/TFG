@@ -104,7 +104,7 @@ const verificarGenerarMisiones = async (uid, objetivo) => {
 
 
     if (!yaHayEspecial) {
-      const especiales = await obtenerMisionesPorObjetivo(objetivo, "special", 1);
+      const especiales = await obtenerMisionesPorObjetivo(objetivo, "especial", 1);
       if (especiales[0]) {
         const unlockEspecial = siguienteLunes(agregarDias(hoy, 7));
         await missionsRef.add({

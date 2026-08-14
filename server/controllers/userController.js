@@ -88,12 +88,10 @@ const getUserRewards = async (req, res) => {
   const now = new Date().toISOString();
 
   try {
-    // 📊 Stats del usuario
     const statsSnap = await db.collection('userStats').doc(uid).get();
     const stats = statsSnap.exists ? statsSnap.data() : { xp: 0, level: 1 };
     const { xp = 0, level = 1 } = stats;
 
-    // 🧠 Misiones completadas
     const completedSnap = await db
       .collection('users')
       .doc(uid)
@@ -105,33 +103,50 @@ const getUserRewards = async (req, res) => {
 
     const completadasDiarias = completed.filter(m => m.categoria === 'diaria');
     const completadasSemanales = completed.filter(m => m.categoria === 'semanal');
-    const completadasDificiles = completed.filter(m => 
+    const completadasDificiles = completed.filter(m =>
       m.dificultad === 'difícil' || m.dificultad === 'dificil'
     );
 
-    const fechasCompletadas = completed.map(m => new Date(m.completedAt));
-    const diasUnicos = new Set(fechasCompletadas.map(f => f.toISOString().split('T')[0]));
+    const fechasCompletadas = completed
+      .filter(m => m.completedAt)
+      .map(m => new Date(m.completedAt).toISOString().split('T')[0]);
+    const diasUnicos = new Set(fechasCompletadas);
 
-    // ✅ Cargar recompensas ya guardadas
+    const conteoPorDia = {};
+    fechasCompletadas.forEach(dia => {
+      conteoPorDia[dia] = (conteoPorDia[dia] || 0) + 1;
+    });
+    const maxEnUnDia = Math.max(0, ...Object.values(conteoPorDia));
+
     const existingRewardsSnap = await db
       .collection('users')
       .doc(uid)
       .collection('userRewards')
       .get();
-
     const existingIds = existingRewardsSnap.docs.map(doc => doc.data().id);
 
-    // 🧩 Nuevas recompensas a validar
-    const posibles = [];
+    const condiciones = {
+      'Primeros pasos': totalCompleted >= 1,
+      'nivel': xp >= 100,
+      'Constancia': totalCompleted >= 5,
+      'Pro': level >= 3,
+      'diarias10': completadasDiarias.length >= 10,
+      'semanales5': completadasSemanales.length >= 5,
+      'misiones20': totalCompleted >= 20,
+      'nivel5': level >= 5,
+      'veterano': diasUnicos.size >= 30,
+      'dificil1': completadasDificiles.length >= 1,
+      '3diarias1dia': maxEnUnDia >= 3,
+      'racha7': diasUnicos.size >= 7,
+      'nivel10': level >= 10,
+    };
 
-    if (diasUnicos.size >= 7) posibles.push('semanaPerfecta');
-    if (level >= 5) posibles.push('nivel5Maestro');
-    if (diasUnicos.size >= 30) posibles.push('constante30dias');
-    if (level >= 10) posibles.push('proGamer');
+    const posibles = Object.entries(condiciones)
+      .filter(([, cumplida]) => cumplida)
+      .map(([id]) => id);
 
     const nuevas = posibles.filter(id => !existingIds.includes(id));
 
-    // 📝 Guardar nuevas recompensas
     const userRewardsRef = db.collection('users').doc(uid).collection('userRewards');
     for (const id of nuevas) {
       const recompensa = rewardsCatalog[id];
@@ -145,13 +160,12 @@ const getUserRewards = async (req, res) => {
       });
     }
 
-    // 🧾 Juntar todas las recompensas
     const finalSnap = await userRewardsRef.get();
     const finalRewards = finalSnap.docs.map(doc => doc.data());
 
     return res.status(200).json(finalRewards);
   } catch (error) {
-    console.error('❌ Error al obtener recompensas:', error);
+    console.error('Error al obtener recompensas:', error);
     res.status(500).json({ error: 'Error al obtener recompensas del usuario' });
   }
 };

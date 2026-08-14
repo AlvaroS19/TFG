@@ -66,6 +66,7 @@ const TODOS_LOS_LOGROS = [
   { nombre: 'Misión imposible', clave: 'dificil1', icono: Skull, descripcion: 'Completa al menos 1 misión difícil' },
   { nombre: 'Productividad máxima', clave: '3diarias1dia', icono: Rocket, descripcion: 'Completa 3 misiones en un solo día' },
   { nombre: 'Imparable', clave: 'racha7', icono: Repeat, descripcion: 'Completa misiones durante 7 días seguidos' },
+  { nombre: 'Leyenda', clave: 'nivel10', icono: Award, descripcion: 'Alcanza el nivel 10' },
 ]
 
 const esDesbloqueado = (logro) => logrosDesbloqueados.value.some(r => r.id === logro.clave)

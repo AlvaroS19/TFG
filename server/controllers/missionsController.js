@@ -1,5 +1,6 @@
 const { admin, db } = require("../services/firebase");
 const { actualizarMisionesDesbloqueadas } = require('../utils/actualizarDesbloqueadas')
+const obtenerMisionesPorObjetivo = require('../utils/obtenerMisionesPorObjeto.js');
 
 const getUserMissions = async (req, res) => {
   const uid = req.uid;
@@ -185,44 +186,45 @@ const regenerateMissions = async (req, res) => {
       return res.status(400).json({ error: 'El usuario no tiene un objetivo definido' });
     }
 
-    // Leer catálogo desde Firestore
-    const catalogSnap = await db.collection('missionsCatalog')
-      .where('objetivo', '==', objetivo)
-      .get();
-
-    const catalogo = catalogSnap.docs.map(doc => doc.data());
-
-    if (!catalogo.length) {
-      return res.status(404).json({ error: 'No hay misiones para este objetivo' });
-    }
-
-    // Eliminar misiones anteriores
     const missionsRef = db.collection('users').doc(uid).collection('missions');
-    const oldSnap = await missionsRef.get();
-    const deleteBatch = db.batch();
 
+    // Solo borramos las misiones pendientes, nunca las ya completadas
+    const oldSnap = await missionsRef.where('completada', '==', false).get();
+    const deleteBatch = db.batch();
     oldSnap.forEach(doc => deleteBatch.delete(doc.ref));
     await deleteBatch.commit();
 
-    // Crear nuevas misiones
+    // Generamos un set fresco: 3 diarias, 1 semanal, 1 especial
+    const [diarias, semanales, especiales] = await Promise.all([
+      obtenerMisionesPorObjetivo(objetivo, 'daily', 3),
+      obtenerMisionesPorObjetivo(objetivo, 'weekly', 1),
+      obtenerMisionesPorObjetivo(objetivo, 'especial', 1),
+    ]);
+
     const now = new Date().toISOString();
     const createBatch = db.batch();
 
-    catalogo.slice(0, 5).forEach(m => {
-      const newRef = missionsRef.doc();
-      createBatch.set(newRef, {
-        ...m,
-        completada: false,
-        generatedAt: now,
-        desbloqueada: true
+    diarias.forEach(m => {
+      createBatch.set(missionsRef.doc(), {
+        ...m, categoria: 'diaria', completada: false, generatedAt: now, desbloqueada: true, unlockAt: now
+      });
+    });
+    semanales.forEach(m => {
+      createBatch.set(missionsRef.doc(), {
+        ...m, categoria: 'semanal', completada: false, generatedAt: now, desbloqueada: true, unlockAt: now
+      });
+    });
+    especiales.forEach(m => {
+      createBatch.set(missionsRef.doc(), {
+        ...m, categoria: 'especial', completada: false, generatedAt: now, desbloqueada: true, unlockAt: now
       });
     });
 
     await createBatch.commit();
 
-    return res.status(200).json({ ok: true, msg: 'Misiones regeneradas desde Firebase' });
+    return res.status(200).json({ ok: true, msg: 'Misiones regeneradas correctamente' });
   } catch (err) {
-    console.error('❌ Error en regenerateMissions:', err);
+    console.error('Error en regenerateMissions:', err);
     return res.status(500).json({ error: 'Error al regenerar misiones' });
   }
 }
