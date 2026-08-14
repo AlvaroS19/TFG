@@ -1,16 +1,14 @@
 <template>
   <div class="min-h-screen overflow-y-auto bg-background text-text">
     <div class="max-w-4xl mx-auto px-4 pt-6 pb-28">
-      <h1 class="text-2xl font-bold text-center mb-6">📋 Todas tus misiones</h1>
+      <h1 class="text-2xl font-bold text-center mb-6 flex items-center justify-center gap-2">
+        <ClipboardList :size="24" /> Todas tus misiones
+      </h1>
 
-      <!-- 🔁 Botón para regenerar misiones -->
       <div class="flex justify-center mb-4">
-        <button
-          @click="regenerarMisiones"
-          class="bg-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#d55306] transition"
-        >
-          🔄 Regenerar misiones
-        </button>
+        <BaseButton :icon="RefreshCw" variant="secondary" size="sm" class="w-auto px-6" @click="regenerarMisiones">
+          Regenerar misiones
+        </BaseButton>
       </div>
 
       <!-- Filtro de categoría -->
@@ -20,7 +18,7 @@
           :key="cat"
           @click="categoriaSeleccionada = cat"
           :class="[
-            'px-4 py-1 rounded-full text-sm font-semibold border transition',
+            'px-4 py-1 rounded-full text-sm font-semibold border transition active:scale-95',
             categoriaSeleccionada === cat
               ? 'bg-primary text-white border-primary'
               : 'bg-transparent text-text border-text/30 hover:bg-text/10'
@@ -43,14 +41,16 @@
               @completar="completarMision(m.id)"
             />
           </div>
-          <div v-else class="p-4 border border-text/30 rounded bg-text/5">
-            <p class="text-lg font-semibold text-text/80">{{ m.titulo }}</p>
-            <p class="text-sm text-text/50">🔒 Disponible en {{ tiempoRestante(m.unlockAt) }}</p>
+          <div v-else class="p-4 border border-text/30 rounded bg-text/5 flex items-center gap-2">
+            <Lock :size="16" class="text-text/50 shrink-0" />
+            <div>
+              <p class="text-lg font-semibold text-text/80">{{ m.titulo }}</p>
+              <p class="text-sm text-text/50">Disponible en {{ tiempoRestante(m.unlockAt) }}</p>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Si no hay misiones -->
       <div v-else class="text-center text-text/50 mt-10 italic">
         No hay misiones de esta categoría ahora mismo.
       </div>
@@ -64,6 +64,8 @@ import MissionCard from '../components/MissionCard.vue'
 import { notifySuccess, notifyError } from '../utils/toastNotify'
 import { getMissions, completeMission } from '../services/missions'
 import { apiFetch } from '../services/api'
+import { ClipboardList, RefreshCw, Lock } from 'lucide-vue-next'
+import BaseButton from '../components/BaseButton.vue'
 
 const misiones = ref([])
 const categoriaSeleccionada = ref('todas')

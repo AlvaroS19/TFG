@@ -1,10 +1,12 @@
 <template>
-  <div class="bg-surface rounded-lg p-4 shadow w-full max-w-md mx-auto text-sm text-text space-y-6 mb-6">
-    <h2 class="font-semibold text-lg mb-2">Progreso de XP</h2>
+  <div class="bg-surface rounded-lg p-4 shadow w-full max-w-md mx-auto text-sm text-text space-y-6 mb-6 border-l-4 border-info">
+    <h2 class="font-semibold text-lg mb-2 flex items-center gap-2 text-info">
+      <TrendingUp :size="18" /> Progreso de XP
+    </h2>
 
     <div>
       <p class="mb-1 text-text/70">Hoy: {{ xpHoy }} XP</p>
-      <div class="w-full bg-gray-700 h-4 rounded">
+      <div class="w-full bg-muted h-4 rounded">
         <div
           class="bg-primary h-4 rounded transition-all duration-300"
           :style="{ width: `${Math.min((xpHoy / metaDiaria) * 100, 100)}%` }"
@@ -14,9 +16,9 @@
 
     <div>
       <p class="mb-1 text-text/70">Últimos 7 días: {{ xpSemana }} XP</p>
-      <div class="w-full bg-gray-700 h-4 rounded">
+      <div class="w-full bg-muted h-4 rounded">
         <div
-          class="bg-blue-500 h-4 rounded transition-all duration-300"
+          class="bg-info h-4 rounded transition-all duration-300"
           :style="{ width: `${Math.min((xpSemana / metaSemanal) * 100, 100)}%` }"
         />
       </div>
@@ -26,6 +28,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { TrendingUp } from 'lucide-vue-next'
 import { apiFetch } from '../services/api.js';
 
 const xpHoy = ref(0)
@@ -35,8 +38,7 @@ const metaSemanal = 150
 
 const fetchXpData = async () => {
   try {
-    const { xpByDate } = await apiFetch('/user/xp-history',
-    )
+    const { xpByDate } = await apiFetch('/user/xp-history')
 
     const today = new Date().toISOString().slice(0, 10)
     xpHoy.value = xpByDate?.[today] || 0
@@ -50,7 +52,7 @@ const fetchXpData = async () => {
 
     xpSemana.value = xp7dias
   } catch (error) {
-    console.error('❌ Error al obtener XP:', error)
+    console.error('Error al obtener XP:', error)
   }
 }
 
