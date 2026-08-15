@@ -2,11 +2,17 @@ const { admin, db } = require('../services/firebase');
 const fetch = require('node-fetch');
 const { verificarGenerarMisiones } = require("../utils/verificarGenerarMisiones");
 
-const registerUser = async (req, res) => {
-  const { name, lastName, email, password, objetivo } = req.body;
+const NIVELES_VALIDOS = ['fácil', 'media', 'difícil'];
 
-  if (!email || !password || !name || !lastName || !objetivo) {
+const registerUser = async (req, res) => {
+  const { name, lastName, email, password, objetivo, nivel } = req.body;
+
+  if (!email || !password || !name || !lastName || !objetivo || !nivel) {
     return res.status(400).json({ error: 'Faltan campos obligatorios' });
+  }
+
+  if (!NIVELES_VALIDOS.includes(nivel)) {
+    return res.status(400).json({ error: 'Nivel de condición física no válido' });
   }
 
   try {
@@ -34,7 +40,7 @@ const registerUser = async (req, res) => {
     await db.collection('userConfig').doc(uid).set({
       nickname: name,
       goal: objetivo,
-      difficulty: 'media',
+      difficulty: nivel,
     });
 
     await verificarGenerarMisiones(uid, objetivo);

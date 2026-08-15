@@ -52,10 +52,22 @@
             <option disabled value="">Selecciona tu objetivo</option>
             <option value="salud">Salud</option>
             <option value="resistencia">Resistencia</option>
-            <option value="tonificacion">Tonificación</option>
+            <option value="tonificación">Tonificación</option>
             <option value="fuerza">Fuerza</option>
           </select>
         <p v-if="goalError" class="text-red-500 text-sm mt-1">{{ goalError }}</p>
+      </div>
+
+      <!-- Nivel de condición física -->
+      <div>
+        <label class="text-sm font-medium">Nivel de condición física</label>
+        <select v-model="nivel" class="mt-1 w-full px-3 py-2 rounded border bg-white text-black">
+          <option disabled value="">Selecciona tu nivel</option>
+          <option value="fácil">Principiante</option>
+          <option value="media">Intermedio</option>
+          <option value="difícil">Avanzado</option>
+        </select>
+        <p v-if="nivelError" class="text-red-500 text-sm mt-1">{{ nivelError }}</p>
       </div>
 
       <!-- Botón -->
@@ -86,7 +98,6 @@ const lastName = ref('')
 const email = ref('')
 const password = ref('')
 const repeatPassword = ref('')
-const goal = ref('')
 
 const showPassword = ref(false)
 const showRepeat = ref(false)
@@ -100,6 +111,11 @@ const goalError = ref('')
 
 const isValidEmail = (mail) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(mail)
 const isValidPassword = (pwd) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(pwd)
+
+const goal = ref('')
+const nivel = ref('')
+const nivelError = ref('')
+
 
 async function handleRegister() {
   nameError.value = ''
@@ -141,6 +157,11 @@ async function handleRegister() {
     valid = false
   }
 
+  if (!nivel.value) {
+    nivelError.value = 'Selecciona tu nivel de condición física'
+    valid = false
+  }
+
   if (!valid) return
 
   try {
@@ -149,7 +170,8 @@ async function handleRegister() {
       lastName: lastName.value,
       email: email.value,
       password: password.value,
-      objetivo: goal.value
+      objetivo: goal.value,
+      nivel: nivel.value,
     })
 
     notifySuccess('Cuenta creada correctamente. Redirigiendo al login...')
