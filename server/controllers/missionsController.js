@@ -195,10 +195,13 @@ const regenerateMissions = async (req, res) => {
     await deleteBatch.commit();
 
     // Generamos un set fresco: 3 diarias, 1 semanal, 1 especial
+    const configSnap = await db.collection('userConfig').doc(uid).get();
+    const nivel = configSnap.exists ? configSnap.data().difficulty : 'media';
+
     const [diarias, semanales, especiales] = await Promise.all([
-      obtenerMisionesPorObjetivo(objetivo, 'daily', 3),
-      obtenerMisionesPorObjetivo(objetivo, 'weekly', 1),
-      obtenerMisionesPorObjetivo(objetivo, 'especial', 1),
+      obtenerMisionesPorObjetivo(objetivo, 'diaria', 3, nivel),
+      obtenerMisionesPorObjetivo(objetivo, 'semanal', 1, nivel),
+      obtenerMisionesPorObjetivo(objetivo, 'especial', 1, nivel),
     ]);
 
     const now = new Date().toISOString();

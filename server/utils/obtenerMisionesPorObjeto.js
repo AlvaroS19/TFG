@@ -1,34 +1,27 @@
-const { db } = require("../services/firebase");
+const { db } = require('../services/firebase');
 
-const obtenerMisionesPorObjetivo = async (objetivo, tipo = null, limit = null) => {
-  const catalogRef = db.collection("missionsCatalog").doc(objetivo);
-  const catalogSnap = await catalogRef.get();
+async function obtenerMisionesPorObjetivo(objetivo, categoria, limit, dificultad) {
+  let query = db.collection('missionsCatalog')
+    .where('objetivo', '==', objetivo)
+    .where('categoria', '==', categoria);
 
-  if (!catalogSnap.exists) {
-    console.error(`❌ No se encontró el catálogo para el objetivo: ${objetivo}`);
-    return [];
+  if (dificultad) {
+    query = query.where('dificultad', '==', dificultad);
   }
 
-  const catalogo = catalogSnap.data();
+  const snapshot = await query.get();
+  let misiones = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-  let misiones = [];
-
-  if (tipo && catalogo[tipo]) {
-    misiones = catalogo[tipo];
-  } else {
-    // Por defecto: juntar daily y weekly
-    const daily = catalogo.daily || [];
-    const weekly = catalogo.weekly || [];
-    misiones = [...daily, ...weekly];
+  for (let i = misiones.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [misiones[i], misiones[j]] = [misiones[j], misiones[i]];
   }
 
-  // Si se define un límite, devolvemos misiones aleatorias hasta ese límite
   if (limit) {
-    // Barajamos aleatoriamente
-    misiones = misiones.sort(() => 0.5 - Math.random()).slice(0, limit);
+    misiones = misiones.slice(0, limit);
   }
 
   return misiones;
-};
+}
 
 module.exports = obtenerMisionesPorObjetivo;
