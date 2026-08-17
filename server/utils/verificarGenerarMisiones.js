@@ -16,6 +16,9 @@ const siguienteLunes = (desde) => {
 };
 
 const verificarGenerarMisiones = async (uid, objetivo) => {
+  const configSnap = await db.collection('userConfig').doc(uid).get();
+  const nivel = configSnap.exists ? configSnap.data().difficulty : 'media';
+
   try {
     await cleanOldUncompletedMissions(uid);
     const hoy = new Date();
@@ -67,6 +70,7 @@ const verificarGenerarMisiones = async (uid, objetivo) => {
         if (esDesbloqueada) desbloqueadas++;
         if (desbloqueadas >= 3) break;
       }
+      const diarias = await obtenerMisionesPorObjetivo(objetivo, "diaria", faltanDiarias, nivel);
     }
 
     // 🟠 SEMANALES
@@ -80,7 +84,6 @@ const verificarGenerarMisiones = async (uid, objetivo) => {
    const yaHaySemanal = semanalSnap.docs.length > 0;
 
     if (!yaHaySemanal) {
-      const semanal = await obtenerMisionesPorObjetivo(objetivo, "weekly", 1);
       if (semanal[0]) {
         await missionsRef.add({
           ...semanal[0],
@@ -92,6 +95,7 @@ const verificarGenerarMisiones = async (uid, objetivo) => {
         });
         console.log("🟠 Misión semanal programada:", semanal[0].titulo);
       }
+      const semanales = await obtenerMisionesPorObjetivo(objetivo, "semanal", 1, nivel);
     }
 
     // 🔵 ESPECIALES
@@ -104,7 +108,6 @@ const verificarGenerarMisiones = async (uid, objetivo) => {
 
 
     if (!yaHayEspecial) {
-      const especiales = await obtenerMisionesPorObjetivo(objetivo, "especial", 1);
       if (especiales[0]) {
         const unlockEspecial = siguienteLunes(agregarDias(hoy, 7));
         await missionsRef.add({
@@ -117,6 +120,7 @@ const verificarGenerarMisiones = async (uid, objetivo) => {
         });
         console.log("🔵 Misión especial programada:", especiales[0].titulo);
       }
+      const especiales = await obtenerMisionesPorObjetivo(objetivo, "especial", 1, nivel);
     }
 
     await configRef.set({ lastMissionCheck: new Date().toDateString() }, { merge: true })
